@@ -1,7 +1,7 @@
 import React from 'react';
 import ChargeList from './ChargeList';
 import PaymentList from './PaymentList';
-import './MemberDashboard.css';
+import '../styles/MemberDashboard.css';
 
 const sampleCharges = [
   { id: 1, status: 'Outstanding', amount: '$200', dueDate: '2024-05-01' },

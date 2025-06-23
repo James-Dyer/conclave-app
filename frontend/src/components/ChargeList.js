@@ -1,6 +1,6 @@
 import React from 'react';
 import ChargeItem from './ChargeItem';
-import './ChargeList.css';
+import '../styles/ChargeList.css';
 
 export default function ChargeList({ charges }) {
   if (!charges || charges.length === 0) {

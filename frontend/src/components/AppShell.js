@@ -1,5 +1,5 @@
 import Header from './Header';
-import './AppShell.css';
+import '../styles/AppShell.css';
 
 export default function AppShell({ children, onShowDashboard, onShowLogin }) {
   return (

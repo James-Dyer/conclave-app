@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import MemberDashboard from './MemberDashboard';
+import MemberDashboard from './components/MemberDashboard';
 
 test('renders dashboard sections', () => {
   render(<MemberDashboard />);
