@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '../AuthContext';
 import LoginPage from './LoginPage';
 import MemberDashboard from './MemberDashboard';
+import AdminDashboard from './AdminDashboard';
 import PaymentReviewForm from './PaymentReviewForm';
 import ChargeDetails from './ChargeDetails';
 import AppShell from './AppShell';
@@ -11,7 +12,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [reviewCharge, setReviewCharge] = useState(null);
   const [detailsCharge, setDetailsCharge] = useState(null);
-  const { setToken } = useAuth();
+  const { setToken, setUser, user } = useAuth();
 
   const showDashboard = () => {
     setCurrentPage('dashboard');
@@ -21,8 +22,10 @@ function App() {
   const showLogin = () => setCurrentPage('login');
   const handleLogout = () => {
     setToken(null);
+    setUser(null);
     showLogin();
   };
+  const showAdmin = () => setCurrentPage('admin');
   const showReview = (charge) => {
     if (charge) {
       setReviewCharge(charge);
@@ -60,6 +63,9 @@ function App() {
         />
       );
       break;
+    case 'admin':
+      pageContent = <AdminDashboard />;
+      break;
     default:
       pageContent = <LoginPage onLogin={showDashboard} />;
   }
@@ -70,6 +76,7 @@ function App() {
       onShowLogin={showLogin}
       onShowReview={showReview}
       onShowChargeDetails={showChargeDetails}
+      onShowAdmin={user?.isAdmin ? showAdmin : undefined}
       onLogout={handleLogout}
     >
       {pageContent}
