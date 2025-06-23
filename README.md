@@ -87,6 +87,8 @@ conclave-app/
 ├── frontend/               ← React app (frontend)
 │   ├── public/
 │   ├── src/
+    │   ├── components/
+│   │   └── styles/
 │   ├── package.json
 │   └── node_modules/
 │
