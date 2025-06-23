@@ -1,25 +1,92 @@
 # Charges List Page Plan
 
-This page will provide admins with tools to view and manage all charges in one place. Specific requirements will be expanded later, but the core ideas align with the Members page.
+This document specifies the functionality and user interaction design for the new Charges List page.
 
-## Initial Concepts
+## Goals
 
-- Display all charges in a table with columns such as Member, Status, Amount, Due Date and Description.
-- Use the same Search bar, Sort menu and Filter menu components defined for the Members page so the user experience stays consistent.
+Provide a dedicated page listing all charges in a table.
+Offer intuitive tools for sorting, filtering and searching charges.
+Surface key admin actions (edit, delete, mark paid, send reminder) inline.
+Reuse generic components (Search bar, Sort menu, Filter menu) for consistency with the Members page.
+Table Layout
 
-## Anticipated Features
+Columns include:
 
-1. **Search Bar**
-   - Reused component allowing quick lookup of charges by member name, status or description.
-2. **Sort Menu**
-   - Options may include Due Date, Amount or Status.
-3. **Filter Menu**
-   - Filter by charge status (Outstanding, Paid, Delinquent) and by member tags or classes once available.
+Member
+The recipient of the charge, clickable to open member profile.
+Description
+Charge memo or type (e.g., “Fall 2025 Dues”, “Late Fee”).
+Amount
+Monetary value due, formatted with currency symbol.
+Status
+One of: Outstanding, Paid, Delinquent, Under Review.
+Due Date
+Date by which payment is due.
+Tags
+Custom tags assigned at charge creation (e.g., “Exec Board”, “Beta Class”).
+Actions
+Inline buttons for Edit, Delete, Mark as Paid, View Review.
+Pagination
+Show all charges initially; switch to paginated view (e.g., 25/50/100 rows per page) once the list exceeds a threshold.
+Sorting
 
-## Next Steps
+Sort button opens a menu offering:
+Due Date (asc/desc)
+Amount (asc/desc)
+Status (A→Z)
+Member Name (asc/desc)
+Sorted results update instantly without full page reload.
 
-- Gather further details about charge management tasks in the next planning phase.
-- Refine the table columns and filter criteria accordingly.
+Filtering
 
-## UI 
-- needs a back button to navigate back to Admin Dashboard
+Filter button opens a panel with:
+Status: Outstanding, Paid, Delinquent, Under Review
+Due Date: date-range picker
+Amount: min/max inputs
+Tags: multi-select dropdown
+Member Status: Active, Alumni, Inactive, Suspended, Expelled
+Active filters appear as removable chips above the table.
+Search Bar
+
+Prominently placed above the table.
+Searches across Member name, Description text and Tags.
+Typing dynamically hides non-matching rows in real time.
+Row Actions
+
+Edit
+Opens a modal or drawer to adjust charge details (amount, due date, notes, tags).
+Delete
+Prompts for confirmation before removing the charge.
+Mark as Paid
+Marks the charge paid, logs the action in the audit log.
+View Review (for “Under Review” status)
+Opens member’s submitted proof/details.
+Bulk Actions
+
+Row checkboxes allow multi-select.
+Bulk toolbar appears when ≥1 row is selected, with options to:
+Mark as Paid
+Send Reminder (email/SMS)
+Delete
+Interaction Flow
+
+Admin clicks Charges in Quick Links on the Dashboard.
+All charges load in the table by default.
+Admin may:
+Type to search
+Click Sort to re-order
+Click Filter to narrow results
+Select rows for bulk operations
+Use inline Actions for individual charge tasks
+Table updates instantly; modals/drawers handle edits and confirmations.
+Component Reuse Considerations
+
+SearchBar, SortMenu, FilterMenu: same as Members page.
+DataTable: generic table component configured via props (columns, actions, pagination).
+DateRangePicker and MultiSelectDropdown: reusable across admin pages.
+Next Steps
+
+Define business rules for each charge status and review workflow.
+Finalize API contracts for charge CRUD and bulk operations.
+Refine table column widths, mobile responsiveness and accessibility labels.
+Prototype UI mockups and gather admin feedback before development.
