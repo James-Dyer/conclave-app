@@ -6,7 +6,7 @@ This document outlines the redesign of the admin dashboard by splitting key func
 
 - **Members** – "Browse and manage all member accounts"
 - **Charges** – "View and update all assigned charges"
-- **Payment Reviews** – "Approve or reject submitted proofs"
+
 
 Each quick link will be presented as a button with a short 5–8 word description so admins can immediately navigate to the appropriate tool. The Members and Charges links open their own pages. Payment Reviews remain on the dashboard with a reserved section for future enhancements.
 

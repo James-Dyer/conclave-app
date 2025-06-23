@@ -44,10 +44,6 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
           Charges
           <span className="desc">View and update all assigned charges</span>
         </button>
-        <button className="quick-link" disabled>
-          Payment Reviews
-          <span className="desc">Approve or reject submitted proofs</span>
-        </button>
       </section>
       <section>
         <h2>Payment Reviews</h2>
