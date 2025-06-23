@@ -1,4 +1,4 @@
-# Conclave
+# Conclave - Chapter Financial Manegment
 
 **Conclave** is the Lambda Delta chapter of Sigma Chi's internal financial management system. It is a private, login-secured web application built to manage fraternity dues, fines, and payment verification workflows — with a design philosophy centered on clarity, functionality, and zero bloat.
 
