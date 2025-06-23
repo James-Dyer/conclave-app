@@ -50,6 +50,7 @@ function App() {
         <ChargeDetails
           charge={detailsCharge || undefined}
           onRequestReview={showReview}
+          onBack={showDashboard}
         />
       );
       break;

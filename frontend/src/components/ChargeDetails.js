@@ -9,7 +9,7 @@ const sampleCharge = {
   description: 'Semester dues',
 };
 
-export default function ChargeDetails({ charge, onRequestReview }) {
+export default function ChargeDetails({ charge, onRequestReview, onBack }) {
   const displayCharge = { ...sampleCharge, ...(charge || {}) };
 
   return (
@@ -37,15 +37,22 @@ export default function ChargeDetails({ charge, onRequestReview }) {
         </tbody>
       </table>
 
-      {onRequestReview && (
-        <button
-          type="button"
-          className="request-review-button"
-          onClick={() => onRequestReview(displayCharge)}
-        >
-          Request Review
-        </button>
-      )}
+      <div className="charge-actions">
+        {onRequestReview && (
+          <button
+            type="button"
+            className="request-review-button"
+            onClick={() => onRequestReview(displayCharge)}
+          >
+            Request Review
+          </button>
+        )}
+        {onBack && (
+          <button type="button" onClick={onBack} className="back-button">
+            Back
+          </button>
+        )}
+      </div>
     </div>
   );
 }
