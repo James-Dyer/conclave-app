@@ -1,11 +1,12 @@
 import './App.css';
 import LoginPage from './LoginPage';
+import AppShell from './AppShell';
 
 function App() {
   return (
-    <div className="App">
+    <AppShell>
       <LoginPage />
-    </div>
+    </AppShell>
   );
 }
 
