@@ -1,5 +1,5 @@
 import React from 'react';
-import './PaymentList.css';
+import '../styles/PaymentList.css';
 
 export default function PaymentList({ payments }) {
   if (!payments || payments.length === 0) {
