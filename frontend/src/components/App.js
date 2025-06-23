@@ -2,21 +2,41 @@ import '../styles/App.css';
 import { useState } from 'react';
 import LoginPage from './LoginPage';
 import MemberDashboard from './MemberDashboard';
+import PaymentReviewForm from './PaymentReviewForm';
+import ChargeDetails from './ChargeDetails';
 import AppShell from './AppShell';
 
 function App() {
-  const [showDashboard, setShowDashboard] = useState(false);
+  const [currentPage, setCurrentPage] = useState('login');
 
-  const handleShowDashboard = () => setShowDashboard(true);
-  const handleShowLogin = () => setShowDashboard(false);
+  const showDashboard = () => setCurrentPage('dashboard');
+  const showLogin = () => setCurrentPage('login');
+  const showReview = () => setCurrentPage('review');
+  const showChargeDetails = () => setCurrentPage('chargeDetails');
+
+  let pageContent;
+  switch (currentPage) {
+    case 'dashboard':
+      pageContent = <MemberDashboard />;
+      break;
+    case 'review':
+      pageContent = <PaymentReviewForm onBack={showDashboard} />;
+      break;
+    case 'chargeDetails':
+      pageContent = <ChargeDetails />;
+      break;
+    default:
+      pageContent = <LoginPage />;
+  }
 
   return (
-    <AppShell onShowDashboard={handleShowDashboard} onShowLogin={handleShowLogin}>
-      {showDashboard ? (
-        <MemberDashboard />
-      ) : (
-        <LoginPage />
-      )}
+    <AppShell
+      onShowDashboard={showDashboard}
+      onShowLogin={showLogin}
+      onShowReview={showReview}
+      onShowChargeDetails={showChargeDetails}
+    >
+      {pageContent}
     </AppShell>
   );
 }

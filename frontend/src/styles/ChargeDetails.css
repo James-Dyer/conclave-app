@@ -1,0 +1,18 @@
+.charge-details-page {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.charge-details-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.charge-details-table th,
+.charge-details-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}

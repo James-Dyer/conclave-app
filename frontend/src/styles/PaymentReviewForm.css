@@ -1,0 +1,37 @@
+.payment-review-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 300px;
+}
+
+.review-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.review-form input {
+  padding: 8px;
+  font-size: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
