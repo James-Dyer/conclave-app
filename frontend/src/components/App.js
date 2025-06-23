@@ -9,10 +9,12 @@ import AppShell from './AppShell';
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [reviewCharge, setReviewCharge] = useState(null);
+  const [detailsCharge, setDetailsCharge] = useState(null);
 
   const showDashboard = () => {
     setCurrentPage('dashboard');
     setReviewCharge(null);
+    setDetailsCharge(null);
   };
   const showLogin = () => setCurrentPage('login');
   const showReview = (charge) => {
@@ -21,12 +23,22 @@ function App() {
     }
     setCurrentPage('review');
   };
-  const showChargeDetails = () => setCurrentPage('chargeDetails');
+  const showChargeDetails = (charge) => {
+    if (charge) {
+      setDetailsCharge(charge);
+    }
+    setCurrentPage('chargeDetails');
+  };
 
   let pageContent;
   switch (currentPage) {
     case 'dashboard':
-      pageContent = <MemberDashboard onRequestReview={showReview} />;
+      pageContent = (
+        <MemberDashboard
+          onRequestReview={showReview}
+          onViewDetails={showChargeDetails}
+        />
+      );
       break;
     case 'review':
       pageContent = (
@@ -34,7 +46,12 @@ function App() {
       );
       break;
     case 'chargeDetails':
-      pageContent = <ChargeDetails />;
+      pageContent = (
+        <ChargeDetails
+          charge={detailsCharge || undefined}
+          onRequestReview={showReview}
+        />
+      );
       break;
     default:
       pageContent = <LoginPage />;

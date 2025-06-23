@@ -3,7 +3,16 @@ import '../styles/ChargeDetails.css';
 const sampleCharge = {
   id: 1,
   status: 'Outstanding',
-  amount: '$400',
+export default function ChargeDetails({ charge = sampleCharge, onRequestReview }) {
+      {onRequestReview && (
+        <button
+          type="button"
+          className="request-review-button"
+          onClick={() => onRequestReview(charge)}
+        >
+          Request Review
+        </button>
+      )}
   dueDate: '2024-05-01',
   description: 'Semester dues'
 };

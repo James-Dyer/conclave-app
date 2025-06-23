@@ -2,7 +2,11 @@ import React from 'react';
 import ChargeItem from './ChargeItem';
 import '../styles/ChargeList.css';
 
-export default function ChargeList({ charges, onRequestReview = () => {} }) {
+export default function ChargeList({
+  charges,
+  onRequestReview = () => {},
+  onViewDetails = () => {},
+}) {
   if (!charges || charges.length === 0) {
     return <div className="charge-list-empty">No charges found.</div>;
   }
@@ -23,6 +27,7 @@ export default function ChargeList({ charges, onRequestReview = () => {} }) {
             key={charge.id || `${charge.status}-${charge.dueDate}`}
             {...charge}
             onRequestReview={onRequestReview}
+            onViewDetails={onViewDetails}
           />
         ))}
       </tbody>

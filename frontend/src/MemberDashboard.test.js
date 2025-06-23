@@ -14,3 +14,9 @@ test('shows review payment button for charges', () => {
   const reviewButtons = screen.getAllByRole('button', { name: /review payment/i });
   expect(reviewButtons.length).toBeGreaterThan(0);
 });
+
+test('shows details button for charges', () => {
+  render(<MemberDashboard />);
+  const detailButtons = screen.getAllByRole('button', { name: /details/i });
+  expect(detailButtons.length).toBeGreaterThan(0);
+});

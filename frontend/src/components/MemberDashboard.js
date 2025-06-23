@@ -16,13 +16,18 @@ export default function MemberDashboard({
   charges = sampleCharges,
   payments = samplePayments,
   onRequestReview = () => {},
+  onViewDetails = () => {},
 }) {
   return (
     <div className="member-dashboard">
       <h1>Dashboard</h1>
       <section>
         <h2>Outstanding Charges</h2>
-        <ChargeList charges={charges} onRequestReview={onRequestReview} />
+        <ChargeList
+          charges={charges}
+          onRequestReview={onRequestReview}
+          onViewDetails={onViewDetails}
+        />
       </section>
       <section>
         <h2>Recent Payments</h2>
