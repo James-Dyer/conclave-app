@@ -51,6 +51,9 @@ The table should support pagination once the list grows, but initial implementat
 
 - Implement the Sort menu, Filter menu and Search bar as standalone components.
 - These components will later be reused on the Charges page to provide a consistent admin experience.
+- SearchBar, SortMenu, FilterMenu: same as Members page.
+- DataTable: generic table component configured via props (columns, actions, pagination).
+- DateRangePicker and MultiSelectDropdown: reusable across admin pages
 
 ## UI 
 - needs a back button to navigate back to Admin Dashboard
