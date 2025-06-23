@@ -22,3 +22,6 @@ Phase 4 – Audit Logs & Full Workflow
 - Build interface for audit logs (filter by user, action, date range).
 - Polish workflows for editing charges, applying discounts/interest, and so on.
 - Integrate advanced admin features such as mass assignments or more complex review processes.
+
+## Development
+When creating new pages that are not directly accessible thru the frontend page only, create a temporary button on the header so the developer can navigate to that new page and check out how it look on thier localhost.
