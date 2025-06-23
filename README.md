@@ -67,19 +67,19 @@ These are used for charge targeting and filtering within the admin dashboard.
 | Layer     | Technology              |
 |-----------|-------------------------|
 | Frontend  | React                   |
-| Backend   | Node.js + Express       |
-| Database  | PostgreSQL              |
-| Auth      | Passport.js or JWT      |
+| Backend   | TBD: Maybe Node.js + Express?       |
+| Database  | TBD              |
+| Auth      | TBD     |
 | Hosting   | GitHub Pages (frontend) |
-|           | Render or Railway (backend) |
+|           | Backend TBD |
 | Domain    | Existing public domain `ucmsigmachi.org` reused via routing or subdomain |
 
 ## Architecture
 
-This project will be maintained in its own repository (`conclave-app`) and will be linked from the chapter's public website (`chapter-website` repo).
+This project will be maintained in its own repository (`conclave-app`) and will be linked from the chapter's public website (`lambda-delta-chapter-website` repo).
 
 - The public website remains informational and publicly visible
-- Conclave is accessed via a “Member Login” button, linking to `/conclave` or a subdomain like `members.chapter-domain.org`
+- Conclave is accessed via a “Member Login” button, linking to `/conclave` or a subdomain like `members.chapter-domain.org` - TBD
 - Auth is required for all access to Conclave
 
 ## Design Philosophy
