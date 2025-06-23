@@ -21,3 +21,5 @@ This page will provide admins with tools to view and manage all charges in one p
 - Gather further details about charge management tasks in the next planning phase.
 - Refine the table columns and filter criteria accordingly.
 
+## UI 
+- needs a back button to navigate back to Admin Dashboard
