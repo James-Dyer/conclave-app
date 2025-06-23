@@ -84,9 +84,3 @@ Component Reuse Considerations
 SearchBar, SortMenu, FilterMenu: same as Members page.
 DataTable: generic table component configured via props (columns, actions, pagination).
 DateRangePicker and MultiSelectDropdown: reusable across admin pages.
-Next Steps
-
-Define business rules for each charge status and review workflow.
-Finalize API contracts for charge CRUD and bulk operations.
-Refine table column widths, mobile responsiveness and accessibility labels.
-Prototype UI mockups and gather admin feedback before development.
