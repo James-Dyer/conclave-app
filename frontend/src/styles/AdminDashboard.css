@@ -49,3 +49,18 @@
   padding: 8px;
   text-align: left;
 }
+
+.control-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.back-button {
+  margin-left: auto;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+}

@@ -1,0 +1,9 @@
+.filter-menu {
+  display: flex;
+  gap: 12px;
+}
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

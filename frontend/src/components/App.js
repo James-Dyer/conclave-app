@@ -76,7 +76,7 @@ function App() {
       );
       break;
     case 'members':
-      pageContent = <MembersList />;
+      pageContent = <MembersList onBack={showAdmin} />;
       break;
     case 'charges':
       pageContent = <ChargesList />;
