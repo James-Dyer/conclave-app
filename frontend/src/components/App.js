@@ -4,6 +4,8 @@ import { useAuth } from '../AuthContext';
 import LoginPage from './LoginPage';
 import MemberDashboard from './MemberDashboard';
 import AdminDashboard from './AdminDashboard';
+import MembersList from './MembersList';
+import ChargesList from './ChargesList';
 import PaymentReviewForm from './PaymentReviewForm';
 import ChargeDetails from './ChargeDetails';
 import AppShell from './AppShell';
@@ -26,6 +28,8 @@ function App() {
     showLogin();
   };
   const showAdmin = () => setCurrentPage('admin');
+  const showMembersList = () => setCurrentPage('members');
+  const showChargesList = () => setCurrentPage('charges');
   const showReview = (charge) => {
     if (charge) {
       setReviewCharge(charge);
@@ -64,7 +68,18 @@ function App() {
       );
       break;
     case 'admin':
-      pageContent = <AdminDashboard />;
+      pageContent = (
+        <AdminDashboard
+          onShowMembers={showMembersList}
+          onShowCharges={showChargesList}
+        />
+      );
+      break;
+    case 'members':
+      pageContent = <MembersList />;
+      break;
+    case 'charges':
+      pageContent = <ChargesList />;
       break;
     default:
       pageContent = <LoginPage onLogin={showDashboard} />;
