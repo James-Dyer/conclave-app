@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './LoginPage.css';
+import { login } from './apiClient';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,14 +11,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      if (!res.ok) {
-        throw new Error('Invalid credentials');
-      }
+      await login(email, password);
       // In a real app, you'd handle login success here
       console.log('Logged in');
     } catch (err) {
