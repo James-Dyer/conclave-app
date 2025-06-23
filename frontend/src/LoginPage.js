@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './LoginPage.css';
 
-export default function LoginPage({ onShowDashboard }) {
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -49,15 +49,6 @@ export default function LoginPage({ onShowDashboard }) {
         </label>
         {error && <div className="error">{error}</div>}
         <button type="submit">Login</button>
-        {onShowDashboard && (
-          <button
-            type="button"
-            className="view-dashboard-button"
-            onClick={onShowDashboard}
-          >
-            View Dashboard
-          </button>
-        )}
       </form>
     </div>
   );

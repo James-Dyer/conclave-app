@@ -7,12 +7,15 @@ import AppShell from './AppShell';
 function App() {
   const [showDashboard, setShowDashboard] = useState(false);
 
+  const handleShowDashboard = () => setShowDashboard(true);
+  const handleShowLogin = () => setShowDashboard(false);
+
   return (
-    <AppShell>
+    <AppShell onShowDashboard={handleShowDashboard} onShowLogin={handleShowLogin}>
       {showDashboard ? (
         <MemberDashboard />
       ) : (
-        <LoginPage onShowDashboard={() => setShowDashboard(true)} />
+        <LoginPage />
       )}
     </AppShell>
   );

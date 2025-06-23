@@ -1,10 +1,10 @@
 import Header from './Header';
 import './AppShell.css';
 
-export default function AppShell({ children }) {
+export default function AppShell({ children, onShowDashboard, onShowLogin }) {
   return (
     <div className="app-shell">
-      <Header />
+      <Header onShowDashboard={onShowDashboard} onShowLogin={onShowLogin} />
       <main className="app-content">{children}</main>
     </div>
   );
