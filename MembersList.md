@@ -14,23 +14,22 @@ Columns include:
 
 1. **Name**
 2. **Email**
-3. **Status** (Active, Alumni, etc.)
+3. **Status** (Active, Alumni, Inactive, Suspended, Expelled)
 4. **Initiation Date**
 5. **Amount Owed**
-6. **Tags**
+6. **Tags** 
 
 The table should support pagination once the list grows, but initial implementation can show all members.
 
 ## Sorting
 
-- A **Sort** button opens a menu listing sort options: Name, Initiation Date, Amount Owed and any other relevant fields.
-- Selecting a criterion applies ascending/descending ordering to the table.
+- A **Sort** button opens a menu listing sort options: Name, Initiation Date, Amount Owed and any other relevant fields with ascending/descending options for each where relevant.
 
 ## Filtering
 
 - A **Filter** button opens a menu with checkboxes or dropdowns to narrow the list by:
-  - Member status (Active, Alumni, Inactive, etc.)
-  - Tags or tag groups
+  - Member status (Active, Alumni, Inactive, Suspended, Expelled)
+  - Tags
 - Multiple filter criteria can be combined.
 
 ## Search Bar
