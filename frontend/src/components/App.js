@@ -8,19 +8,30 @@ import AppShell from './AppShell';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
+  const [reviewCharge, setReviewCharge] = useState(null);
 
-  const showDashboard = () => setCurrentPage('dashboard');
+  const showDashboard = () => {
+    setCurrentPage('dashboard');
+    setReviewCharge(null);
+  };
   const showLogin = () => setCurrentPage('login');
-  const showReview = () => setCurrentPage('review');
+  const showReview = (charge) => {
+    if (charge) {
+      setReviewCharge(charge);
+    }
+    setCurrentPage('review');
+  };
   const showChargeDetails = () => setCurrentPage('chargeDetails');
 
   let pageContent;
   switch (currentPage) {
     case 'dashboard':
-      pageContent = <MemberDashboard />;
+      pageContent = <MemberDashboard onRequestReview={showReview} />;
       break;
     case 'review':
-      pageContent = <PaymentReviewForm onBack={showDashboard} />;
+      pageContent = (
+        <PaymentReviewForm charge={reviewCharge || undefined} onBack={showDashboard} />
+      );
       break;
     case 'chargeDetails':
       pageContent = <ChargeDetails />;

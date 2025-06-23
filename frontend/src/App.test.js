@@ -46,3 +46,13 @@ test('header login button shows login page', async () => {
   const heading = screen.getByRole('heading', { name: /login/i });
   expect(heading).toBeInTheDocument();
 });
+
+test('dashboard review button opens form with charge data', async () => {
+  render(<App />);
+  await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
+  const reviewButtons = screen.getAllByRole('button', { name: /review payment/i });
+  await userEvent.click(reviewButtons[0]);
+  const heading = screen.getByRole('heading', { name: /payment review/i });
+  expect(heading).toBeInTheDocument();
+  expect(screen.getByText(/charge id:/i)).toBeInTheDocument();
+});

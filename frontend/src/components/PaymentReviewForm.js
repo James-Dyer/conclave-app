@@ -2,9 +2,9 @@ import { useState } from 'react';
 import '../styles/PaymentReviewForm.css';
 import { submitReview } from '../apiClient';
 
-export default function PaymentReviewForm({ onBack }) {
-  const [chargeId, setChargeId] = useState('');
-  const [amount, setAmount] = useState('');
+const sampleCharge = { id: 1, amount: '$200' };
+
+export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
   const [memo, setMemo] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -14,10 +14,8 @@ export default function PaymentReviewForm({ onBack }) {
     setError('');
     setMessage('');
     try {
-      await submitReview({ chargeId, amount, memo });
+      await submitReview({ chargeId: charge.id, amount: charge.amount, memo });
       setMessage('Review request submitted');
-      setChargeId('');
-      setAmount('');
       setMemo('');
     } catch (err) {
       setError(err.message);
@@ -28,24 +26,12 @@ export default function PaymentReviewForm({ onBack }) {
     <div className="payment-review-page">
       <h1>Payment Review</h1>
       <form onSubmit={handleSubmit} className="review-form">
-        <label>
-          Charge ID
-          <input
-            type="text"
-            value={chargeId}
-            onChange={(e) => setChargeId(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Amount
-          <input
-            type="text"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            required
-          />
-        </label>
+        <div className="static-field">
+          <strong>Charge ID:</strong> {charge.id}
+        </div>
+        <div className="static-field">
+          <strong>Amount:</strong> {charge.amount}
+        </div>
         <label>
           Memo
           <input

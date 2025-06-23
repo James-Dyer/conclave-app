@@ -12,13 +12,17 @@ const samplePayments = [
   { id: 1, amount: '$100', date: '2024-04-15', memo: 'Dues' }
 ];
 
-export default function MemberDashboard({ charges = sampleCharges, payments = samplePayments }) {
+export default function MemberDashboard({
+  charges = sampleCharges,
+  payments = samplePayments,
+  onRequestReview = () => {},
+}) {
   return (
     <div className="member-dashboard">
       <h1>Dashboard</h1>
       <section>
         <h2>Outstanding Charges</h2>
-        <ChargeList charges={charges} />
+        <ChargeList charges={charges} onRequestReview={onRequestReview} />
       </section>
       <section>
         <h2>Recent Payments</h2>

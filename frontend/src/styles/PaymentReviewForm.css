@@ -35,3 +35,7 @@
 .success {
   color: green;
 }
+
+.static-field {
+  font-size: 1rem;
+}
