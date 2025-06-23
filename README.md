@@ -124,7 +124,6 @@ The server listens on port `3001` by default and exposes endpoints under `/api`.
 1. Create a `frontend/.env.development` file containing:
    ```
    REACT_APP_API_URL=http://localhost:3001
-   REACT_APP_TOKEN=abc123xyz
    ```
 2. Start the backend server as shown above.
 3. In a new terminal run the React development server:
@@ -133,6 +132,12 @@ The server listens on port `3001` by default and exposes endpoints under `/api`.
    ```
    The development server proxies `/api` requests to `localhost:3001` allowing
    the UI to hit the backend without CORS issues.
+
+### Authentication in Development
+
+The React app stores the login token in `localStorage` using a lightweight
+`AuthProvider`. After logging in, the token persists across page refreshes until
+you click the **Logout** button in the header.
 
 ## Design Philosophy
 

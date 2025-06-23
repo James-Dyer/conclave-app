@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import ChargeList from './ChargeList';
 import PaymentList from './PaymentList';
 import '../styles/MemberDashboard.css';
-import { fetchCharges, fetchPayments } from '../apiClient';
+import useApi from '../apiClient';
+import { useAuth } from '../AuthContext';
 
 const sampleCharges = [
   { id: 1, status: 'Outstanding', amount: '$200', dueDate: '2024-05-01' },
@@ -21,11 +22,13 @@ export default function MemberDashboard({
 }) {
   const [chargeData, setChargeData] = useState(charges);
   const [paymentData, setPaymentData] = useState(payments);
+  const api = useApi();
+  const { token } = useAuth();
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [c, p] = await Promise.all([fetchCharges(), fetchPayments()]);
+        const [c, p] = await Promise.all([api.fetchCharges(), api.fetchPayments()]);
         if (c) {
           console.log('Charges from API:', c);
           setChargeData(c);
@@ -38,10 +41,10 @@ export default function MemberDashboard({
         console.error('API error', err);
       }
     }
-    if (process.env.REACT_APP_TOKEN) {
+    if (token) {
       loadData();
     }
-  }, []);
+  }, [token]);
 
   return (
     <div className="member-dashboard">

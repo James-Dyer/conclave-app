@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import '../styles/PaymentReviewForm.css';
-import { submitReview } from '../apiClient';
+import useApi from '../apiClient';
 
 const sampleCharge = { id: 1, amount: '$200' };
 
@@ -8,13 +8,14 @@ export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
   const [memo, setMemo] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const api = useApi();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
     try {
-      await submitReview({ chargeId: charge.id, amount: charge.amount, memo });
+      await api.submitReview({ chargeId: charge.id, amount: charge.amount, memo });
       setMessage('Review request submitted');
       setMemo('');
     } catch (err) {
