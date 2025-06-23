@@ -50,7 +50,7 @@ test('header login button shows login page', async () => {
 test('dashboard review button opens form with charge data', async () => {
   render(<App />);
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
-  const reviewButtons = screen.getAllByRole('button', { name: /review payment/i });
+  const reviewButtons = screen.getAllByRole('button', { name: /request review/i });
   await userEvent.click(reviewButtons[0]);
   const heading = screen.getByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();

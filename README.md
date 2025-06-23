@@ -103,6 +103,22 @@ This project will be maintained in its own repository (`conclave-app`) and will 
 - Auth is required for all access to Conclave
 
 
+
+## Running the Backend (Phase 1)
+
+The backend server is a lightweight Express application providing member authentication and data APIs.
+
+1. Install dependencies:
+   ```bash
+   npm install --prefix backend
+   ```
+2. Start the server:
+   ```bash
+   node backend/index.js
+   ```
+
+The server listens on port `3001` by default and exposes endpoints under `/api`.
+
 ## Design Philosophy
 
 - No unnecessary features — strictly chapter-specific functionality
