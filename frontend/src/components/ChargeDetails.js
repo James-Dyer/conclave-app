@@ -38,11 +38,6 @@ export default function ChargeDetails({ charge, onRequestReview, onBack }) {
       </table>
 
       <div className="charge-actions">
-        {onBack && (
-          <button type="button" onClick={onBack} className="back-button">
-            Back
-          </button>
-        )}
         {onRequestReview && (
           <button
             type="button"
@@ -50,6 +45,11 @@ export default function ChargeDetails({ charge, onRequestReview, onBack }) {
             onClick={() => onRequestReview(displayCharge)}
           >
             Request Review
+          </button>
+        )}
+        {onBack && (
+          <button type="button" onClick={onBack} className="back-button">
+            Back
           </button>
         )}
       </div>
