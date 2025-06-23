@@ -97,7 +97,7 @@ conclave-app/
 This project will be maintained in its own repository (`conclave-app`) and will be linked from the chapter's public website (`lambda-delta-chapter-website` repo).
 
 - The public website remains informational and publicly visible
-- Conclave is accessed via a “Member Login” button, linking to `/conclave` or a subdomain like `members.chapter-domain.org` - TBD
+- Conclave is accessed via a “Conclave” button, linking to `/conclave` or a subdomain like `members.chapter-domain.org` - TBD
 - Auth is required for all access to Conclave
 
 
