@@ -1,9 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './components/App';
+import { AuthProvider } from './AuthContext';
 
 test('renders login heading and header buttons', () => {
-  render(<App />);
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   const heading = screen.getByRole('heading', { name: /login/i });
   expect(heading).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /dashboard/i })).toBeInTheDocument();
@@ -11,12 +16,16 @@ test('renders login heading and header buttons', () => {
   expect(screen.getByRole('button', { name: /charge details/i })).toBeInTheDocument();
   const loginButtons = screen.getAllByRole('button', { name: /^login$/i });
   expect(loginButtons.length).toBeGreaterThan(0);
-  const logout = screen.getByRole('link', { name: /logout/i });
+  const logout = screen.getByRole('button', { name: /logout/i });
   expect(logout).toBeInTheDocument();
 });
 
 test('header dashboard button shows dashboard', async () => {
-  render(<App />);
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   const btn = screen.getByRole('button', { name: /dashboard/i });
   await userEvent.click(btn);
   const heading = screen.getByRole('heading', { name: /dashboard/i });
@@ -24,7 +33,11 @@ test('header dashboard button shows dashboard', async () => {
 });
 
 test('header payment review button shows form', async () => {
-  render(<App />);
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   const btn = screen.getByRole('button', { name: /payment review/i });
   await userEvent.click(btn);
   const heading = screen.getByRole('heading', { name: /payment review/i });
@@ -32,7 +45,11 @@ test('header payment review button shows form', async () => {
 });
 
 test('header charge details button shows page', async () => {
-  render(<App />);
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   const btn = screen.getByRole('button', { name: /charge details/i });
   await userEvent.click(btn);
   const heading = screen.getByRole('heading', { name: /charge details/i });
@@ -40,7 +57,11 @@ test('header charge details button shows page', async () => {
 });
 
 test('header login button shows login page', async () => {
-  render(<App />);
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
   await userEvent.click(screen.getByRole('button', { name: /^login$/i }));
   const heading = screen.getByRole('heading', { name: /login/i });
@@ -48,9 +69,13 @@ test('header login button shows login page', async () => {
 });
 
 test('dashboard review button opens form with charge data', async () => {
-  render(<App />);
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
-  const reviewButtons = screen.getAllByRole('button', { name: /review payment/i });
+  const reviewButtons = screen.getAllByRole('button', { name: /request review/i });
   await userEvent.click(reviewButtons[0]);
   const heading = screen.getByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();
@@ -58,7 +83,11 @@ test('dashboard review button opens form with charge data', async () => {
 });
 
 test('dashboard details button opens details page then review form', async () => {
-  render(<App />);
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
   const detailButtons = screen.getAllByRole('button', { name: /details/i });
   await userEvent.click(detailButtons[0]);
@@ -70,7 +99,11 @@ test('dashboard details button opens details page then review form', async () =>
 });
 
 test('charge details back button returns to dashboard', async () => {
-  render(<App />);
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
   const detailButtons = screen.getAllByRole('button', { name: /details/i });
   await userEvent.click(detailButtons[0]);

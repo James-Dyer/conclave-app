@@ -4,7 +4,8 @@ export default function Header({
   onShowDashboard,
   onShowLogin,
   onShowReview,
-  onShowChargeDetails
+  onShowChargeDetails,
+  onLogout
 }) {
   return (
     <header className="header">
@@ -47,7 +48,11 @@ export default function Header({
               Charge Details
             </button>
           )}
-          <a href="#" className="logout-link">Logout</a>
+          {onLogout && (
+            <button type="button" className="nav-button logout-button" onClick={onLogout}>
+              Logout
+            </button>
+          )}
         </div>
       </nav>
     </header>

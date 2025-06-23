@@ -1,5 +1,6 @@
 import '../styles/App.css';
 import { useState } from 'react';
+import { useAuth } from '../AuthContext';
 import LoginPage from './LoginPage';
 import MemberDashboard from './MemberDashboard';
 import PaymentReviewForm from './PaymentReviewForm';
@@ -10,6 +11,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [reviewCharge, setReviewCharge] = useState(null);
   const [detailsCharge, setDetailsCharge] = useState(null);
+  const { setToken } = useAuth();
 
   const showDashboard = () => {
     setCurrentPage('dashboard');
@@ -17,6 +19,10 @@ function App() {
     setDetailsCharge(null);
   };
   const showLogin = () => setCurrentPage('login');
+  const handleLogout = () => {
+    setToken(null);
+    showLogin();
+  };
   const showReview = (charge) => {
     if (charge) {
       setReviewCharge(charge);
@@ -55,7 +61,7 @@ function App() {
       );
       break;
     default:
-      pageContent = <LoginPage />;
+      pageContent = <LoginPage onLogin={showDashboard} />;
   }
 
   return (
@@ -64,6 +70,7 @@ function App() {
       onShowLogin={showLogin}
       onShowReview={showReview}
       onShowChargeDetails={showChargeDetails}
+      onLogout={handleLogout}
     >
       {pageContent}
     </AppShell>

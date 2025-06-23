@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import '../styles/LoginPage.css';
-import { login } from '../apiClient';
+import useApi from '../apiClient';
+import { useAuth } from '../AuthContext';
 
-export default function LoginPage() {
+export default function LoginPage({ onLogin = () => {} }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { setToken } = useAuth();
+  const api = useApi();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      await login(email, password);
-      // In a real app, you'd handle login success here
-      console.log('Logged in');
+      const data = await api.login(email, password);
+      setToken(data.token);
+      onLogin();
     } catch (err) {
       setError(err.message);
     }

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ChargeList from './ChargeList';
 import PaymentList from './PaymentList';
 import '../styles/MemberDashboard.css';
+import useApi from '../apiClient';
+import { useAuth } from '../AuthContext';
 
 const sampleCharges = [
   { id: 1, status: 'Outstanding', amount: '$200', dueDate: '2024-05-01' },
@@ -18,20 +20,46 @@ export default function MemberDashboard({
   onRequestReview = () => {},
   onViewDetails = () => {},
 }) {
+  const [chargeData, setChargeData] = useState(charges);
+  const [paymentData, setPaymentData] = useState(payments);
+  const api = useApi();
+  const { token } = useAuth();
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [c, p] = await Promise.all([api.fetchCharges(), api.fetchPayments()]);
+        if (c) {
+          console.log('Charges from API:', c);
+          setChargeData(c);
+        }
+        if (p) {
+          console.log('Payments from API:', p);
+          setPaymentData(p);
+        }
+      } catch (err) {
+        console.error('API error', err);
+      }
+    }
+    if (token) {
+      loadData();
+    }
+  }, [token]);
+
   return (
     <div className="member-dashboard">
       <h1>Dashboard</h1>
       <section>
         <h2>Outstanding Charges</h2>
         <ChargeList
-          charges={charges}
+          charges={chargeData}
           onRequestReview={onRequestReview}
           onViewDetails={onViewDetails}
         />
       </section>
       <section>
         <h2>Recent Payments</h2>
-        <PaymentList payments={payments} />
+        <PaymentList payments={paymentData} />
       </section>
     </div>
   );

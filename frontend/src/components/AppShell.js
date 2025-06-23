@@ -6,7 +6,8 @@ export default function AppShell({
   onShowDashboard,
   onShowLogin,
   onShowReview,
-  onShowChargeDetails
+  onShowChargeDetails,
+  onLogout
 }) {
   return (
     <div className="app-shell">
@@ -15,6 +16,7 @@ export default function AppShell({
         onShowLogin={onShowLogin}
         onShowReview={onShowReview}
         onShowChargeDetails={onShowChargeDetails}
+        onLogout={onLogout}
       />
       <main className="app-content">{children}</main>
     </div>

@@ -103,6 +103,42 @@ This project will be maintained in its own repository (`conclave-app`) and will 
 - Auth is required for all access to Conclave
 
 
+
+## Running the Backend (Phase 1)
+
+The backend server is a lightweight Express application providing member authentication and data APIs.
+
+1. Install dependencies:
+   ```bash
+   npm install --prefix backend
+   ```
+2. Start the server:
+   ```bash
+   node backend/index.js
+   ```
+
+The server listens on port `3001` by default and exposes endpoints under `/api`.
+
+## Connecting the Frontend to the Backend
+
+1. Create a `frontend/.env.development` file containing:
+   ```
+   REACT_APP_API_URL=http://localhost:3001
+   ```
+2. Start the backend server as shown above.
+3. In a new terminal run the React development server:
+   ```bash
+   npm start --prefix frontend
+   ```
+   The development server proxies `/api` requests to `localhost:3001` allowing
+   the UI to hit the backend without CORS issues.
+
+### Authentication in Development
+
+The React app stores the login token in `localStorage` using a lightweight
+`AuthProvider`. After logging in, the token persists across page refreshes until
+you click the **Logout** button in the header.
+
 ## Design Philosophy
 
 - No unnecessary features — strictly chapter-specific functionality

@@ -11,7 +11,7 @@ test('renders dashboard sections', () => {
 
 test('shows review payment button for charges', () => {
   render(<MemberDashboard />);
-  const reviewButtons = screen.getAllByRole('button', { name: /review payment/i });
+  const reviewButtons = screen.getAllByRole('button', { name: /request review/i });
   expect(reviewButtons.length).toBeGreaterThan(0);
 });
 
