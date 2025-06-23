@@ -82,8 +82,7 @@ conclave-app/
 │   ├── routes/
 │   ├── models/
 │   ├── config/
-│   ├── package.json
-│   └── .env
+│   └── package.json
 │
 ├── frontend/               ← React app (frontend)
 │   ├── public/
@@ -92,8 +91,7 @@ conclave-app/
 │   └── node_modules/
 │
 ├── README.md
-├── .gitignore
-└── .env.example
+└── .gitignore
 ```
 
 This project will be maintained in its own repository (`conclave-app`) and will be linked from the chapter's public website (`lambda-delta-chapter-website` repo).
