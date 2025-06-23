@@ -8,3 +8,15 @@ test('renders dashboard sections', () => {
   const paymentsHeading = screen.getByRole('heading', { name: /recent payments/i });
   expect(paymentsHeading).toBeInTheDocument();
 });
+
+test('shows review payment button for charges', () => {
+  render(<MemberDashboard />);
+  const reviewButtons = screen.getAllByRole('button', { name: /review payment/i });
+  expect(reviewButtons.length).toBeGreaterThan(0);
+});
+
+test('shows details button for charges', () => {
+  render(<MemberDashboard />);
+  const detailButtons = screen.getAllByRole('button', { name: /details/i });
+  expect(detailButtons.length).toBeGreaterThan(0);
+});

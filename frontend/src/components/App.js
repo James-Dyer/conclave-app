@@ -2,21 +2,69 @@ import '../styles/App.css';
 import { useState } from 'react';
 import LoginPage from './LoginPage';
 import MemberDashboard from './MemberDashboard';
+import PaymentReviewForm from './PaymentReviewForm';
+import ChargeDetails from './ChargeDetails';
 import AppShell from './AppShell';
 
 function App() {
-  const [showDashboard, setShowDashboard] = useState(false);
+  const [currentPage, setCurrentPage] = useState('login');
+  const [reviewCharge, setReviewCharge] = useState(null);
+  const [detailsCharge, setDetailsCharge] = useState(null);
 
-  const handleShowDashboard = () => setShowDashboard(true);
-  const handleShowLogin = () => setShowDashboard(false);
+  const showDashboard = () => {
+    setCurrentPage('dashboard');
+    setReviewCharge(null);
+    setDetailsCharge(null);
+  };
+  const showLogin = () => setCurrentPage('login');
+  const showReview = (charge) => {
+    if (charge) {
+      setReviewCharge(charge);
+    }
+    setCurrentPage('review');
+  };
+  const showChargeDetails = (charge) => {
+    if (charge) {
+      setDetailsCharge(charge);
+    }
+    setCurrentPage('chargeDetails');
+  };
+
+  let pageContent;
+  switch (currentPage) {
+    case 'dashboard':
+      pageContent = (
+        <MemberDashboard
+          onRequestReview={showReview}
+          onViewDetails={showChargeDetails}
+        />
+      );
+      break;
+    case 'review':
+      pageContent = (
+        <PaymentReviewForm charge={reviewCharge || undefined} onBack={showDashboard} />
+      );
+      break;
+    case 'chargeDetails':
+      pageContent = (
+        <ChargeDetails
+          charge={detailsCharge || undefined}
+          onRequestReview={showReview}
+        />
+      );
+      break;
+    default:
+      pageContent = <LoginPage />;
+  }
 
   return (
-    <AppShell onShowDashboard={handleShowDashboard} onShowLogin={handleShowLogin}>
-      {showDashboard ? (
-        <MemberDashboard />
-      ) : (
-        <LoginPage />
-      )}
+    <AppShell
+      onShowDashboard={showDashboard}
+      onShowLogin={showLogin}
+      onShowReview={showReview}
+      onShowChargeDetails={showChargeDetails}
+    >
+      {pageContent}
     </AppShell>
   );
 }
