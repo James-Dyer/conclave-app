@@ -77,23 +77,12 @@ These are used for charge targeting and filtering within the admin dashboard.
 ```
 conclave-app/
 │
-├── backend/                ← Backend tools
-│   ├── index.js
-│   ├── routes/
-│   ├── models/
-│   ├── config/
-│   └── package.json
+├── backend/    ← Node + Express
 │
-├── frontend/               ← React app (frontend)
-│   ├── public/
-│   ├── src/
-    │   ├── components/
-│   │   └── styles/
-│   ├── package.json
-│   └── node_modules/
+├── frontend/   ← React app
 │
 ├── README.md
-└── .gitignore
+└── AGENTS.md   ← Instructions for Codex AI
 ```
 
 This project will be maintained in its own repository (`conclave-app`) and will be linked from the chapter's public website (`lambda-delta-chapter-website` repo).
