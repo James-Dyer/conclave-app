@@ -3,6 +3,8 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* Optional: if you want the button on the left/up against the table, this keeps children left-aligned */
+  align-items: flex-start;
 }
 
 .charge-details-table {
@@ -15,4 +17,9 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+}
+
+.request-review-button {
+  width: auto;
+  display: inline-block;
 }

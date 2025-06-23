@@ -1,46 +1,51 @@
+import React from 'react';
 import '../styles/ChargeDetails.css';
 
 const sampleCharge = {
   id: 1,
   status: 'Outstanding',
-export default function ChargeDetails({ charge = sampleCharge, onRequestReview }) {
-      {onRequestReview && (
-        <button
-          type="button"
-          className="request-review-button"
-          onClick={() => onRequestReview(charge)}
-        >
-          Request Review
-        </button>
-      )}
+  amount: '$500',
   dueDate: '2024-05-01',
-  description: 'Semester dues'
+  description: 'Semester dues',
 };
 
-export default function ChargeDetails({ charge = sampleCharge }) {
+export default function ChargeDetails({ charge, onRequestReview }) {
+  const displayCharge = { ...sampleCharge, ...(charge || {}) };
+
   return (
     <div className="charge-details-page">
       <h1>Charge Details</h1>
+
       <table className="charge-details-table">
         <tbody>
           <tr>
             <th>Status</th>
-            <td>{charge.status}</td>
+            <td>{displayCharge.status}</td>
           </tr>
           <tr>
             <th>Amount</th>
-            <td>{charge.amount}</td>
+            <td>{displayCharge.amount}</td>
           </tr>
           <tr>
             <th>Due Date</th>
-            <td>{new Date(charge.dueDate).toLocaleDateString()}</td>
+            <td>{new Date(displayCharge.dueDate).toLocaleDateString()}</td>
           </tr>
           <tr>
             <th>Description</th>
-            <td>{charge.description || '-'}</td>
+            <td>{displayCharge.description || '-'}</td>
           </tr>
         </tbody>
       </table>
+
+      {onRequestReview && (
+        <button
+          type="button"
+          className="request-review-button"
+          onClick={() => onRequestReview(displayCharge)}
+        >
+          Request Review
+        </button>
+      )}
     </div>
   );
 }
