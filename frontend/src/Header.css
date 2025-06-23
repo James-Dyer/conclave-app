@@ -19,3 +19,21 @@
   color: #61dafb;
   text-decoration: none;
 }
+
+.nav-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-button {
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background-color: #4db8d6;
+}
