@@ -1,27 +1,44 @@
 # Codex
 Relevant information about the project for the codex agent to understand when performing tasks
 
-## Frontend Phases
-Phase 1 – Core Member Portal
+## Phases
+
+Phase 1 - Core Member Portal
+Frontend:
 - Build the minimal UI necessary for members to log in and view their outstanding charges and payment history.
 - Display charge statuses (“Delinquent,” “Outstanding,” “Under Review,” “Paid”).
-- Allow a member to submit a simple payment review request (with memo field).
+- Allow a member to submit a simple payment review request with a memo field.
 - Pages: login, dashboard, charge details, payment review form.
-  
-Phase 2 – Basic Admin Dashboard
+Backend:
+- Provide authentication and member data endpoints.
+- Implement routes for retrieving charges and payment history.
+- Accept payment review submissions.
+
+Phase 2 - Basic Admin Dashboard
+Frontend:
 - Add an admin-only section for viewing all members, assigning charges, and reviewing payment confirmation requests.
 - Include simple tables or lists for members and charges.
 - Provide ability to mark charges as fulfilled or delete them.
-  
-Phase 3 – Advanced Member & Admin Functions
+Backend:
+- Implement admin authentication and role checks.
+- Expose APIs to manage members, assign charges, and review payments.
+
+Phase 3 - Advanced Member & Admin Functions
+Frontend:
 - Introduce status and tag management (Active, Alumni, etc.).
-- Support filtering members or charges by status/tags.
-- Implement email/SMS reminders or notifications (if scoped to the web client).
-  
-Phase 4 – Audit Logs & Full Workflow
-- Build interface for audit logs (filter by user, action, date range).
-- Polish workflows for editing charges, applying discounts/interest, and so on.
-- Integrate advanced admin features such as mass assignments or more complex review processes.
+- Support filtering members or charges by status or tags.
+- Implement email or SMS reminders if scoped to the web client.
+Backend:
+- Persist member statuses and tags and provide filtering queries.
+- Integrate notification services for email or SMS reminders.
+
+Phase 4 - Audit Logs & Full Workflow
+Frontend:
+- Build interface for audit logs that can be filtered by user, action, or date range.
+- Polish workflows for editing charges, applying discounts or interest, and more complex review processes.
+Backend:
+- Record audit logs for key actions and expose search APIs.
+- Support bulk operations like mass assignments and charge edits.
 
 ## Development
 When creating new pages that are not directly accessible thru the frontend page only, create a temporary button on the header so the developer can navigate to that new page and check out how it look on thier localhost.
