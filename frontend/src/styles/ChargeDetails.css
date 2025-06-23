@@ -23,3 +23,8 @@
   width: auto;
   display: inline-block;
 }
+
+.charge-actions {
+  display: flex;
+  gap: 10px;
+}

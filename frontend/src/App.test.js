@@ -68,3 +68,14 @@ test('dashboard details button opens details page then review form', async () =>
   await userEvent.click(requestBtn);
   expect(screen.getByRole('heading', { name: /payment review/i })).toBeInTheDocument();
 });
+
+test('charge details back button returns to dashboard', async () => {
+  render(<App />);
+  await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
+  const detailButtons = screen.getAllByRole('button', { name: /details/i });
+  await userEvent.click(detailButtons[0]);
+  const backButton = screen.getByRole('button', { name: /back/i });
+  await userEvent.click(backButton);
+  const heading = screen.getByRole('heading', { name: /dashboard/i });
+  expect(heading).toBeInTheDocument();
+});
