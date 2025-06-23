@@ -11,10 +11,24 @@ app.use((req, res, next) => {
   next();
 });
 
-// In-memory data for Phase 1
+// In-memory data for Phase 2
 const members = [
-  { id: 1, email: 'member@example.com', password: 'password', name: 'John Doe' }
+  {
+    id: 1,
+    email: 'member@example.com',
+    password: 'password',
+    name: 'John Doe',
+    isAdmin: false
+  },
+  {
+    id: 2,
+    email: 'admin@example.com',
+    password: 'admin',
+    name: 'Admin User',
+    isAdmin: true
+  }
 ];
+let nextMemberId = 3;
 
 const charges = [
   {
@@ -34,10 +48,12 @@ const charges = [
     description: 'Fine'
   }
 ];
+let nextChargeId = 3;
 
 const payments = [
   { id: 1, memberId: 1, amount: 100, date: '2024-04-15', memo: 'Dues' }
 ];
+let nextPaymentId = 2;
 
 const sessions = {};
 let nextReviewId = 1;
@@ -60,7 +76,12 @@ app.post('/api/login', (req, res) => {
   sessions[token] = member.id;
   res.json({
     token,
-    member: { id: member.id, email: member.email, name: member.name }
+    member: {
+      id: member.id,
+      email: member.email,
+      name: member.name,
+      isAdmin: member.isAdmin
+    }
   });
 });
 
@@ -72,6 +93,14 @@ function auth(req, res, next) {
     return res.status(401).send('Unauthorized');
   }
   req.memberId = memberId;
+  next();
+}
+
+function adminOnly(req, res, next) {
+  const member = members.find((m) => m.id === req.memberId);
+  if (!member || !member.isAdmin) {
+    return res.status(403).send('Forbidden');
+  }
   next();
 }
 
@@ -106,6 +135,111 @@ app.post('/api/review', auth, (req, res) => {
     memo: memo || ''
   };
   reviews.push(review);
+  res.json({ success: true });
+});
+
+// Admin routes
+// Member management
+app.get('/api/admin/members', auth, adminOnly, (req, res) => {
+  const safeMembers = members.map(({ password, ...m }) => m);
+  res.json(safeMembers);
+});
+
+app.post('/api/admin/members', auth, adminOnly, (req, res) => {
+  const { email, password, name, isAdmin = false } = req.body || {};
+  if (!email || !password || !name) {
+    return res.status(400).send('Missing fields');
+  }
+  const member = { id: nextMemberId++, email, password, name, isAdmin };
+  members.push(member);
+  res.json({ id: member.id });
+});
+
+app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
+  const member = members.find((m) => m.id === Number(req.params.id));
+  if (!member) return res.status(404).send('Not found');
+  const { email, password, name, isAdmin } = req.body || {};
+  if (email !== undefined) member.email = email;
+  if (password !== undefined) member.password = password;
+  if (name !== undefined) member.name = name;
+  if (isAdmin !== undefined) member.isAdmin = isAdmin;
+  res.json({ success: true });
+});
+
+app.delete('/api/admin/members/:id', auth, adminOnly, (req, res) => {
+  const idx = members.findIndex((m) => m.id === Number(req.params.id));
+  if (idx === -1) return res.status(404).send('Not found');
+  members.splice(idx, 1);
+  res.json({ success: true });
+});
+
+// Charge management
+app.get('/api/admin/charges', auth, adminOnly, (req, res) => {
+  res.json(charges);
+});
+
+app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
+  const { memberId, status = 'Outstanding', amount, dueDate, description } =
+    req.body || {};
+  if (!memberId || !amount || !dueDate) {
+    return res.status(400).send('Missing fields');
+  }
+  const charge = {
+    id: nextChargeId++,
+    memberId: Number(memberId),
+    status,
+    amount,
+    dueDate,
+    description: description || ''
+  };
+  charges.push(charge);
+  res.json(charge);
+});
+
+app.put('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
+  const charge = charges.find((c) => c.id === Number(req.params.id));
+  if (!charge) return res.status(404).send('Not found');
+  const { status, amount, dueDate, description } = req.body || {};
+  if (status !== undefined) charge.status = status;
+  if (amount !== undefined) charge.amount = amount;
+  if (dueDate !== undefined) charge.dueDate = dueDate;
+  if (description !== undefined) charge.description = description;
+  res.json({ success: true });
+});
+
+app.delete('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
+  const idx = charges.findIndex((c) => c.id === Number(req.params.id));
+  if (idx === -1) return res.status(404).send('Not found');
+  charges.splice(idx, 1);
+  res.json({ success: true });
+});
+
+// Payment review endpoints
+app.get('/api/admin/reviews', auth, adminOnly, (req, res) => {
+  res.json(reviews);
+});
+
+app.post('/api/admin/reviews/:id/approve', auth, adminOnly, (req, res) => {
+  const reviewIdx = reviews.findIndex((r) => r.id === Number(req.params.id));
+  if (reviewIdx === -1) return res.status(404).send('Not found');
+  const review = reviews[reviewIdx];
+  const charge = charges.find((c) => c.id === review.chargeId);
+  if (charge) charge.status = 'Paid';
+  payments.push({
+    id: nextPaymentId++,
+    memberId: review.memberId,
+    amount: review.amount,
+    date: new Date().toISOString(),
+    memo: review.memo
+  });
+  reviews.splice(reviewIdx, 1);
+  res.json({ success: true });
+});
+
+app.post('/api/admin/reviews/:id/reject', auth, adminOnly, (req, res) => {
+  const idx = reviews.findIndex((r) => r.id === Number(req.params.id));
+  if (idx === -1) return res.status(404).send('Not found');
+  reviews.splice(idx, 1);
   res.json({ success: true });
 });
 

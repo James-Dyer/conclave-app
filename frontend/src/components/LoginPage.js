@@ -7,7 +7,7 @@ export default function LoginPage({ onLogin = () => {} }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { setToken } = useAuth();
+  const { setToken, setUser } = useAuth();
   const api = useApi();
 
   const handleSubmit = async (e) => {
@@ -16,6 +16,7 @@ export default function LoginPage({ onLogin = () => {} }) {
     try {
       const data = await api.login(email, password);
       setToken(data.token);
+      setUser(data.member);
       onLogin();
     } catch (err) {
       setError(err.message);

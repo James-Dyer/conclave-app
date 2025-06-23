@@ -44,7 +44,46 @@ export function useApi() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(review)
-      })
+      }),
+
+    // Admin
+    fetchMembers: () => request('/admin/members'),
+    createMember: (member) =>
+      request('/admin/members', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(member)
+      }),
+    updateMember: (id, member) =>
+      request(`/admin/members/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(member)
+      }),
+    deleteMember: (id) =>
+      request(`/admin/members/${id}`, { method: 'DELETE' }),
+
+    fetchAllCharges: () => request('/admin/charges'),
+    createCharge: (charge) =>
+      request('/admin/charges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(charge)
+      }),
+    updateCharge: (id, charge) =>
+      request(`/admin/charges/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(charge)
+      }),
+    deleteCharge: (id) =>
+      request(`/admin/charges/${id}`, { method: 'DELETE' }),
+
+    fetchReviews: () => request('/admin/reviews'),
+    approveReview: (id) =>
+      request(`/admin/reviews/${id}/approve`, { method: 'POST' }),
+    rejectReview: (id) =>
+      request(`/admin/reviews/${id}/reject`, { method: 'POST' })
   };
 }
 
