@@ -9,11 +9,9 @@ This project is distinct from the public chapter website and is intended exclusi
 Conclave serves as the Lambda Delta chapter's platform for:
 - Managing dues, fines, and charges
 - Tracking member payment status
-- Administering and reviewing Zelle payments
+- Tracking and reviewing Zelle payments
 - Facilitating administrative control and auditing
 - Enforcing accountability for both members and admins
-
-The system does **not process payments directly**. Instead, members pay externally via Zelle, and the app allows admins to verify and record those payments manually.
 
 ## Features
 
