@@ -119,6 +119,21 @@ The backend server is a lightweight Express application providing member authent
 
 The server listens on port `3001` by default and exposes endpoints under `/api`.
 
+## Connecting the Frontend to the Backend
+
+1. Create a `frontend/.env.development` file containing:
+   ```
+   REACT_APP_API_URL=http://localhost:3001
+   REACT_APP_TOKEN=abc123xyz
+   ```
+2. Start the backend server as shown above.
+3. In a new terminal run the React development server:
+   ```bash
+   npm start --prefix frontend
+   ```
+   The development server proxies `/api` requests to `localhost:3001` allowing
+   the UI to hit the backend without CORS issues.
+
 ## Design Philosophy
 
 - No unnecessary features — strictly chapter-specific functionality

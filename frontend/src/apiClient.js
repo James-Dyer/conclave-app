@@ -1,7 +1,18 @@
-const API_BASE = '/api';
+const API_BASE = process.env.REACT_APP_API_URL
+  ? `${process.env.REACT_APP_API_URL}/api`
+  : '/api';
+
+function withAuth(headers = {}) {
+  const token = process.env.REACT_APP_TOKEN;
+  return token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
+}
 
 async function request(path, options = {}) {
-  const res = await fetch(`${API_BASE}${path}`, options);
+  const opts = {
+    ...options,
+    headers: withAuth(options.headers)
+  };
+  const res = await fetch(`${API_BASE}${path}`, opts);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(text || 'API request failed');
