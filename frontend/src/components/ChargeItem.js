@@ -8,7 +8,7 @@ export default function ChargeItem({ id, status, amount, dueDate, onRequestRevie
       <td>{new Date(dueDate).toLocaleDateString()}</td>
       <td>
         <button type="button" onClick={() => onRequestReview({ id, amount })}>
-          Review Payment
+          Request Review
         </button>
       </td>
     </tr>

@@ -3,7 +3,7 @@ import '../styles/ChargeDetails.css';
 const sampleCharge = {
   id: 1,
   status: 'Outstanding',
-  amount: '$200',
+  amount: '$400',
   dueDate: '2024-05-01',
   description: 'Semester dues'
 };

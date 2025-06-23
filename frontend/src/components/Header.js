@@ -9,7 +9,7 @@ export default function Header({
   return (
     <header className="header">
       <nav className="nav">
-        <span className="brand">Conclave</span>
+        <span className="brand">Conclave ΣΧ-ΛΔ</span>
         <div className="nav-actions">
           {onShowLogin && (
             <button
