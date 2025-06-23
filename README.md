@@ -4,8 +4,6 @@
 
 This project is distinct from the public chapter website and is intended exclusively for use by initiated brothers and chapter leadership.
 
----
-
 ## Project Purpose
 
 Conclave serves as the Lambda Delta chapter's platform for:
@@ -16,8 +14,6 @@ Conclave serves as the Lambda Delta chapter's platform for:
 - Enforcing accountability for both members and admins
 
 The system does **not process payments directly**. Instead, members pay externally via Zelle, and the app allows admins to verify and record those payments manually.
-
----
 
 ## Features
 
@@ -53,16 +49,12 @@ The system does **not process payments directly**. Instead, members pay external
   - Date range
 - Audit logs are only visible to admins
 
----
-
 ## Payment Workflow
 
 - Members submit dues and fines using Zelle to the chapter account
 - After sending payment, members may submit a review request within the app
 - Admins verify payments using the chapter’s banking records (Chase Mobile app or emails from Zelle)
 - Upon confirmation, the admin marks the charge as paid and logs the action
-
----
 
 ## Statuses and Tags
 
@@ -71,8 +63,6 @@ Each user is assigned:
 - One or more **tags** for flexible grouping (e.g., `Fall 2024`, `Exec Board`, `Beta Class`)
 
 These are used for charge targeting and filtering within the admin dashboard.
-
----
 
 ## Technical Stack
 
@@ -86,8 +76,6 @@ These are used for charge targeting and filtering within the admin dashboard.
 |           | Render or Railway (backend) |
 | Domain    | Existing public domain `ucmsigmachi.org` reused via routing or subdomain |
 
----
-
 ## Architecture
 
 This project will be maintained in its own repository (`conclave-app`) and will be linked from the chapter's public website (`chapter-website` repo).
@@ -96,16 +84,12 @@ This project will be maintained in its own repository (`conclave-app`) and will 
 - Conclave is accessed via a “Member Login” button, linking to `/conclave` or a subdomain like `members.chapter-domain.org`
 - Auth is required for all access to Conclave
 
----
-
 ## Design Philosophy
 
 - No unnecessary features — strictly chapter-specific functionality
 - Minimal, clean user interface
 - Fast and understandable admin tools
 - Easily maintainable by future treasurers or tech chairs
-
----
 
 ## License
 
