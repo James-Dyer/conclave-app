@@ -4,11 +4,9 @@ import PaymentList from './PaymentList';
 import '../styles/MemberDashboard.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
+import mockData from '../../../mockData.json';
 
-const sampleCharges = [
-  { id: 1, status: 'Outstanding', amount: '$200', dueDate: '2024-05-01' },
-  { id: 2, status: 'Paid', amount: '$100', dueDate: '2024-04-01' }
-];
+const sampleCharges = mockData.charges.filter((c) => c.memberId === 1);
 
 const samplePayments = [
   { id: 1, amount: '$100', date: '2024-04-15', memo: 'Dues' }

@@ -12,53 +12,11 @@ app.use((req, res, next) => {
 });
 
 // In-memory data for Phase 2
-const members = [
-  {
-    id: 1,
-    email: 'member@example.com',
-    password: 'password',
-    name: 'John Doe',
-    isAdmin: false,
-    status: 'Active',
-    initiationDate: '2022-08-15',
-    amountOwed: 100,
-    tags: ['Beta']
-  },
-  {
-    id: 2,
-    email: 'admin@example.com',
-    password: 'admin',
-    name: 'Admin User',
-    isAdmin: true,
-    status: 'Active',
-    initiationDate: '2020-01-10',
-    amountOwed: 0,
-    tags: ['Exec']
-  }
-];
-let nextMemberId = 3;
-
-const charges = [
-  {
-    id: 1,
-    memberId: 1,
-    status: 'Outstanding',
-    amount: 200,
-    dueDate: '2024-05-01',
-    description: 'Semester dues',
-    tags: ['Fall 2024']
-  },
-  {
-    id: 2,
-    memberId: 1,
-    status: 'Paid',
-    amount: 100,
-    dueDate: '2024-04-01',
-    description: 'Fine',
-    tags: ['Late Fee']
-  }
-];
-let nextChargeId = 3;
+const data = require('../mockData.json');
+let members = data.members;
+let charges = data.charges;
+let nextMemberId = Math.max(...members.map((m) => m.id)) + 1;
+let nextChargeId = Math.max(...charges.map((c) => c.id)) + 1;
 
 const payments = [
   { id: 1, memberId: 1, amount: 100, date: '2024-04-15', memo: 'Dues' }
