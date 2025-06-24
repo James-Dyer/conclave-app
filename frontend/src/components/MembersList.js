@@ -1,11 +1,28 @@
 import { useEffect, useState } from 'react';
 import useApi from '../apiClient';
+import SearchBar from './SearchBar';
+import SortMenu from './SortMenu';
+import FilterMenu from './FilterMenu';
+import DataTable from './DataTable';
 import '../styles/AdminDashboard.css';
 
-export default function MembersList() {
+const STATUS_OPTIONS = ['Active', 'Alumni', 'Inactive', 'Suspended', 'Expelled'];
+
+const SORT_OPTIONS = [
+  { label: 'Name A→Z', value: 'nameAsc' },
+  { label: 'Name Z→A', value: 'nameDesc' },
+  { label: 'Initiation Date', value: 'initAsc' },
+  { label: 'Amount Owed', value: 'amountDesc' }
+];
+
+export default function MembersList({ onBack }) {
   const api = useApi();
   const [members, setMembers] = useState([]);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('nameAsc');
+  const [statusFilter, setStatusFilter] = useState([]);
+  const [tagFilter, setTagFilter] = useState([]);
 
   useEffect(() => {
     async function load() {
@@ -23,28 +40,73 @@ export default function MembersList() {
     <div className="admin-dashboard">
       <header className="admin-dash-header">
         <h1>Members List</h1>
+        {onBack && (
+          <button onClick={onBack} className="back-button">Back</button>
+        )}
       </header>
       {error && <div className="error">{error}</div>}
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Admin</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((m) => (
-            <tr key={m.id}>
-              <td>{m.id}</td>
-              <td>{m.name}</td>
-              <td>{m.email}</td>
-              <td>{m.isAdmin ? 'Yes' : 'No'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="control-bar">
+        <SearchBar value={search} onChange={setSearch} />
+        <SortMenu options={SORT_OPTIONS} value={sort} onChange={setSort} />
+      </div>
+      <FilterMenu
+        statusOptions={STATUS_OPTIONS}
+        selectedStatuses={statusFilter}
+        tagOptions={[...new Set(members.flatMap((m) => m.tags || []))]}
+        selectedTags={tagFilter}
+        onChangeStatuses={setStatusFilter}
+        onChangeTags={setTagFilter}
+      />
+      <DataTable
+        columns={[
+          { header: 'Name', accessor: 'name' },
+          { header: 'Email', accessor: 'email' },
+          { header: 'Status', accessor: 'status' },
+          { header: 'Initiation Date', accessor: 'initiationDate' },
+          { header: 'Amount Owed', accessor: 'amountOwed' },
+          { header: 'Tags', accessor: 'tags' }
+        ]}
+        data={filteredAndSorted(members, {
+          search,
+          sort,
+          statusFilter,
+          tagFilter
+        })}
+      />
     </div>
   );
+}
+
+function filteredAndSorted(data, { search, sort, statusFilter, tagFilter }) {
+  let rows = data;
+  if (search) {
+    const term = search.toLowerCase();
+    rows = rows.filter(
+      (m) =>
+        m.name.toLowerCase().includes(term) ||
+        m.email.toLowerCase().includes(term) ||
+        (m.tags || []).some((t) => t.toLowerCase().includes(term))
+    );
+  }
+  if (statusFilter.length)
+    rows = rows.filter((m) => statusFilter.includes(m.status));
+  if (tagFilter.length)
+    rows = rows.filter((m) => (m.tags || []).some((t) => tagFilter.includes(t)));
+
+  switch (sort) {
+    case 'nameDesc':
+      rows = [...rows].sort((a, b) => b.name.localeCompare(a.name));
+      break;
+    case 'initAsc':
+      rows = [...rows].sort((a, b) =>
+        (a.initiationDate || '').localeCompare(b.initiationDate || '')
+      );
+      break;
+    case 'amountDesc':
+      rows = [...rows].sort((a, b) => (b.amountOwed || 0) - (a.amountOwed || 0));
+      break;
+    default:
+      rows = [...rows].sort((a, b) => a.name.localeCompare(b.name));
+  }
+  return rows;
 }

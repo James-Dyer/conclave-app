@@ -12,43 +12,11 @@ app.use((req, res, next) => {
 });
 
 // In-memory data for Phase 2
-const members = [
-  {
-    id: 1,
-    email: 'member@example.com',
-    password: 'password',
-    name: 'John Doe',
-    isAdmin: false
-  },
-  {
-    id: 2,
-    email: 'admin@example.com',
-    password: 'admin',
-    name: 'Admin User',
-    isAdmin: true
-  }
-];
-let nextMemberId = 3;
-
-const charges = [
-  {
-    id: 1,
-    memberId: 1,
-    status: 'Outstanding',
-    amount: 200,
-    dueDate: '2024-05-01',
-    description: 'Semester dues'
-  },
-  {
-    id: 2,
-    memberId: 1,
-    status: 'Paid',
-    amount: 100,
-    dueDate: '2024-04-01',
-    description: 'Fine'
-  }
-];
-let nextChargeId = 3;
+const data = require('../mockData.json');
+let members = data.members;
+let charges = data.charges;
+let nextMemberId = Math.max(...members.map((m) => m.id)) + 1;
+let nextChargeId = Math.max(...charges.map((c) => c.id)) + 1;
 
 const payments = [
   { id: 1, memberId: 1, amount: 100, date: '2024-04-15', memo: 'Dues' }
@@ -146,11 +114,30 @@ app.get('/api/admin/members', auth, adminOnly, (req, res) => {
 });
 
 app.post('/api/admin/members', auth, adminOnly, (req, res) => {
-  const { email, password, name, isAdmin = false } = req.body || {};
+  const {
+    email,
+    password,
+    name,
+    isAdmin = false,
+    status = 'Active',
+    initiationDate = new Date().toISOString().slice(0, 10),
+    amountOwed = 0,
+    tags = []
+  } = req.body || {};
   if (!email || !password || !name) {
     return res.status(400).send('Missing fields');
   }
-  const member = { id: nextMemberId++, email, password, name, isAdmin };
+  const member = {
+    id: nextMemberId++,
+    email,
+    password,
+    name,
+    isAdmin,
+    status,
+    initiationDate,
+    amountOwed,
+    tags
+  };
   members.push(member);
   res.json({ id: member.id });
 });
@@ -158,11 +145,24 @@ app.post('/api/admin/members', auth, adminOnly, (req, res) => {
 app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
   const member = members.find((m) => m.id === Number(req.params.id));
   if (!member) return res.status(404).send('Not found');
-  const { email, password, name, isAdmin } = req.body || {};
+  const {
+    email,
+    password,
+    name,
+    isAdmin,
+    status,
+    initiationDate,
+    amountOwed,
+    tags
+  } = req.body || {};
   if (email !== undefined) member.email = email;
   if (password !== undefined) member.password = password;
   if (name !== undefined) member.name = name;
   if (isAdmin !== undefined) member.isAdmin = isAdmin;
+  if (status !== undefined) member.status = status;
+  if (initiationDate !== undefined) member.initiationDate = initiationDate;
+  if (amountOwed !== undefined) member.amountOwed = amountOwed;
+  if (tags !== undefined) member.tags = tags;
   res.json({ success: true });
 });
 
@@ -179,8 +179,14 @@ app.get('/api/admin/charges', auth, adminOnly, (req, res) => {
 });
 
 app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
-  const { memberId, status = 'Outstanding', amount, dueDate, description } =
-    req.body || {};
+  const {
+    memberId,
+    status = 'Outstanding',
+    amount,
+    dueDate,
+    description,
+    tags = []
+  } = req.body || {};
   if (!memberId || !amount || !dueDate) {
     return res.status(400).send('Missing fields');
   }
@@ -190,7 +196,8 @@ app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
     status,
     amount,
     dueDate,
-    description: description || ''
+    description: description || '',
+    tags
   };
   charges.push(charge);
   res.json(charge);
@@ -199,11 +206,12 @@ app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
 app.put('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
   const charge = charges.find((c) => c.id === Number(req.params.id));
   if (!charge) return res.status(404).send('Not found');
-  const { status, amount, dueDate, description } = req.body || {};
+  const { status, amount, dueDate, description, tags } = req.body || {};
   if (status !== undefined) charge.status = status;
   if (amount !== undefined) charge.amount = amount;
   if (dueDate !== undefined) charge.dueDate = dueDate;
   if (description !== undefined) charge.description = description;
+  if (tags !== undefined) charge.tags = tags;
   res.json({ success: true });
 });
 
