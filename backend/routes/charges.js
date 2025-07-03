@@ -14,8 +14,8 @@ router.get('/', async (req, res) => {
     ];
   }
 
-  const charges = await Charge.find(filter);
-  res.json(charges);
+  const charges = await Charge.find(filter).lean();
+  res.json(charges.map((c) => ({ ...c, id: c._id })));
 });
 
 module.exports = router;
