@@ -37,7 +37,7 @@ export function useApi() {
         },
         false
       ),
-    fetchCharges: () => request('/charges'),
+    fetchCharges: () => request('/my-charges'),
     fetchPayments: () => request('/payments'),
     submitReview: (review) =>
       request('/review', {
@@ -47,7 +47,7 @@ export function useApi() {
       }),
 
     // Admin
-    fetchMembers: () => request('/admin/members'),
+    fetchMembers: (search = '') => request(`/members?search=${encodeURIComponent(search)}`),
     createMember: (member) =>
       request('/admin/members', {
         method: 'POST',
@@ -63,7 +63,7 @@ export function useApi() {
     deleteMember: (id) =>
       request(`/admin/members/${id}`, { method: 'DELETE' }),
 
-    fetchAllCharges: () => request('/admin/charges'),
+    fetchAllCharges: (search = '') => request(`/charges?search=${encodeURIComponent(search)}`),
     createCharge: (charge) =>
       request('/admin/charges', {
         method: 'POST',

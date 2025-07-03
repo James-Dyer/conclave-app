@@ -3,6 +3,34 @@ import userEvent from '@testing-library/user-event';
 import App from './components/App';
 import { AuthProvider } from './AuthContext';
 
+function mockFetch() {
+  global.fetch = jest.fn((url) => {
+    if (url.endsWith('/my-charges')) {
+      return Promise.resolve({
+        ok: true,
+        json: async () => [
+          { id: 1, status: 'Outstanding', amount: 200, dueDate: '2024-05-01' }
+        ]
+      });
+    }
+    if (url.endsWith('/payments')) {
+      return Promise.resolve({ ok: true, json: async () => [] });
+    }
+    return Promise.resolve({ ok: true, json: async () => [] });
+  });
+}
+
+beforeEach(() => {
+  localStorage.setItem('authToken', 'token');
+  localStorage.setItem('authUser', JSON.stringify({ id: 1 }));
+  mockFetch();
+});
+
+afterEach(() => {
+  localStorage.clear();
+  jest.resetAllMocks();
+});
+
 test('renders login heading and header buttons', () => {
   render(
     <AuthProvider>
@@ -28,7 +56,7 @@ test('header dashboard button shows dashboard', async () => {
   );
   const btn = screen.getByRole('button', { name: /dashboard/i });
   await userEvent.click(btn);
-  const heading = screen.getByRole('heading', { name: /dashboard/i });
+  const heading = await screen.findByRole('heading', { name: /dashboard/i });
   expect(heading).toBeInTheDocument();
 });
 
@@ -40,7 +68,7 @@ test('header payment review button shows form', async () => {
   );
   const btn = screen.getByRole('button', { name: /payment review/i });
   await userEvent.click(btn);
-  const heading = screen.getByRole('heading', { name: /payment review/i });
+  const heading = await screen.findByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();
 });
 
@@ -75,9 +103,9 @@ test('dashboard review button opens form with charge data', async () => {
     </AuthProvider>
   );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
-  const reviewButtons = screen.getAllByRole('button', { name: /request review/i });
+  const reviewButtons = await screen.findAllByRole('button', { name: /request review/i });
   await userEvent.click(reviewButtons[0]);
-  const heading = screen.getByRole('heading', { name: /payment review/i });
+  const heading = await screen.findByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();
   expect(screen.getByText(/charge id:/i)).toBeInTheDocument();
 });
@@ -89,13 +117,13 @@ test('dashboard details button opens details page then review form', async () =>
     </AuthProvider>
   );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
-  const detailButtons = screen.getAllByRole('button', { name: /details/i });
+  const detailButtons = await screen.findAllByRole('button', { name: /details/i });
   await userEvent.click(detailButtons[0]);
-  const detailHeading = screen.getByRole('heading', { name: /charge details/i });
+  const detailHeading = await screen.findByRole('heading', { name: /charge details/i });
   expect(detailHeading).toBeInTheDocument();
-  const requestBtn = screen.getByRole('button', { name: /request review/i });
+  const requestBtn = await screen.findByRole('button', { name: /request review/i });
   await userEvent.click(requestBtn);
-  expect(screen.getByRole('heading', { name: /payment review/i })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: /payment review/i })).toBeInTheDocument();
 });
 
 test('charge details back button returns to dashboard', async () => {
@@ -105,10 +133,10 @@ test('charge details back button returns to dashboard', async () => {
     </AuthProvider>
   );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
-  const detailButtons = screen.getAllByRole('button', { name: /details/i });
+  const detailButtons = await screen.findAllByRole('button', { name: /details/i });
   await userEvent.click(detailButtons[0]);
   const backButton = screen.getByRole('button', { name: /back/i });
   await userEvent.click(backButton);
-  const heading = screen.getByRole('heading', { name: /dashboard/i });
+  const heading = await screen.findByRole('heading', { name: /dashboard/i });
   expect(heading).toBeInTheDocument();
 });

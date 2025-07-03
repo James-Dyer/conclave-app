@@ -29,8 +29,8 @@ export default function ChargesList() {
     async function load() {
       try {
         const [c, m] = await Promise.all([
-          api.fetchAllCharges(),
-          api.fetchMembers()
+          api.fetchAllCharges(search),
+          api.fetchMembers('')
         ]);
         setCharges(c || []);
         setMembers(m || []);
@@ -39,7 +39,7 @@ export default function ChargesList() {
       }
     }
     load();
-  }, []);
+  }, [search]);
 
   function memberName(id) {
     const m = members.find((mem) => mem.id === id);
@@ -84,7 +84,6 @@ export default function ChargesList() {
           { header: 'Tags', accessor: 'tags' }
         ]}
         data={prepareRows(charges, members, {
-          search,
           sort,
           statusFilter,
           tagFilter
@@ -102,7 +101,7 @@ export default function ChargesList() {
   );
 }
 
-function prepareRows(charges, members, { search, sort, statusFilter, tagFilter }) {
+function prepareRows(charges, members, { sort, statusFilter, tagFilter }) {
   const getName = (id) => {
     const m = members.find((mem) => mem.id === id);
     return m ? m.name : id;
@@ -113,15 +112,6 @@ function prepareRows(charges, members, { search, sort, statusFilter, tagFilter }
     memberName: getName(c.memberId)
   }));
 
-  if (search) {
-    const term = search.toLowerCase();
-    rows = rows.filter(
-      (r) =>
-        r.memberName.toLowerCase().includes(term) ||
-        (r.description || '').toLowerCase().includes(term) ||
-        (r.tags || []).some((t) => t.toLowerCase().includes(term))
-    );
-  }
   if (statusFilter.length)
     rows = rows.filter((r) => statusFilter.includes(r.status));
   if (tagFilter.length)
