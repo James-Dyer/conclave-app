@@ -12,7 +12,8 @@ async function seed() {
   await Member.deleteMany({});
   await Charge.deleteMany({});
 
-  await Member.insertMany(data.members);
+  const members = data.members.map(({ id, ...rest }) => rest);
+  await Member.insertMany(members);
 
   const charges = data.charges.map(c => ({
     memberName: data.members.find(m => m.id === c.memberId)?.name || '',
