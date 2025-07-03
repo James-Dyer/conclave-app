@@ -27,14 +27,14 @@ export default function MembersList({ onBack }) {
   useEffect(() => {
     async function load() {
       try {
-        const data = await api.fetchMembers();
+        const data = await api.fetchMembers(search);
         setMembers(data || []);
       } catch (e) {
         setError(e.message);
       }
     }
     load();
-  }, []);
+  }, [search]);
 
   return (
     <div className="admin-dashboard">
@@ -77,17 +77,8 @@ export default function MembersList({ onBack }) {
   );
 }
 
-function filteredAndSorted(data, { search, sort, statusFilter, tagFilter }) {
+function filteredAndSorted(data, { sort, statusFilter, tagFilter }) {
   let rows = data;
-  if (search) {
-    const term = search.toLowerCase();
-    rows = rows.filter(
-      (m) =>
-        m.name.toLowerCase().includes(term) ||
-        m.email.toLowerCase().includes(term) ||
-        (m.tags || []).some((t) => t.toLowerCase().includes(term))
-    );
-  }
   if (statusFilter.length)
     rows = rows.filter((m) => statusFilter.includes(m.status));
   if (tagFilter.length)

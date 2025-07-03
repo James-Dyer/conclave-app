@@ -11,52 +11,40 @@ export default function MemberDashboard({
 }) {
   const [chargeData, setChargeData] = useState([]);
   const [paymentData, setPaymentData] = useState([]);
-  const [loadingMock, setLoadingMock] = useState(true);
+  const [loading, setLoading] = useState(true);
   const api = useApi();
-  const { token, user } = useAuth(); 
-  const memberId = user?.id;
+  const { token } = useAuth();
 
   useEffect(() => {
     window.api = api;
   }, [api]);
 
-  // Load mockData.json as fallback or initial data
+  // Load data from the API for the logged in member
   useEffect(() => {
-    fetch(`${process.env.PUBLIC_URL}/mockData.json`)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        const charges = (data.charges || []).filter(c => c.memberId === memberId);
-        const payments = (data.payments || []).filter(p => p.memberId === memberId);
-        setChargeData(charges);
-        setPaymentData(payments);
-      })
-      .catch(err => console.error('Error loading mockData.json', err))
-      .finally(() => setLoadingMock(false));
-  }, [memberId]);  // ← run again whenever memberId changes
-
-  // Then overwrite with real API data if logged in
-  useEffect(() => {
-    if (!token) return;
-    async function loadFromApi() {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    async function load() {
       try {
         const [c, p] = await Promise.all([
           api.fetchCharges(),
-          api.fetchPayments(),
+          api.fetchPayments()
         ]);
         if (c) setChargeData(c);
         if (p) setPaymentData(p);
       } catch (err) {
         console.error('API error', err);
+      } finally {
+        setLoading(false);
       }
     }
-    loadFromApi();
-  }, [token]);
+    load();
+  }, [token, api]);
+
 
   // Render
-  if (loadingMock) {
+  if (loading) {
     return <div>Loading…</div>;
   }
 
