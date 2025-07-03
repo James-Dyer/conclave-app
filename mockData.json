@@ -22,7 +22,7 @@
     { "id": 8, "memberId": 8, "status": "Paid", "amount": 90, "dueDate": "2024-02-15", "description": "Charity donation", "tags": ["Charity"] },
     { "id": 9, "memberId": 9, "status": "Outstanding", "amount": 180, "dueDate": "2024-04-20", "description": "Semester dues", "tags": ["Spring 2024"] },
     { "id": 10, "memberId": 10, "status": "Delinquent", "amount": 200, "dueDate": "2023-11-15", "description": "Past dues", "tags": ["Fall 2023"] },
-    { "id": 11, "memberId": 2, "status": "Paid", "amount": 150, "dueDate": "2024-03-05", "description": "Exec fee", "tags": ["Exec"] },
+    { "id": 11, "memberId": 2, "status": "Paid", "amount": 6969, "dueDate": "2024-03-05", "description": "Exec fee", "tags": ["Exec"] },
     { "id": 12, "memberId": 3, "status": "Outstanding", "amount": 25, "dueDate": "2024-05-25", "description": "Late fee", "tags": ["Late Fee"] },
     { "id": 13, "memberId": 4, "status": "Under Review", "amount": 70, "dueDate": "2024-06-10", "description": "Dispute", "tags": ["Dispute"] },
     { "id": 14, "memberId": 9, "status": "Outstanding", "amount": 50, "dueDate": "2024-08-01", "description": "T-Shirt", "tags": ["Merch"] },
