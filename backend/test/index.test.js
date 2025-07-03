@@ -1,3 +1,7 @@
+// Indicate to the application code that we are running in a test
+// environment so that it can skip actions like connecting to MongoDB.
+process.env.NODE_ENV = 'test';
+
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const app = require('../index');

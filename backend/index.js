@@ -5,10 +5,22 @@ const chargesRoute = require('./routes/charges');
 const ChargeModel = require('./models/Charge');
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/myapp', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+
+// Avoid attempting a MongoDB connection when running tests to prevent
+// unhandled rejections if no Mongo instance is available. Tests set
+// NODE_ENV=test so this block is skipped during "npm test".
+if (process.env.NODE_ENV !== 'test') {
+  mongoose
+    .connect('mongodb://localhost:27017/myapp', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    .catch((err) => {
+      // Log the connection error but allow the server to continue
+      // so that non-DB dependant routes can still be exercised.
+      console.error('Mongo connection error', err);
+    });
+}
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
