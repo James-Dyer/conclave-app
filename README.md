@@ -97,6 +97,30 @@ This project will be maintained in its own repository (`conclave-app`) and will 
 - Conclave is accessed via a “Conclave” button, linking to `/conclave` or a subdomain like `members.chapter-domain.org` - TBD
 - Auth is required for all access to Conclave
 
+## Running the App Locally
+
+1. **Start the frontend**
+   ```bash
+   cd frontend
+   npm start
+   ```
+
+2. **Start the backend**
+   ```bash
+   cd backend
+   npm start
+   ```
+
+3. **Start MongoDB** (macOS with Homebrew)
+   ```bash
+   brew services start mongodb-community
+   ```
+
+4. **Verify MongoDB is running**
+   ```bash
+   mongosh
+   ```
+
 ### Authentication in Development
 
 The React app stores the login token in `localStorage` using a lightweight

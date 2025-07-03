@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node --test",
     "coverage": "node --test --experimental-test-coverage",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
