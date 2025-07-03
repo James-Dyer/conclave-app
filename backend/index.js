@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const membersRoute = require('./routes/members');
 const chargesRoute = require('./routes/charges');
+const ChargeModel = require('./models/Charge');
 
 const app = express();
 mongoose.connect('mongodb://localhost:27017/myapp', {
@@ -92,9 +93,9 @@ app.get('/api/member', auth, (req, res) => {
 });
 
 // Charges and payment history
-app.get('/api/my-charges', auth, (req, res) => {
-  const memberCharges = charges.filter((c) => c.memberId === req.memberId);
-  res.json(memberCharges);
+app.get('/api/my-charges', auth, async (req, res) => {
+  const memberCharges = await ChargeModel.find({ memberId: req.memberId }).lean();
+  res.json(memberCharges.map((c) => ({ ...c, id: c._id })));
 });
 
 app.get('/api/payments', auth, (req, res) => {

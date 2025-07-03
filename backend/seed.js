@@ -15,8 +15,11 @@ async function seed() {
   const members = data.members.map(({ id, ...rest }) => rest);
   await Member.insertMany(members);
 
-  const charges = data.charges.map(c => ({
-    memberName: data.members.find(m => m.id === c.memberId)?.name || '',
+  const charges = data.charges.map((c) => ({
+    memberId: c.memberId,
+    memberName: data.members.find((m) => m.id === c.memberId)?.name || '',
+    amount: c.amount,
+    dueDate: c.dueDate,
     description: c.description,
     tags: c.tags,
     status: c.status
