@@ -77,7 +77,7 @@ export default function MembersList({ onBack }) {
   );
 }
 
-function filteredAndSorted(data, { sort, statusFilter, tagFilter }) {
+export function filteredAndSorted(data, { sort, statusFilter, tagFilter }) {
   let rows = data;
   if (statusFilter.length)
     rows = rows.filter((m) => statusFilter.includes(m.status));

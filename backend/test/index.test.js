@@ -83,3 +83,50 @@ test('submit review succeeds', async () => {
   const data = await res.json();
   assert.deepEqual(data, { success: true });
 });
+
+test('admin endpoints enforce permissions and can approve review', async () => {
+  // login as admin
+  const adminLogin = await fetch(`${baseUrl}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: 'admin@example.com', password: 'admin' })
+  });
+  assert.equal(adminLogin.status, 200);
+  const adminData = await adminLogin.json();
+  const adminToken = adminData.token;
+
+  // member cannot access admin route
+  const forbidden = await fetch(`${baseUrl}/api/admin/members`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  assert.equal(forbidden.status, 403);
+
+  // admin can access admin route
+  const listRes = await fetch(`${baseUrl}/api/admin/members`, {
+    headers: { Authorization: `Bearer ${adminToken}` }
+  });
+  assert.equal(listRes.status, 200);
+  const members = await listRes.json();
+  assert.ok(Array.isArray(members));
+
+  // admin sees pending reviews
+  const revRes = await fetch(`${baseUrl}/api/admin/reviews`, {
+    headers: { Authorization: `Bearer ${adminToken}` }
+  });
+  const rev = (await revRes.json())[0];
+  const approve = await fetch(
+    `${baseUrl}/api/admin/reviews/${rev.id}/approve`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${adminToken}` }
+    }
+  );
+  assert.equal(approve.status, 200);
+
+  // member should now have an additional payment
+  const payRes = await fetch(`${baseUrl}/api/payments`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const payments = await payRes.json();
+  assert.equal(payments.length, 2);
+});

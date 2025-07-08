@@ -101,7 +101,7 @@ export default function ChargesList() {
   );
 }
 
-function prepareRows(charges, members, { sort, statusFilter, tagFilter }) {
+export function prepareRows(charges, members, { sort, statusFilter, tagFilter }) {
   const getName = (id) => {
     const m = members.find((mem) => mem.id === id);
     return m ? m.name : id;
