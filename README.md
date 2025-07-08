@@ -70,7 +70,7 @@ These are used for charge targeting and filtering within the admin dashboard.
 | Auth      | TBD     |
 | Hosting   | GitHub Pages (frontend) |
 |           | Backend TBD |
-| Domain    | Existing public domain `ucmsigmachi.org` reused via routing or subdomain |
+| Domain    | Custom subdomain `conclave.ucmsigmachi.org` |
 
 ## Architecture
 
