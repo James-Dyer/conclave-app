@@ -56,10 +56,7 @@ function generateToken() {
 
 // Authentication
 app.post('/api/login', (req, res) => {
-  console.log(Array.isArray(members), members.length); 
   const { email, password } = req.body || {};
-  console.log('searching for:', { email, password });
-  console.log('first few members:', members.slice(0,3));
   const member = members.find(
     (m) => m.email === email && m.password === password
   );
