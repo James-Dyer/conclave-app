@@ -110,6 +110,19 @@ test('dashboard review button opens form with charge data', async () => {
   expect(screen.getByText(/charge id:/i)).toBeInTheDocument();
 });
 
+test('dashboard tile review button opens form', async () => {
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+  await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
+  const button = await screen.findByTestId('dashboard-review-button');
+  await userEvent.click(button);
+  const heading = await screen.findByRole('heading', { name: /payment review/i });
+  expect(heading).toBeInTheDocument();
+});
+
 test('dashboard details button opens details page then review form', async () => {
   render(
     <AuthProvider>

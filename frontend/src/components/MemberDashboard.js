@@ -62,6 +62,14 @@ export default function MemberDashboard({
           Total balance due. Please send payment to the chapter Zelle and submit
           a payment review when complete.
         </div>
+        <button
+          type="button"
+          className="dashboard-review-button"
+          data-testid="dashboard-review-button"
+          onClick={() => onRequestReview()}
+        >
+          Payment Review
+        </button>
       </div>
 
       <section>

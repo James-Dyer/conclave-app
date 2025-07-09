@@ -30,3 +30,16 @@
 .balance-text {
   font-size: 1.1rem;
 }
+
+.dashboard-review-button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  cursor: pointer;
+}
+
+.dashboard-review-button:hover {
+  background-color: #4db8d6;
+}
