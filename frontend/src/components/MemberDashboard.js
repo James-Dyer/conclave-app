@@ -56,10 +56,12 @@ export default function MemberDashboard({
     <div className="member-dashboard">
       <h1>Dashboard</h1>
 
-      <div className="balance-info">
-        Your total balance due is{' '}
-        <strong>{`$${totalBalance}`}</strong>. Please send payment to the chapter
-        Zelle and submit a payment review when complete.
+      <div className="balance-info" data-testid="balance-info">
+        <div className="balance-amount">{`$${totalBalance}`}</div>
+        <div className="balance-text">
+          Total balance due. Please send payment to the chapter Zelle and submit
+          a payment review when complete.
+        </div>
       </div>
 
       <section>

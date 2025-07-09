@@ -41,10 +41,16 @@ test('renders dashboard sections', async () => {
     name: /outstanding charges/i
   });
   expect(chargesHeading).toBeInTheDocument();
-  const paymentsHeading = screen.getByRole('heading', { name: /recent payments/i });
+  const paymentsHeading = screen.getByRole('heading', {
+    name: /recent payments/i
+  });
   expect(paymentsHeading).toBeInTheDocument();
-  const balance = screen.getByText(/total balance due/i);
-  expect(balance).toHaveTextContent('$200');
+  const amount = screen.getByText('$200');
+  expect(amount).toBeInTheDocument();
+  const instructions = screen.getByText(
+    /please send payment to the chapter zelle/i
+  );
+  expect(instructions).toBeInTheDocument();
 });
 
 test('shows review payment button for charges', async () => {
