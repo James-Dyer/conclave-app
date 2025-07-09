@@ -43,6 +43,8 @@ test('renders dashboard sections', async () => {
   expect(chargesHeading).toBeInTheDocument();
   const paymentsHeading = screen.getByRole('heading', { name: /recent payments/i });
   expect(paymentsHeading).toBeInTheDocument();
+  const balance = screen.getByText(/total balance due/i);
+  expect(balance).toHaveTextContent('$200');
 });
 
 test('shows review payment button for charges', async () => {
