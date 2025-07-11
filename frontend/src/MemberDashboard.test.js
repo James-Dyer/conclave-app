@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import MemberDashboard from './components/MemberDashboard';
 import { AuthProvider } from './AuthContext';
 
@@ -41,8 +42,16 @@ test('renders dashboard sections', async () => {
     name: /outstanding charges/i
   });
   expect(chargesHeading).toBeInTheDocument();
-  const paymentsHeading = screen.getByRole('heading', { name: /recent payments/i });
+  const paymentsHeading = screen.getByRole('heading', {
+    name: /recent payments/i
+  });
   expect(paymentsHeading).toBeInTheDocument();
+  const amount = screen.getByText('$200');
+  expect(amount).toBeInTheDocument();
+  const instructions = screen.getByText(
+    /please send payment to the chapter zelle/i
+  );
+  expect(instructions).toBeInTheDocument();
 });
 
 test('shows review payment button for charges', async () => {
@@ -63,4 +72,17 @@ test('shows details button for charges', async () => {
   );
   const detailButtons = await screen.findAllByRole('button', { name: /details/i });
   expect(detailButtons.length).toBeGreaterThan(0);
+});
+
+test('dashboard payment review button triggers callback', async () => {
+  const onRequestReview = jest.fn();
+  render(
+    <AuthProvider>
+      <MemberDashboard onRequestReview={onRequestReview} />
+    </AuthProvider>
+  );
+  await screen.findByText('$200');
+  const button = screen.getByTestId('dashboard-review-button');
+  await userEvent.click(button);
+  expect(onRequestReview).toHaveBeenCalled();
 });

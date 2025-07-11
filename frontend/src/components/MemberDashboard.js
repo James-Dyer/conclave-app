@@ -48,9 +48,29 @@ export default function MemberDashboard({
     return <div>Loading…</div>;
   }
 
+  const totalBalance = chargeData
+    .filter((c) => c.status !== 'Paid')
+    .reduce((sum, c) => sum + Number(c.amount || 0), 0);
+
   return (
     <div className="member-dashboard">
       <h1>Dashboard</h1>
+
+      <div className="balance-info" data-testid="balance-info">
+        <div className="balance-amount">{`$${totalBalance}`}</div>
+        <div className="balance-text">
+          Total balance due. Please send payment to the chapter Zelle and submit
+          a payment review when complete.
+        </div>
+        <button
+          type="button"
+          className="dashboard-review-button"
+          data-testid="dashboard-review-button"
+          onClick={() => onRequestReview()}
+        >
+          Payment Review
+        </button>
+      </div>
 
       <section>
         <h2>Outstanding Charges</h2>

@@ -10,3 +10,36 @@
   flex-direction: column;
   gap: 12px;
 }
+
+.balance-info {
+  background-color: #f5f5f5;
+  padding: 16px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.balance-amount {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.balance-text {
+  font-size: 1.1rem;
+}
+
+.dashboard-review-button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  cursor: pointer;
+}
+
+.dashboard-review-button:hover {
+  background-color: #4db8d6;
+}
