@@ -1,8 +1,7 @@
 import { useAuth } from './AuthContext';
 
-const API_BASE = process.env.REACT_APP_API_URL
-  ? `${process.env.REACT_APP_API_URL}/api`
-  : '/api';
+// Use the deployed API directly without relying on an environment variable
+const API_BASE = 'https://conclave-app.onrender.com/api';
 
 export function useApi() {
   const { token } = useAuth();
