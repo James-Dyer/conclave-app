@@ -126,8 +126,12 @@ async function auth(req, res, next) {
     }
   }
 
-  const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+  const {
+    data: { user },
+    error
+  } = await supabaseAdmin.auth.getUser(token);
   if (error || !user) {
+    console.error('Supabase auth failed:', error);
     return res.status(401).send('Invalid token');
   }
   req.memberId = user.id;
