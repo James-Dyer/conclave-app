@@ -65,9 +65,9 @@ These are used for charge targeting and filtering within the admin dashboard.
 | Layer     | Technology              |
 |-----------|-------------------------|
 | Frontend  | React                   |
-| Backend   | TBD: Maybe Node.js + Express?       |
-| Database  | TBD              |
-| Auth      | TBD     |
+| Backend   | Node.js + Express |
+| Database  | Postgres (Supabase) |
+| Auth      | Supabase |
 | Hosting   | GitHub Pages (frontend) |
 |           | Backend TBD |
 | Domain    | Existing public domain `ucmsigmachi.org` reused via routing or subdomain |
@@ -110,18 +110,8 @@ This project will be maintained in its own repository (`conclave-app`) and will 
    cd backend
    npm start
    ```
-   The backend requires `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment
-   variables. See `SupabaseSetup.md` for details on configuring the database.
-
-3. **Start MongoDB** (macOS with Homebrew)
-   ```bash
-   brew services start mongodb-community
-   ```
-
-4. **Verify MongoDB is running**
-   ```bash
-   mongosh
-   ```
+The backend requires `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment
+variables. See `SupabaseSetup.md` for details on configuring the database.
 
 ### Authentication in Development
 
