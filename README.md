@@ -94,8 +94,11 @@ This project will be maintained in its own repository (`conclave-app`) and will 
    npm start
    ```
 The backend requires `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and
-`SUPABASE_JWT_SECRET` environment variables. See `SupabaseSetup.md` for
-details on configuring the database and obtaining these values.
+`SUPABASE_JWT_SECRET` environment variables. If you also provide
+`SUPABASE_SERVICE_ROLE_KEY`, the server will verify JWTs using Supabase's
+admin API via `supabaseAdmin.auth.getUser`. When that key is absent (e.g. in
+tests) the JWT is verified locally. See `SupabaseSetup.md` for details on
+configuring the database and obtaining these values.
 
 ### Authentication in Development
 

@@ -50,6 +50,8 @@ editor using the **Import Data** option.
    - `SUPABASE_URL`
    - `SUPABASE_ANON_KEY`
    - `SUPABASE_JWT_SECRET` (found under Project Settings → API)
+   - `SUPABASE_SERVICE_ROLE_KEY` *(optional, used by the backend to validate
+     JWTs via the Supabase admin API)*
 3. Deploy the backend to Render as a web service pointing to `backend/index.js`.
 
 The `/signup` endpoint in `index.js` demonstrates how to create a user with Supabase auth and store additional info in the `profiles` table.

@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('node:crypto');
 const supabase = require('./db');
+const { supabaseAdmin, hasServiceRoleKey } = require('./adminClient');
 const jwt = require('jsonwebtoken');
 const membersRoute = require('./routes/members');
 const chargesRoute = require('./routes/charges');
@@ -107,19 +108,32 @@ app.post('/api/login', async (req, res) => {
   });
 });
 
-function auth(req, res, next) {
+async function auth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.replace('Bearer ', '');
   if (!token) {
     return res.status(401).send('Unauthorized');
   }
-  try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    req.memberId = payload.sub;
-    next();
-  } catch {
+
+  // In tests we verify the JWT locally so no external call is made
+  if (process.env.NODE_ENV === 'test' || !hasServiceRoleKey) {
+    try {
+      const payload = jwt.verify(token, JWT_SECRET);
+      req.memberId = payload.sub;
+      return next();
+    } catch {
+      return res.status(401).send('Invalid token');
+    }
+  }
+
+  const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+  if (error || !user) {
+    console.error('Supabase auth failed:', error);
     return res.status(401).send('Invalid token');
   }
+
+  req.memberId = user.id;
+  next();
 }
 
 function adminOnly(req, res, next) {
