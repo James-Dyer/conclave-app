@@ -6,7 +6,6 @@
   "scripts": {
     "test": "node --test",
     "coverage": "node --test --experimental-test-coverage",
-    "seed": "node seed.js",
     "start": "node index.js"
   },
   "keywords": [],
@@ -15,7 +14,6 @@
   "type": "commonjs",
   "dependencies": {
     "express": "^5.1.0",
-    "mongoose": "^7.6.0",
     "@supabase/supabase-js": "^2.50.5"
   }
 }
