@@ -110,8 +110,9 @@ This project will be maintained in its own repository (`conclave-app`) and will 
    cd backend
    npm start
    ```
-The backend requires `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment
-variables. See `SupabaseSetup.md` for details on configuring the database.
+The backend requires `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and
+`SUPABASE_JWT_SECRET` environment variables. See `SupabaseSetup.md` for
+details on configuring the database and obtaining these values.
 
 ### Authentication in Development
 
