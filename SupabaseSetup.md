@@ -36,7 +36,9 @@ create table if not exists charges (
 
 ```
 
-You can import existing `mockData.json` through the Supabase table editor or by converting it to CSV and using the **Import Data** option.
+Sample data is available in the `mock-data` directory. You can import the
+`profiles.csv` and `charges.csv` files directly through the Supabase table
+editor using the **Import Data** option.
 
 ## 3. Backend configuration
 1. Install dependencies:
