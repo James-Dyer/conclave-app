@@ -34,14 +34,6 @@ create table if not exists charges (
   tags text[] default '{}'
 );
 
--- Payment review requests
-create table if not exists reviews (
-  id bigserial primary key,
-  member_id uuid references profiles(id) on delete cascade,
-  charge_id bigint references charges(id) on delete cascade,
-  amount numeric not null,
-  memo text
-);
 ```
 
 You can import existing `mockData.json` through the Supabase table editor or by converting it to CSV and using the **Import Data** option.
