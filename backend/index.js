@@ -158,7 +158,12 @@ function adminOnly(req, res, next) {
 // Return basic information about the currently authenticated member
 app.get('/api/member', auth, (req, res) => {
   const member = members.find((m) => m.id === req.memberId);
-  res.json({ id: member.id, email: member.email, name: member.name });
+  res.json({
+    id: member.id,
+    email: member.email,
+    name: member.name,
+    isAdmin: member.isAdmin
+  });
 });
 
 // Fetch all charges associated with the logged in member from Supabase
