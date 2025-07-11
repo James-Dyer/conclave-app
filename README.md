@@ -110,6 +110,8 @@ This project will be maintained in its own repository (`conclave-app`) and will 
    cd backend
    npm start
    ```
+   The backend requires `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment
+   variables. See `SupabaseSetup.md` for details on configuring the database.
 
 3. **Start MongoDB** (macOS with Homebrew)
    ```bash

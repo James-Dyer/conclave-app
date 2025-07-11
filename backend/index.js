@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const supabase = require('./db');
 const membersRoute = require('./routes/members');
 const chargesRoute = require('./routes/charges');
 const ChargeModel = require('./models/Charge');
@@ -53,6 +54,23 @@ const reviews = [];
 function generateToken() {
   return Math.random().toString(36).substring(2);
 }
+
+// Sign up with Supabase
+app.post('/signup', async (req, res) => {
+  const { email, password, displayName } = req.body;
+  const { data: userData, error: authErr } = await supabase.auth.signUp({
+    email,
+    password
+  });
+  if (authErr) return res.status(400).json({ error: authErr.message });
+
+  const { data, error: dbErr } = await supabase
+    .from('profiles')
+    .insert({ id: userData.user.id, email, display_name: displayName });
+  if (dbErr) return res.status(500).json({ error: dbErr.message });
+
+  res.status(201).json({ user: userData.user, profile: data[0] });
+});
 
 // Authentication
 app.post('/api/login', (req, res) => {
