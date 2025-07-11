@@ -1,0 +1,3 @@
+id,email,name,is_admin,status,initiation_date,amount_owed,tags
+5b7a79df-2f46-4206-b363-b4e1da6a6e99,member@example.com,John Doe,false,Active,2022-08-15,100,"{Beta}"
+c45f9670-c1c5-406b-b6ce-d8142fffa748,admin@example.com,Admin User,true,Active,2020-01-10,0,"{Gamma, Exec}"

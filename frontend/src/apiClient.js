@@ -37,6 +37,7 @@ export function useApi() {
         },
         false
       ),
+    fetchMember: () => request('/member'),
     fetchCharges: () => request('/my-charges'),
     fetchPayments: () => request('/payments'),
     submitReview: (review) =>

@@ -1,0 +1,9 @@
+id,member_id,status,amount,due_date,description,tags
+1,5b7a79df-2f46-4206-b363-b4e1da6a6e99,Outstanding,200,2024-05-01,Semester dues,"{Fall 2024}"
+2,c45f9670-c1c5-406b-b6ce-d8142fffa748,Paid,100,2024-04-01,Fine,"{Late Fee}"
+3,5b7a79df-2f46-4206-b363-b4e1da6a6e99,Outstanding,150,2024-06-15,Spring dues,"{Spring 2024}"
+4,c45f9670-c1c5-406b-b6ce-d8142fffa748,Paid,50,2023-12-01,Merch,"{Shirt}"
+5,5b7a79df-2f46-4206-b363-b4e1da6a6e99,Delinquent,75,2024-03-01,Late dues,"{Winter 2024}"
+6,c45f9670-c1c5-406b-b6ce-d8142fffa748,Under Review,60,2024-05-10,Event fee,"{Event}"
+7,c45f9670-c1c5-406b-b6ce-d8142fffa748,Outstanding,120,2024-07-01,Semester dues,"{Summer 2024}"
+8,5b7a79df-2f46-4206-b363-b4e1da6a6e99,Paid,90,2024-02-15,Charity donation,"{Charity}"

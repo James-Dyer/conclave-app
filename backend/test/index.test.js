@@ -1,5 +1,5 @@
 // Indicate to the application code that we are running in a test
-// environment so that it can skip actions like connecting to MongoDB.
+// environment so that it can skip actions that require external services.
 process.env.NODE_ENV = 'test';
 
 const test = require('node:test');

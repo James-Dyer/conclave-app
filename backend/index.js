@@ -1,26 +1,13 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const crypto = require('node:crypto');
+const supabase = require('./db');
+const jwt = require('jsonwebtoken');
 const membersRoute = require('./routes/members');
 const chargesRoute = require('./routes/charges');
-const ChargeModel = require('./models/Charge');
 
 const app = express();
 
-// Avoid attempting a MongoDB connection when running tests to prevent
-// unhandled rejections if no Mongo instance is available. Tests set
-// NODE_ENV=test so this block is skipped during "npm test".
-if (process.env.NODE_ENV !== 'test') {
-  mongoose
-    .connect('mongodb://localhost:27017/myapp', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-    .catch((err) => {
-      // Log the connection error but allow the server to continue
-      // so that non-DB dependant routes can still be exercised.
-      console.error('Mongo connection error', err);
-    });
-}
+// In tests we skip starting external connections.
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
@@ -35,43 +22,87 @@ app.use('/api/members', membersRoute);
 app.use('/api/charges', chargesRoute);
 
 // In-memory data for Phase 2
-const data = require('../mockData.json');
+const data = require('./mockData');
 let members = data.members;
 let charges = data.charges;
-let nextMemberId = Math.max(...members.map((m) => m.id)) + 1;
+// Charges continue to use numeric IDs, but members keep their original UUIDs.
+// New members will be assigned a fresh UUID.
 let nextChargeId = Math.max(...charges.map((c) => c.id)) + 1;
 
 const payments = [
-  { id: 1, memberId: 1, amount: 100, date: '2024-04-15', memo: 'Dues' }
+  {
+    id: 1,
+    memberId: members[0].id,
+    amount: 100,
+    date: '2024-04-15',
+    memo: 'Dues'
+  }
 ];
 let nextPaymentId = 2;
 
-const sessions = {};
+const JWT_SECRET = process.env.SUPABASE_JWT_SECRET || 'test-secret';
 let nextReviewId = 1;
 const reviews = [];
 
-function generateToken() {
-  return Math.random().toString(36).substring(2);
-}
+// Sign up with Supabase
+app.post('/signup', async (req, res) => {
+  const { email, password, displayName } = req.body;
+  const { data: userData, error: authErr } = await supabase.auth.signUp({
+    email,
+    password
+  });
+  if (authErr) return res.status(400).json({ error: authErr.message });
 
-// Authentication
-app.post('/api/login', (req, res) => {
+  const { data, error: dbErr } = await supabase
+    .from('profiles')
+    .insert({ id: userData.user.id, email, display_name: displayName });
+  if (dbErr) return res.status(500).json({ error: dbErr.message });
+
+  res.status(201).json({ user: userData.user, profile: data[0] });
+});
+
+// Authentication using Supabase
+app.post('/api/login', async (req, res) => {
   const { email, password } = req.body || {};
-  const member = members.find(
-    (m) => m.email === email && m.password === password
-  );
-  if (!member) {
-    return res.status(401).send('Invalid credentials');
+
+  // During tests we avoid external network calls
+  if (process.env.NODE_ENV === 'test') {
+    const member = members.find(
+      (m) => m.email === email && m.password === password
+    );
+    if (!member) {
+      return res.status(401).send('Invalid credentials');
+    }
+    const token = jwt.sign({ sub: member.id }, JWT_SECRET, { expiresIn: '1h' });
+    return res.json({
+      token,
+      member: {
+        id: member.id,
+        email: member.email,
+        name: member.name,
+        isAdmin: member.isAdmin
+      }
+    });
   }
-  const token = generateToken();
-  sessions[token] = member.id;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error || !data.session) {
+    return res.status(401).send(error ? error.message : 'Login failed');
+  }
+
+  const profile = members.find((m) => m.id === data.user.id) || {};
+
   res.json({
-    token,
+    token: data.session.access_token,
     member: {
-      id: member.id,
-      email: member.email,
-      name: member.name,
-      isAdmin: member.isAdmin
+      id: data.user.id,
+      email: data.user.email,
+      name: profile.name,
+      isAdmin: profile.isAdmin
     }
   });
 });
@@ -79,12 +110,16 @@ app.post('/api/login', (req, res) => {
 function auth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.replace('Bearer ', '');
-  const memberId = sessions[token];
-  if (!memberId) {
+  if (!token) {
     return res.status(401).send('Unauthorized');
   }
-  req.memberId = memberId;
-  next();
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.memberId = payload.sub;
+    next();
+  } catch {
+    return res.status(401).send('Invalid token');
+  }
 }
 
 function adminOnly(req, res, next) {
@@ -103,8 +138,12 @@ app.get('/api/member', auth, (req, res) => {
 
 // Charges and payment history
 app.get('/api/my-charges', auth, async (req, res) => {
-  const memberCharges = await ChargeModel.find({ memberId: req.memberId }).lean();
-  res.json(memberCharges.map((c) => ({ ...c, id: c._id })));
+  const { data, error } = await supabase
+    .from('charges')
+    .select('*')
+    .eq('member_id', req.memberId);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
 });
 
 app.get('/api/payments', auth, (req, res) => {
@@ -151,7 +190,7 @@ app.post('/api/admin/members', auth, adminOnly, (req, res) => {
     return res.status(400).send('Missing fields');
   }
   const member = {
-    id: nextMemberId++,
+    id: crypto.randomUUID(),
     email,
     password,
     name,
@@ -166,7 +205,7 @@ app.post('/api/admin/members', auth, adminOnly, (req, res) => {
 });
 
 app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
-  const member = members.find((m) => m.id === Number(req.params.id));
+  const member = members.find((m) => m.id === req.params.id);
   if (!member) return res.status(404).send('Not found');
   const {
     email,
@@ -190,7 +229,7 @@ app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
 });
 
 app.delete('/api/admin/members/:id', auth, adminOnly, (req, res) => {
-  const idx = members.findIndex((m) => m.id === Number(req.params.id));
+  const idx = members.findIndex((m) => m.id === req.params.id);
   if (idx === -1) return res.status(404).send('Not found');
   members.splice(idx, 1);
   res.json({ success: true });
@@ -215,7 +254,7 @@ app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
   }
   const charge = {
     id: nextChargeId++,
-    memberId: Number(memberId),
+    memberId,
     status,
     amount,
     dueDate,
