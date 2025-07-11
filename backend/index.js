@@ -45,7 +45,7 @@ const JWT_SECRET = process.env.SUPABASE_JWT_SECRET || 'test-secret';
 let nextReviewId = 1;
 const reviews = [];
 
-// Sign up with Supabase
+// Create a new user account and profile entry using Supabase authentication
 app.post('/signup', async (req, res) => {
   const { email, password, displayName } = req.body;
   const { data: userData, error: authErr } = await supabase.auth.signUp({
@@ -62,7 +62,8 @@ app.post('/signup', async (req, res) => {
   res.status(201).json({ user: userData.user, profile: data[0] });
 });
 
-// Authentication using Supabase
+// Log in a user and return a JWT. When running tests we verify credentials
+// against the local in-memory data instead of calling Supabase.
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body || {};
 
@@ -108,6 +109,11 @@ app.post('/api/login', async (req, res) => {
   });
 });
 
+/**
+ * Middleware that validates an incoming JWT and attaches the member ID to
+ * the request. In the test environment the token is verified locally,
+ * otherwise the Supabase admin client is used.
+ */
 async function auth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.replace('Bearer ', '');
@@ -138,6 +144,9 @@ async function auth(req, res, next) {
   next();
 }
 
+/**
+ * Middleware that allows access only to users flagged as administrators.
+ */
 function adminOnly(req, res, next) {
   const member = members.find((m) => m.id === req.memberId);
   if (!member || !member.isAdmin) {
@@ -146,13 +155,13 @@ function adminOnly(req, res, next) {
   next();
 }
 
-// Member data
+// Return basic information about the currently authenticated member
 app.get('/api/member', auth, (req, res) => {
   const member = members.find((m) => m.id === req.memberId);
   res.json({ id: member.id, email: member.email, name: member.name });
 });
 
-// Charges and payment history
+// Fetch all charges associated with the logged in member from Supabase
 app.get('/api/my-charges', auth, async (req, res) => {
   const { data, error } = await supabase
     .from('charges')
@@ -162,12 +171,13 @@ app.get('/api/my-charges', auth, async (req, res) => {
   res.json(data);
 });
 
+// Retrieve the payment history for the authenticated member
 app.get('/api/payments', auth, (req, res) => {
   const memberPayments = payments.filter((p) => p.memberId === req.memberId);
   res.json(memberPayments);
 });
 
-// Payment review submission
+// Allow a member to request a manual review of a payment
 app.post('/api/review', auth, (req, res) => {
   const { chargeId, amount, memo } = req.body || {};
   if (!chargeId || !amount) {
@@ -184,13 +194,17 @@ app.post('/api/review', auth, (req, res) => {
   res.json({ success: true });
 });
 
+// ------------------------------
 // Admin routes
-// Member management
+// ------------------------------
+
+// Return a list of all members without exposing passwords
 app.get('/api/admin/members', auth, adminOnly, (req, res) => {
   const safeMembers = members.map(({ password, ...m }) => m);
   res.json(safeMembers);
 });
 
+// Create a new member record
 app.post('/api/admin/members', auth, adminOnly, (req, res) => {
   const {
     email,
@@ -220,6 +234,7 @@ app.post('/api/admin/members', auth, adminOnly, (req, res) => {
   res.json({ id: member.id });
 });
 
+// Update an existing member
 app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
   const member = members.find((m) => m.id === req.params.id);
   if (!member) return res.status(404).send('Not found');
@@ -244,6 +259,7 @@ app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
   res.json({ success: true });
 });
 
+// Delete a member by id
 app.delete('/api/admin/members/:id', auth, adminOnly, (req, res) => {
   const idx = members.findIndex((m) => m.id === req.params.id);
   if (idx === -1) return res.status(404).send('Not found');
@@ -252,10 +268,13 @@ app.delete('/api/admin/members/:id', auth, adminOnly, (req, res) => {
 });
 
 // Charge management
+
+// Return all charges in the system
 app.get('/api/admin/charges', auth, adminOnly, (req, res) => {
   res.json(charges);
 });
 
+// Create a new charge for a member
 app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
   const {
     memberId,
@@ -281,6 +300,7 @@ app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
   res.json(charge);
 });
 
+// Update an existing charge by id
 app.put('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
   const charge = charges.find((c) => c.id === Number(req.params.id));
   if (!charge) return res.status(404).send('Not found');
@@ -293,6 +313,7 @@ app.put('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
   res.json({ success: true });
 });
 
+// Remove a charge from the system
 app.delete('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
   const idx = charges.findIndex((c) => c.id === Number(req.params.id));
   if (idx === -1) return res.status(404).send('Not found');
@@ -301,10 +322,13 @@ app.delete('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
 });
 
 // Payment review endpoints
+
+// List all submitted payment reviews
 app.get('/api/admin/reviews', auth, adminOnly, (req, res) => {
   res.json(reviews);
 });
 
+// Approve a review and mark the associated charge as paid
 app.post('/api/admin/reviews/:id/approve', auth, adminOnly, (req, res) => {
   const reviewIdx = reviews.findIndex((r) => r.id === Number(req.params.id));
   if (reviewIdx === -1) return res.status(404).send('Not found');
@@ -322,6 +346,7 @@ app.post('/api/admin/reviews/:id/approve', auth, adminOnly, (req, res) => {
   res.json({ success: true });
 });
 
+// Reject a payment review without applying a payment
 app.post('/api/admin/reviews/:id/reject', auth, adminOnly, (req, res) => {
   const idx = reviews.findIndex((r) => r.id === Number(req.params.id));
   if (idx === -1) return res.status(404).send('Not found');
@@ -329,6 +354,7 @@ app.post('/api/admin/reviews/:id/reject', auth, adminOnly, (req, res) => {
   res.json({ success: true });
 });
 
+// Simple health check endpoint
 app.get('/', (req, res) => res.send('Server running'));
 
 if (require.main === module) {
