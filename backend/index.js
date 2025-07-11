@@ -20,7 +20,7 @@ app.use('/api/members', membersRoute);
 app.use('/api/charges', chargesRoute);
 
 // In-memory data for Phase 2
-const data = require('../mockData.json');
+const data = require('./mockData');
 let members = data.members;
 let charges = data.charges;
 let nextMemberId = Math.max(...members.map((m) => m.id)) + 1;
