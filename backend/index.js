@@ -173,7 +173,18 @@ app.get('/api/my-charges', auth, async (req, res) => {
     .select('*')
     .eq('member_id', req.memberId);
   if (error) return res.status(500).json({ error: error.message });
-  res.json(data);
+
+  const mapped = (data || []).map((row) => ({
+    id: row.id,
+    memberId: row.member_id,
+    status: row.status,
+    amount: row.amount,
+    dueDate: row.due_date,
+    description: row.description,
+    tags: row.tags,
+  }));
+
+  res.json(mapped);
 });
 
 // Retrieve the payment history for the authenticated member
