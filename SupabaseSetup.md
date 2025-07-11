@@ -49,6 +49,7 @@ editor using the **Import Data** option.
 2. Set environment variables on Render (or locally in a `.env` file):
    - `SUPABASE_URL`
    - `SUPABASE_ANON_KEY`
+   - `SUPABASE_JWT_SECRET` (found under Project Settings → API)
 3. Deploy the backend to Render as a web service pointing to `backend/index.js`.
 
 The `/signup` endpoint in `index.js` demonstrates how to create a user with Supabase auth and store additional info in the `profiles` table.

@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('node:crypto');
 const supabase = require('./db');
+const jwt = require('jsonwebtoken');
 const membersRoute = require('./routes/members');
 const chargesRoute = require('./routes/charges');
 
@@ -39,13 +40,9 @@ const payments = [
 ];
 let nextPaymentId = 2;
 
-const sessions = {};
+const JWT_SECRET = process.env.SUPABASE_JWT_SECRET || 'test-secret';
 let nextReviewId = 1;
 const reviews = [];
-
-function generateToken() {
-  return Math.random().toString(36).substring(2);
-}
 
 // Sign up with Supabase
 app.post('/signup', async (req, res) => {
@@ -64,24 +61,48 @@ app.post('/signup', async (req, res) => {
   res.status(201).json({ user: userData.user, profile: data[0] });
 });
 
-// Authentication
-app.post('/api/login', (req, res) => {
+// Authentication using Supabase
+app.post('/api/login', async (req, res) => {
   const { email, password } = req.body || {};
-  const member = members.find(
-    (m) => m.email === email && m.password === password
-  );
-  if (!member) {
-    return res.status(401).send('Invalid credentials');
+
+  // During tests we avoid external network calls
+  if (process.env.NODE_ENV === 'test') {
+    const member = members.find(
+      (m) => m.email === email && m.password === password
+    );
+    if (!member) {
+      return res.status(401).send('Invalid credentials');
+    }
+    const token = jwt.sign({ sub: member.id }, JWT_SECRET, { expiresIn: '1h' });
+    return res.json({
+      token,
+      member: {
+        id: member.id,
+        email: member.email,
+        name: member.name,
+        isAdmin: member.isAdmin
+      }
+    });
   }
-  const token = generateToken();
-  sessions[token] = member.id;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error || !data.session) {
+    return res.status(401).send(error ? error.message : 'Login failed');
+  }
+
+  const profile = members.find((m) => m.id === data.user.id) || {};
+
   res.json({
-    token,
+    token: data.session.access_token,
     member: {
-      id: member.id,
-      email: member.email,
-      name: member.name,
-      isAdmin: member.isAdmin
+      id: data.user.id,
+      email: data.user.email,
+      name: profile.name,
+      isAdmin: profile.isAdmin
     }
   });
 });
@@ -89,12 +110,16 @@ app.post('/api/login', (req, res) => {
 function auth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.replace('Bearer ', '');
-  const memberId = sessions[token];
-  if (!memberId) {
+  if (!token) {
     return res.status(401).send('Unauthorized');
   }
-  req.memberId = memberId;
-  next();
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.memberId = payload.sub;
+    next();
+  } catch {
+    return res.status(401).send('Invalid token');
+  }
 }
 
 function adminOnly(req, res, next) {
