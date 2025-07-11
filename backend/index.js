@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('node:crypto');
 const supabase = require('./db');
-const { supabaseAdmin, hasServiceRoleKey } = require('./adminClient');
+const supabaseAdmin = require('./adminClient');
 const jwt = require('jsonwebtoken');
 const membersRoute = require('./routes/members');
 const chargesRoute = require('./routes/charges');
@@ -115,8 +115,8 @@ async function auth(req, res, next) {
     return res.status(401).send('Unauthorized');
   }
 
-  // In tests we verify the JWT locally so no external call is made
-  if (process.env.NODE_ENV === 'test' || !hasServiceRoleKey) {
+  // When running tests we continue verifying the JWT locally
+  if (process.env.NODE_ENV === 'test') {
     try {
       const payload = jwt.verify(token, JWT_SECRET);
       req.memberId = payload.sub;
@@ -131,7 +131,6 @@ async function auth(req, res, next) {
     console.error('Supabase auth failed:', error);
     return res.status(401).send('Invalid token');
   }
-
   req.memberId = user.id;
   next();
 }
