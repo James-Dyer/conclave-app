@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../styles/LoginPage.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
+import { supabase } from '../supabaseClient';
 
 export default function LoginPage({ onLogin = () => {} }) {
   const [email, setEmail] = useState('');
@@ -14,9 +15,20 @@ export default function LoginPage({ onLogin = () => {} }) {
     e.preventDefault();
     setError('');
     try {
-      const data = await api.login(email, password);
-      setToken(data.token);
-      setUser(data.member);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      if (error || !data.session) {
+        throw new Error(error ? error.message : 'Login failed');
+      }
+      const token = data.session.access_token;
+      setToken(token);
+      const res = await fetch('/api/member', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const member = await res.json();
+      setUser(member);
       onLogin();
     } catch (err) {
       setError(err.message);

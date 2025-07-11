@@ -1,21 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const Charge = require('../models/Charge');
+const supabase = require('../db');
 
 router.get('/', async (req, res) => {
   const search = req.query.search?.toLowerCase() || '';
-  const filter = {};
+  let query = supabase.from('charges').select('*');
 
   if (search) {
-    filter.$or = [
-      { memberName: new RegExp(search, 'i') },
-      { description: new RegExp(search, 'i') },
-      { tags: { $elemMatch: { $regex: search, $options: 'i' } } }
-    ];
+    query = query.or(
+      `description.ilike.%${search}%,tags.cs.{${search}}`
+    );
   }
 
-  const charges = await Charge.find(filter).lean();
-  res.json(charges.map((c) => ({ ...c, id: c._id })));
+  const { data, error } = await query;
+  if (error) return res.status(500).json({ error: error.message });
+
+  const mapped = (data || []).map((row) => ({
+    id: row.id,
+    memberId: row.member_id,
+    status: row.status,
+    amount: row.amount,
+    dueDate: row.due_date,
+    description: row.description,
+    tags: row.tags,
+  }));
+
+  res.json(mapped);
 });
 
 module.exports = router;

@@ -1,21 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const Member = require('../models/Member');
+const supabase = require('../db');
 
 router.get('/', async (req, res) => {
   const search = req.query.search?.toLowerCase() || '';
-  const filter = {};
+  let query = supabase.from('profiles').select('*');
 
   if (search) {
-    filter.$or = [
-      { name: new RegExp(search, 'i') },
-      { email: new RegExp(search, 'i') },
-      { tags: { $elemMatch: { $regex: search, $options: 'i' } } }
-    ];
+    query = query.or(
+      `display_name.ilike.%${search}%,email.ilike.%${search}%`
+    );
   }
 
-  const members = await Member.find(filter);
-  res.json(members);
+  const { data, error } = await query;
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json(data);
 });
 
 module.exports = router;

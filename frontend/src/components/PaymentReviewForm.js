@@ -6,6 +6,7 @@ const sampleCharge = { id: 1, amount: '$200' };
 
 export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
   const [memo, setMemo] = useState('');
+  const [amountPaid, setAmountPaid] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const api = useApi();
@@ -15,9 +16,14 @@ export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
     setError('');
     setMessage('');
     try {
-      await api.submitReview({ chargeId: charge.id, amount: charge.amount, memo });
+      await api.submitReview({
+        chargeId: charge.id,
+        amount: amountPaid,
+        memo
+      });
       setMessage('Review request submitted');
       setMemo('');
+      setAmountPaid('');
     } catch (err) {
       setError(err.message);
     }
@@ -33,6 +39,14 @@ export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
         <div className="static-field">
           <strong>Amount:</strong> {charge.amount}
         </div>
+        <label>
+          Amount Paid
+          <input
+            type="number"
+            value={amountPaid}
+            onChange={(e) => setAmountPaid(e.target.value)}
+          />
+        </label>
         <label>
           Memo
           <input

@@ -21,29 +21,12 @@ Conclave serves as the Lambda Delta chapter's platform for:
 - Track the status of each charge: `Delinquent`, `Outstanding`, `Under Review`, or `Paid`
 
 ### Admin Functionality
-- View and manage all members and their charges
-- Assign charges to:
-  - Individual members
-  - Groups filtered by status (e.g., Active)
-  - Tags (e.g., Beta Class)
-- Edit assigned charges:
-  - Apply flat or percentage-based discounts or interest
-  - Leave internal notes
-- Delete charges if necessary
-- Manually mark charges as fulfilled
-- Review submitted payment confirmations
-  - Email/SMS notifications with a direct review link (optional)
-- Send reminders to delinquent members
-- View full audit logs of all financial activity and admin actions
+- View and search the member directory
+- Browse all charges with sort and filter tools
+- Delete charges when needed
+- Mark charges as fulfilled
+- Review and approve or reject payment confirmations
 
-### Audit Logging
-- All charge creation, edits, deletions, and payment review actions are logged
-- Logs are filterable by:
-  - Admin username
-  - Action type
-  - Affected member
-  - Date range
-- Audit logs are only visible to admins
 
 ## Payment Workflow
 
@@ -65,9 +48,9 @@ These are used for charge targeting and filtering within the admin dashboard.
 | Layer     | Technology              |
 |-----------|-------------------------|
 | Frontend  | React                   |
-| Backend   | TBD: Maybe Node.js + Express?       |
-| Database  | TBD              |
-| Auth      | TBD     |
+| Backend   | Node.js + Express |
+| Database  | Postgres (Supabase) |
+| Auth      | Supabase |
 | Hosting   | GitHub Pages (frontend) |
 |           | Backend TBD |
 | Domain    | Existing public domain `ucmsigmachi.org` reused via routing or subdomain |
@@ -110,22 +93,37 @@ This project will be maintained in its own repository (`conclave-app`) and will 
    cd backend
    npm start
    ```
+The backend requires the following environment variables:
+`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_JWT_SECRET`, and
+`SUPABASE_SERVICE_ROLE_KEY`. See `SupabaseSetup.md` for details on
+configuring the database and obtaining these values.
 
-3. **Start MongoDB** (macOS with Homebrew)
-   ```bash
-   brew services start mongodb-community
-   ```
-
-4. **Verify MongoDB is running**
-   ```bash
-   mongosh
-   ```
+There is a `.env.example` for in both the frontend and backend dirs.
 
 ### Authentication in Development
 
 The React app stores the login token in `localStorage` using a lightweight
 `AuthProvider`. After logging in, the token persists across page refreshes until
 you click the **Logout** button in the header.
+
+## Testing
+
+Automated tests exist for both the frontend and backend. Run them with `npm test`
+or generate coverage reports with `npm run test:coverage`.
+
+### Frontend
+
+```bash
+cd frontend
+npm run test:coverage
+```
+
+### Backend
+
+```bash
+cd backend
+npm run test:coverage
+```
 
 ## Design Philosophy
 
