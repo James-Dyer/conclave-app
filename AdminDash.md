@@ -18,8 +18,8 @@ Each quick link will be presented as a button with a short 5–8 word descriptio
    - Horizontally arranged buttons for Members, Charges and Payment Reviews.
    - Each button includes a concise description underneath.
 3. **Payment Reviews Section**
-   - Placeholder area for handling review requests.
-   - Will eventually show a table of pending reviews with approve/reject actions.
+   - Displays a table of pending review requests.
+   - Admins can approve or reject each request inline.
 4. **Additional Tools (Future)**
    - Space for new quick links as more admin features are added.
 
