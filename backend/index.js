@@ -361,4 +361,13 @@ if (require.main === module) {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
+app.get('/debug/auth', async (req, res) => {
+  const auth = req.headers.authorization || '';
+  const token = auth.replace('Bearer ', '');
+  if (!token) return res.status(400).json({ error: 'no token sent' });
+
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+  return res.json({ data, error });
+});
+
 module.exports = app;
