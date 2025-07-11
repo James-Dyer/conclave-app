@@ -21,29 +21,12 @@ Conclave serves as the Lambda Delta chapter's platform for:
 - Track the status of each charge: `Delinquent`, `Outstanding`, `Under Review`, or `Paid`
 
 ### Admin Functionality
-- View and manage all members and their charges
-- Assign charges to:
-  - Individual members
-  - Groups filtered by status (e.g., Active)
-  - Tags (e.g., Beta Class)
-- Edit assigned charges:
-  - Apply flat or percentage-based discounts or interest
-  - Leave internal notes
-- Delete charges if necessary
-- Manually mark charges as fulfilled
-- Review submitted payment confirmations
-  - Email/SMS notifications with a direct review link (optional)
-- Send reminders to delinquent members
-- View full audit logs of all financial activity and admin actions
+- View and search the member directory
+- Browse all charges with sort and filter tools
+- Delete charges when needed
+- Mark charges as fulfilled
+- Review and approve or reject payment confirmations
 
-### Audit Logging
-- All charge creation, edits, deletions, and payment review actions are logged
-- Logs are filterable by:
-  - Admin username
-  - Action type
-  - Affected member
-  - Date range
-- Audit logs are only visible to admins
 
 ## Payment Workflow
 
@@ -119,6 +102,25 @@ details on configuring the database and obtaining these values.
 The React app stores the login token in `localStorage` using a lightweight
 `AuthProvider`. After logging in, the token persists across page refreshes until
 you click the **Logout** button in the header.
+
+## Testing
+
+Automated tests exist for both the frontend and backend. Run them with `npm test`
+or generate coverage reports with `npm run test:coverage`.
+
+### Frontend
+
+```bash
+cd frontend
+npm run test:coverage
+```
+
+### Backend
+
+```bash
+cd backend
+npm run test:coverage
+```
 
 ## Design Philosophy
 
