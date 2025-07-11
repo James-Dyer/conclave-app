@@ -100,6 +100,8 @@ admin API via `supabaseAdmin.auth.getUser`. When that key is absent (e.g. in
 tests) the JWT is verified locally. See `SupabaseSetup.md` for details on
 configuring the database and obtaining these values.
 
+There is a `.env.example` for in both the frontend and backend dirs.
+
 ### Authentication in Development
 
 The React app stores the login token in `localStorage` using a lightweight
