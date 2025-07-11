@@ -8,13 +8,9 @@ function loadCsv(file) {
 }
 
 const profileRows = loadCsv('profiles.csv');
-const idMap = new Map();
-let nextId = 1;
 const members = profileRows.map((row) => {
-  const numId = nextId++;
-  idMap.set(row.id, numId);
   return {
-    id: numId,
+    id: row.id,
     email: row.email,
     password: row.email === 'admin@example.com' ? 'admin' : 'password',
     name: row.name,
@@ -28,7 +24,7 @@ const members = profileRows.map((row) => {
 
 const charges = loadCsv('charges.csv').map((row) => ({
   id: Number(row.id),
-  memberId: idMap.get(row.member_id) || Number(row.member_id) || 0,
+  memberId: row.member_id,
   status: row.status,
   amount: Number(row.amount),
   dueDate: row.due_date,

@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('node:crypto');
 const supabase = require('./db');
 const membersRoute = require('./routes/members');
 const chargesRoute = require('./routes/charges');
@@ -23,11 +24,18 @@ app.use('/api/charges', chargesRoute);
 const data = require('./mockData');
 let members = data.members;
 let charges = data.charges;
-let nextMemberId = Math.max(...members.map((m) => m.id)) + 1;
+// Charges continue to use numeric IDs, but members keep their original UUIDs.
+// New members will be assigned a fresh UUID.
 let nextChargeId = Math.max(...charges.map((c) => c.id)) + 1;
 
 const payments = [
-  { id: 1, memberId: 1, amount: 100, date: '2024-04-15', memo: 'Dues' }
+  {
+    id: 1,
+    memberId: members[0].id,
+    amount: 100,
+    date: '2024-04-15',
+    memo: 'Dues'
+  }
 ];
 let nextPaymentId = 2;
 
@@ -157,7 +165,7 @@ app.post('/api/admin/members', auth, adminOnly, (req, res) => {
     return res.status(400).send('Missing fields');
   }
   const member = {
-    id: nextMemberId++,
+    id: crypto.randomUUID(),
     email,
     password,
     name,
@@ -172,7 +180,7 @@ app.post('/api/admin/members', auth, adminOnly, (req, res) => {
 });
 
 app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
-  const member = members.find((m) => m.id === Number(req.params.id));
+  const member = members.find((m) => m.id === req.params.id);
   if (!member) return res.status(404).send('Not found');
   const {
     email,
@@ -196,7 +204,7 @@ app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
 });
 
 app.delete('/api/admin/members/:id', auth, adminOnly, (req, res) => {
-  const idx = members.findIndex((m) => m.id === Number(req.params.id));
+  const idx = members.findIndex((m) => m.id === req.params.id);
   if (idx === -1) return res.status(404).send('Not found');
   members.splice(idx, 1);
   res.json({ success: true });
@@ -221,7 +229,7 @@ app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
   }
   const charge = {
     id: nextChargeId++,
-    memberId: Number(memberId),
+    memberId,
     status,
     amount,
     dueDate,
