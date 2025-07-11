@@ -1,27 +1,11 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const supabase = require('./db');
 const membersRoute = require('./routes/members');
 const chargesRoute = require('./routes/charges');
-const ChargeModel = require('./models/Charge');
 
 const app = express();
 
-// Avoid attempting a MongoDB connection when running tests to prevent
-// unhandled rejections if no Mongo instance is available. Tests set
-// NODE_ENV=test so this block is skipped during "npm test".
-if (process.env.NODE_ENV !== 'test') {
-  mongoose
-    .connect('mongodb://localhost:27017/myapp', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-    .catch((err) => {
-      // Log the connection error but allow the server to continue
-      // so that non-DB dependant routes can still be exercised.
-      console.error('Mongo connection error', err);
-    });
-}
+// In tests we skip starting external connections.
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
@@ -121,8 +105,12 @@ app.get('/api/member', auth, (req, res) => {
 
 // Charges and payment history
 app.get('/api/my-charges', auth, async (req, res) => {
-  const memberCharges = await ChargeModel.find({ memberId: req.memberId }).lean();
-  res.json(memberCharges.map((c) => ({ ...c, id: c._id })));
+  const { data, error } = await supabase
+    .from('charges')
+    .select('*')
+    .eq('member_id', req.memberId);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
 });
 
 app.get('/api/payments', auth, (req, res) => {

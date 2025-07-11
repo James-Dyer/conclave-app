@@ -1,6 +1,6 @@
 # Supabase + Render Setup
 
-This guide explains how to migrate the backend from MongoDB to Supabase Postgres and deploy it on Render.
+This guide explains how to configure Supabase Postgres and deploy it on Render.
 
 ## 1. Create the Supabase project
 1. Sign in at [https://supabase.com/](https://supabase.com/) and create a new project.
