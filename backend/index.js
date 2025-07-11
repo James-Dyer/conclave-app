@@ -370,4 +370,11 @@ app.get('/debug/auth', async (req, res) => {
   return res.json({ data, error });
 });
 
+app.get('/debug/env', (req, res) => {
+  res.json({
+    url: process.env.SUPABASE_URL || null,
+    hasServiceRoleKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+  });
+});
+
 module.exports = app;
