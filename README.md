@@ -111,6 +111,7 @@ The application uses three Postgres tables managed through Supabase:
   - `memo` (text)
   - `status` (text)
   - `admin_id` (uuid, approver)
+  - `admin_note` (text, reason for denial)
 
 ## Running the App Locally
 

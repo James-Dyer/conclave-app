@@ -65,3 +65,4 @@ Conclave stores its data in three core tables:
   - `memo`
   - `status`
   - `admin_id` uuid of approving admin
+  - `admin_note` text reason when payment denied
