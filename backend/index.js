@@ -35,10 +35,12 @@ app.post('/signup', async (req, res) => {
 
   const { data, error: dbErr } = await supabase
     .from('profiles')
-    .insert({ id: userData.user.id, email, display_name: displayName });
+    .insert({ id: userData.user.id, email, display_name: displayName })
+    .select();
   if (dbErr) return res.status(500).json({ error: dbErr.message });
+  const inserted = Array.isArray(data) ? data[0] : data;
 
-  res.status(201).json({ user: userData.user, profile: data[0] });
+  res.status(201).json({ user: userData.user, profile: inserted });
 });
 
 // Log in a user and return a JWT. When running tests we verify credentials
@@ -178,39 +180,35 @@ app.get('/api/payments', auth, async (req, res) => {
 // POST /api/review
 app.post('/api/review', auth, async (req, res) => {
   // 1) Pull only the fields you need
-  const { chargeId, amount, memo, date } = req.body || {};
+  const { amount, memo, date } = req.body || {};
 
   // 2) Validate
   if (amount == null) {
     return res.status(400).json({ error: 'Missing amount' });
   }
 
-  // 3) If a charge id was provided, mark that charge under review
-  if (chargeId) {
-    await supabase
-      .from('charges')
-      .update({ status: 'Under Review' })
-      .eq('id', chargeId);
-  }
+  // 3) Reviews are independent of charges, so we don't modify charge status.
 
   // 4) Insert a standalone review record
   const { data, error } = await supabase
     .from('reviews')
     .insert({
-      member_id: req.memberId,                 // who sent it
-      charge_id: chargeId || null,
-      amount,                                  // how much
-      memo: memo || '',                        // optional note
+      member_id: req.memberId, // who sent it
+      amount, // how much
+      memo: memo || '', // optional note
       date: date || new Date().toISOString().slice(0, 10) // default today as YYYY-MM-DD
-    });
+    })
+    .select();
 
   // 5) Error handling
   if (error) {
     return res.status(500).json({ error: error.message });
   }
 
+  const inserted = Array.isArray(data) ? data[0] : data;
+
   // 6) Success
-  res.json({ success: true });
+  res.json({ success: true, review: inserted });
 });
 
 
@@ -348,7 +346,8 @@ app.post('/api/admin/charges', auth, adminOnly, async (req, res) => {
       due_date: dueDate,
       description: description || '',
       tags
-    });
+    })
+    .select();
   if (error) return res.status(500).json({ error: error.message });
   const inserted = Array.isArray(data) ? data[0] : data;
   res.json({
@@ -396,25 +395,14 @@ app.delete('/api/admin/charges/:id', auth, adminOnly, async (req, res) => {
 app.get('/api/admin/reviews', auth, adminOnly, async (req, res) => {
   const { data: revs, error } = await supabase.from('reviews').select('*');
   if (error) return res.status(500).json({ error: error.message });
-  const { data: chargeRows, error: cErr } = await supabase
-    .from('charges')
-    .select('*');
-  if (cErr) return res.status(500).json({ error: cErr.message });
-  const enriched = (revs || []).map((r) => {
-    const charge = (chargeRows || []).find((c) => c.id === r.charge_id) || {};
-    return {
-      id: r.id,
-      memberId: r.member_id,
-      chargeId: r.charge_id,
-      amount: r.amount,
-      memo: r.memo,
-      date: r.date,
-      chargeDescription: charge.description,
-      originalAmount: charge.amount,
-      amountPaid: r.amount
-    };
-  });
-  res.json(enriched);
+  const mapped = (revs || []).map((r) => ({
+    id: r.id,
+    memberId: r.member_id,
+    amount: r.amount,
+    memo: r.memo,
+    date: r.date
+  }));
+  res.json(mapped);
 });
 
 // Approve a review and mark the associated charge as paid
@@ -429,25 +417,15 @@ app.post('/api/admin/reviews/:id/approve', auth, adminOnly, async (req, res) => 
 
   let remaining = Number(review.amount);
   let chargesQuery;
-  if (review.charge_id) {
-    chargesQuery = await supabase
-      .from('charges')
-      .select('*')
-      .eq('id', review.charge_id)
-      .single();
-    if (chargesQuery.error || !chargesQuery.data)
-      return res.status(400).send('Charge not found');
-    chargesQuery.data = [chargesQuery.data];
-  } else {
-    chargesQuery = await supabase
-      .from('charges')
-      .select('*')
-      .eq('member_id', review.member_id);
-    if (chargesQuery.error) return res.status(500).json({ error: chargesQuery.error.message });
-    chargesQuery.data = chargesQuery.data.filter(
-      (c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin'
-    ).sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
-  }
+  chargesQuery = await supabase
+    .from('charges')
+    .select('*')
+    .eq('member_id', review.member_id);
+  if (chargesQuery.error)
+    return res.status(500).json({ error: chargesQuery.error.message });
+  chargesQuery.data = chargesQuery.data
+    .filter((c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin')
+    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
 
   const targets = chargesQuery.data;
   const totalDue = targets.reduce(
@@ -482,7 +460,6 @@ app.post('/api/admin/reviews/:id/approve', auth, adminOnly, async (req, res) => 
 
   await supabase.from('payments').insert({
     member_id: review.member_id,
-    charge_id: review.charge_id,
     amount: review.amount,
     date: review.date || new Date().toISOString(),
     memo: review.memo

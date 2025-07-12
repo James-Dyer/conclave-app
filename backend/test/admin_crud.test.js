@@ -133,7 +133,7 @@ test('admin can reject a review request', async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${memberToken}`
     },
-    body: JSON.stringify({ chargeId: 1, amount: 5 })
+    body: JSON.stringify({ amount: 5 })
   });
   assert.equal(reviewRes.status, 200);
 
