@@ -66,3 +66,15 @@ Conclave stores its data in three core tables:
   - `status`
   - `admin_id` uuid of approving admin
   - `admin_note` text reason when payment denied
+
+## Reusable Frontend Components
+
+Several React components in `frontend/src/components` provide shared functionality used across the application:
+
+- **ConfirmDialog** – A custom confirmation popup for actions like approving or denying payments. It supports an optional text input and exposes handlers for confirm and cancel actions.
+- **SortMenu** – A dropdown select for choosing the current sort order. Pass option objects, a value and `onChange`.
+- **FilterMenu** – Checkbox lists for filtering by status and tags. Accepts options and change handlers for each.
+- **SearchBar** – Generic text input used for searching tables.
+- **DataTable** – Basic table renderer configured via column definitions, data rows and an optional actions render function.
+
+These keep common UI logic centralized so pages like `MembersList` and `ChargesList` stay concise.
