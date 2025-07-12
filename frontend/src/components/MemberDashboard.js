@@ -54,6 +54,10 @@ export default function MemberDashboard({
     pendingReviewIds.includes(c.id) ? { ...c, status: 'Under Review' } : c
   );
 
+  const sortedPayments = [...paymentData].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+
   let breakdownError = false;
   let breakdown = {
     totalBalance: 0,
@@ -139,7 +143,7 @@ export default function MemberDashboard({
 
       <section>
         <h2>Recent Payments</h2>
-        <PaymentList payments={paymentData} />
+        <PaymentList payments={sortedPayments} />
       </section>
     </div>
   );
