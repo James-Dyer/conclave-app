@@ -69,11 +69,32 @@ function from(name) {
           data = data.filter((r) => r[col] === val);
           return q;
         },
+        not(col, op, val) {
+          if (op === 'in') {
+            const arr = val
+              .replace(/[()']/g, '')
+              .split(',')
+              .map((v) => v.trim());
+            data = data.filter((r) => !arr.includes(String(r[col])));
+          } else {
+            data = data.filter((r) => r[col] !== val);
+          }
+          return q;
+        },
         single() {
           q._single = true;
           return q;
         },
-        order() { return q; },
+        order(col, opts = {}) {
+          const dir = opts.ascending === false ? -1 : 1;
+          data = data.slice().sort((a, b) => {
+            if (a[col] < b[col]) return -1 * dir;
+            if (a[col] > b[col]) return 1 * dir;
+            return 0;
+          });
+          return q;
+        },
+        or() { return q; },
         then(res) { res({ data: q._single ? data[0] : data, error: null }); },
         async catch() {},
         async finally() {},
