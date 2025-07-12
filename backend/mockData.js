@@ -29,7 +29,14 @@ const charges = loadCsv('charges.csv').map((row) => ({
   amount: Number(row.amount),
   dueDate: row.due_date,
   description: row.description,
-  tags: row.tags ? row.tags.replace(/[{}]/g, '').split(',').map(t => t.trim()).filter(Boolean) : []
+  tags: row.tags
+    ? row.tags
+        .replace(/[{}]/g, '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean)
+    : [],
+  partialAmountPaid: 0
 }));
 
 module.exports = { members, charges };

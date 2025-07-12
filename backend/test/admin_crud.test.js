@@ -1,4 +1,6 @@
-process.env.NODE_ENV = 'test';
+const dbMock = require('./supabaseMock');
+require.cache[require.resolve('../db')] = { exports: dbMock.supabase };
+require.cache[require.resolve('../adminClient')] = { exports: dbMock.supabaseAdmin };
 
 const test = require('node:test');
 const assert = require('node:assert/strict');

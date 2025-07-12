@@ -56,3 +56,19 @@ test('prefills amount for lump sum payment', () => {
   const input = screen.getByLabelText(/amount paid/i);
   expect(input).toHaveValue(250);
 });
+
+test('shows error on overpayment', async () => {
+  setupLocalStorage();
+  render(
+    <AuthProvider>
+      <PaymentReviewForm charge={{ id: 1, amount: 100 }} />
+    </AuthProvider>
+  );
+  const input = screen.getByLabelText(/amount paid/i);
+  await userEvent.clear(input);
+  await userEvent.type(input, '150');
+  await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+  expect(
+    await screen.findByText(/exceeds outstanding charges/i)
+  ).toBeInTheDocument();
+});

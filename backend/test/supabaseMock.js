@@ -1,0 +1,156 @@
+const fs = require('fs');
+const path = require('path');
+const { parse } = require('csv-parse/sync');
+const jwt = require('jsonwebtoken');
+const crypto = require('node:crypto');
+
+const JWT_SECRET = 'test-secret';
+
+function loadCsv(file) {
+  const csv = fs.readFileSync(path.join(__dirname, '..', '..', 'mock-data', file), 'utf8');
+  return parse(csv, { columns: true, skip_empty_lines: true });
+}
+
+const profiles = loadCsv('profiles.csv').map((row) => ({
+  id: row.id,
+  email: row.email,
+  password: row.email === 'admin@example.com' ? 'admin' : 'password',
+  display_name: row.name,
+  is_admin: row.is_admin === 'true' || row.is_admin === true,
+  status: row.status,
+  initiation_date: row.initiation_date,
+  amount_owed: Number(row.amount_owed),
+  tags: row.tags ? row.tags.replace(/[{}]/g, '').split(',').map((t) => t.trim()).filter(Boolean) : []
+}));
+
+const charges = loadCsv('charges.csv').map((row) => ({
+  id: Number(row.id),
+  member_id: row.member_id,
+  status: row.status,
+  amount: Number(row.amount),
+  due_date: row.due_date,
+  description: row.description,
+  tags: row.tags ? row.tags.replace(/[{}]/g, '').split(',').map((t) => t.trim()).filter(Boolean) : [],
+  partial_amount_paid: 0
+}));
+
+let reviews = [];
+let payments = [
+  {
+    id: 1,
+    member_id: profiles[0].id,
+    charge_id: 1,
+    amount: 100,
+    date: '2024-04-15',
+    memo: 'Dues'
+  }
+];
+let nextReviewId = 1;
+let nextPaymentId = 2;
+let nextChargeId = Math.max(...charges.map((c) => c.id)) + 1;
+
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function table(name) {
+  if (name === 'profiles') return profiles;
+  if (name === 'charges') return charges;
+  if (name === 'reviews') return reviews;
+  if (name === 'payments') return payments;
+  throw new Error('Unknown table ' + name);
+}
+
+function from(name) {
+  const store = table(name);
+  return {
+    select() {
+      let data = clone(store);
+      const q = {
+        eq(col, val) {
+          data = data.filter((r) => r[col] === val);
+          return q;
+        },
+        single() {
+          q._single = true;
+          return q;
+        },
+        order() { return q; },
+        then(res) { res({ data: q._single ? data[0] : data, error: null }); },
+        async catch() {},
+        async finally() {},
+        async [Symbol.asyncIterator]() { return data[Symbol.asyncIterator](); }
+      };
+      q.then = (cb) => Promise.resolve({ data: q._single ? data[0] : data, error: null }).then(cb);
+      return q;
+    },
+    insert(values) {
+      const arr = Array.isArray(values) ? values : [values];
+      const inserted = arr.map((row) => {
+        const r = { ...row };
+        if (!r.id) {
+          if (name === 'reviews') r.id = nextReviewId++;
+          else if (name === 'payments') r.id = nextPaymentId++;
+          else if (name === 'charges') r.id = nextChargeId++;
+        }
+        store.push(r);
+        return r;
+      });
+      return Promise.resolve({ data: inserted, error: null });
+    },
+    update(fields) {
+      return {
+        eq(col, val) {
+          const updated = [];
+          store.forEach((row) => {
+            if (row[col] === val) {
+              Object.assign(row, fields);
+              updated.push(row);
+            }
+          });
+          return Promise.resolve({ data: updated, error: null });
+        }
+      };
+    },
+    delete() {
+      return {
+        eq(col, val) {
+          const removed = [];
+          for (let i = store.length - 1; i >= 0; i--) {
+            if (store[i][col] === val) removed.push(...store.splice(i, 1));
+          }
+          return Promise.resolve({ data: removed, error: null });
+        }
+      };
+    }
+  };
+}
+
+const supabase = {
+  auth: {
+    async signInWithPassword({ email, password }) {
+      const user = profiles.find((u) => u.email === email && u.password === password);
+      if (!user) return { data: {}, error: { message: 'Invalid login' } };
+      const token = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: '1h' });
+      return { data: { session: { access_token: token }, user: { id: user.id, email: user.email } }, error: null };
+    },
+    async signUp() { return { data: {}, error: null }; }
+  },
+  from
+};
+
+const supabaseAdmin = {
+  auth: {
+    async getUser(token) {
+      try {
+        const payload = jwt.verify(token, JWT_SECRET);
+        const user = profiles.find((u) => u.id === payload.sub);
+        return { data: { user }, error: null };
+      } catch (err) {
+        return { data: { user: null }, error: err };
+      }
+    }
+  }
+};
+
+module.exports = { supabase, supabaseAdmin };

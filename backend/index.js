@@ -22,28 +22,7 @@ app.use((req, res, next) => {
 app.use('/api/members', membersRoute);
 app.use('/api/charges', chargesRoute);
 
-// In-memory data for Phase 2
-const data = require('./mockData');
-let members = data.members;
-let charges = data.charges;
-// Charges continue to use numeric IDs, but members keep their original UUIDs.
-// New members will be assigned a fresh UUID.
-let nextChargeId = Math.max(...charges.map((c) => c.id)) + 1;
-
-const payments = [
-  {
-    id: 1,
-    memberId: members[0].id,
-    amount: 100,
-    date: '2024-04-15',
-    memo: 'Dues'
-  }
-];
-let nextPaymentId = 2;
-
 const JWT_SECRET = process.env.SUPABASE_JWT_SECRET || 'test-secret';
-let nextReviewId = 1;
-const reviews = [];
 
 // Create a new user account and profile entry using Supabase authentication
 app.post('/signup', async (req, res) => {
@@ -67,26 +46,6 @@ app.post('/signup', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body || {};
 
-  // During tests we avoid external network calls
-  if (process.env.NODE_ENV === 'test') {
-    const member = members.find(
-      (m) => m.email === email && m.password === password
-    );
-    if (!member) {
-      return res.status(401).send('Invalid credentials');
-    }
-    const token = jwt.sign({ sub: member.id }, JWT_SECRET, { expiresIn: '1h' });
-    return res.json({
-      token,
-      member: {
-        id: member.id,
-        email: member.email,
-        name: member.name,
-        isAdmin: member.isAdmin
-      }
-    });
-  }
-
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -96,7 +55,17 @@ app.post('/api/login', async (req, res) => {
     return res.status(401).send(error ? error.message : 'Login failed');
   }
 
-  const profile = members.find((m) => m.id === data.user.id) || {};
+  const {
+    data: profileData,
+    error: profileErr
+  } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', data.user.id)
+    .single();
+  if (profileErr) return res.status(500).json({ error: profileErr.message });
+
+  const profile = profileData || {};
 
   res.json({
     token: data.session.access_token,
@@ -121,17 +90,6 @@ async function auth(req, res, next) {
     return res.status(401).send('Unauthorized');
   }
 
-  // When running tests we continue verifying the JWT locally
-  if (process.env.NODE_ENV === 'test') {
-    try {
-      const payload = jwt.verify(token, JWT_SECRET);
-      req.memberId = payload.sub;
-      return next();
-    } catch {
-      return res.status(401).send('Invalid token');
-    }
-  }
-
   const {
     data: { user },
     error
@@ -147,22 +105,31 @@ async function auth(req, res, next) {
 /**
  * Middleware that allows access only to users flagged as administrators.
  */
-function adminOnly(req, res, next) {
-  const member = members.find((m) => m.id === req.memberId);
-  if (!member || !member.isAdmin) {
+async function adminOnly(req, res, next) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', req.memberId)
+    .single();
+  if (error || !data || !data.is_admin) {
     return res.status(403).send('Forbidden');
   }
   next();
 }
 
 // Return basic information about the currently authenticated member
-app.get('/api/member', auth, (req, res) => {
-  const member = members.find((m) => m.id === req.memberId);
+app.get('/api/member', auth, async (req, res) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', req.memberId)
+    .single();
+  if (error || !data) return res.status(404).send('Not found');
   res.json({
-    id: member.id,
-    email: member.email,
-    name: member.name,
-    isAdmin: member.isAdmin
+    id: data.id,
+    email: data.email,
+    name: data.display_name,
+    isAdmin: data.is_admin
   });
 });
 
@@ -182,31 +149,53 @@ app.get('/api/my-charges', auth, async (req, res) => {
     dueDate: row.due_date,
     description: row.description,
     tags: row.tags,
+    partialAmountPaid: row.partial_amount_paid || 0,
   }));
 
   res.json(mapped);
 });
 
 // Retrieve the payment history for the authenticated member
-app.get('/api/payments', auth, (req, res) => {
-  const memberPayments = payments.filter((p) => p.memberId === req.memberId);
-  res.json(memberPayments);
+app.get('/api/payments', auth, async (req, res) => {
+  const { data, error } = await supabase
+    .from('payments')
+    .select('*')
+    .eq('member_id', req.memberId);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(
+    (data || []).map((p) => ({
+      id: p.id,
+      memberId: p.member_id,
+      chargeId: p.charge_id,
+      amount: p.amount,
+      date: p.date,
+      memo: p.memo
+    }))
+  );
 });
 
 // Allow a member to request a manual review of a payment
-app.post('/api/review', auth, (req, res) => {
-  const { chargeId, amount, memo } = req.body || {};
-  if (!chargeId || !amount) {
-    return res.status(400).send('Missing chargeId or amount');
+app.post('/api/review', auth, async (req, res) => {
+  const { chargeId = null, amount, memo, date } = req.body || {};
+  if (!amount) {
+    return res.status(400).send('Missing amount');
   }
-  const review = {
-    id: nextReviewId++,
-    memberId: req.memberId,
-    chargeId,
+  const { error: insErr } = await supabase.from('reviews').insert({
+    member_id: req.memberId,
+    charge_id: chargeId,
     amount,
-    memo: memo || ''
-  };
-  reviews.push(review);
+    memo: memo || '',
+    date: date || new Date().toISOString().split('T')[0]
+  });
+  if (insErr) return res.status(500).json({ error: insErr.message });
+
+  if (chargeId) {
+    const { error: updErr } = await supabase
+      .from('charges')
+      .update({ status: 'Under Review' })
+      .eq('id', chargeId);
+    if (updErr) return res.status(500).json({ error: updErr.message });
+  }
   res.json({ success: true });
 });
 
@@ -215,13 +204,25 @@ app.post('/api/review', auth, (req, res) => {
 // ------------------------------
 
 // Return a list of all members without exposing passwords
-app.get('/api/admin/members', auth, adminOnly, (req, res) => {
-  const safeMembers = members.map(({ password, ...m }) => m);
-  res.json(safeMembers);
+app.get('/api/admin/members', auth, adminOnly, async (req, res) => {
+  const { data, error } = await supabase.from('profiles').select('*');
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(
+    (data || []).map((m) => ({
+      id: m.id,
+      email: m.email,
+      name: m.display_name,
+      isAdmin: m.is_admin,
+      status: m.status,
+      initiationDate: m.initiation_date,
+      amountOwed: m.amount_owed,
+      tags: m.tags
+    }))
+  );
 });
 
 // Create a new member record
-app.post('/api/admin/members', auth, adminOnly, (req, res) => {
+app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
   const {
     email,
     password,
@@ -235,25 +236,24 @@ app.post('/api/admin/members', auth, adminOnly, (req, res) => {
   if (!email || !password || !name) {
     return res.status(400).send('Missing fields');
   }
-  const member = {
-    id: crypto.randomUUID(),
+  const id = crypto.randomUUID();
+  const { error } = await supabase.from('profiles').insert({
+    id,
     email,
-    password,
-    name,
-    isAdmin,
+    display_name: name,
+    is_admin: isAdmin,
     status,
-    initiationDate,
-    amountOwed,
-    tags
-  };
-  members.push(member);
-  res.json({ id: member.id });
+    initiation_date: initiationDate,
+    amount_owed: amountOwed,
+    tags,
+    password
+  });
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ id });
 });
 
 // Update an existing member
-app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
-  const member = members.find((m) => m.id === req.params.id);
-  if (!member) return res.status(404).send('Not found');
+app.put('/api/admin/members/:id', auth, adminOnly, async (req, res) => {
   const {
     email,
     password,
@@ -264,34 +264,55 @@ app.put('/api/admin/members/:id', auth, adminOnly, (req, res) => {
     amountOwed,
     tags
   } = req.body || {};
-  if (email !== undefined) member.email = email;
-  if (password !== undefined) member.password = password;
-  if (name !== undefined) member.name = name;
-  if (isAdmin !== undefined) member.isAdmin = isAdmin;
-  if (status !== undefined) member.status = status;
-  if (initiationDate !== undefined) member.initiationDate = initiationDate;
-  if (amountOwed !== undefined) member.amountOwed = amountOwed;
-  if (tags !== undefined) member.tags = tags;
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      email,
+      password,
+      display_name: name,
+      is_admin: isAdmin,
+      status,
+      initiation_date: initiationDate,
+      amount_owed: amountOwed,
+      tags
+    })
+    .eq('id', req.params.id);
+  if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
 
 // Delete a member by id
-app.delete('/api/admin/members/:id', auth, adminOnly, (req, res) => {
-  const idx = members.findIndex((m) => m.id === req.params.id);
-  if (idx === -1) return res.status(404).send('Not found');
-  members.splice(idx, 1);
+app.delete('/api/admin/members/:id', auth, adminOnly, async (req, res) => {
+  const { error } = await supabase
+    .from('profiles')
+    .delete()
+    .eq('id', req.params.id);
+  if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
 
 // Charge management
 
 // Return all charges in the system
-app.get('/api/admin/charges', auth, adminOnly, (req, res) => {
-  res.json(charges);
+app.get('/api/admin/charges', auth, adminOnly, async (req, res) => {
+  const { data, error } = await supabase.from('charges').select('*');
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(
+    (data || []).map((c) => ({
+      id: c.id,
+      memberId: c.member_id,
+      status: c.status,
+      amount: c.amount,
+      dueDate: c.due_date,
+      description: c.description,
+      tags: c.tags,
+      partialAmountPaid: c.partial_amount_paid || 0
+    }))
+  );
 });
 
 // Create a new charge for a member
-app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
+app.post('/api/admin/charges', auth, adminOnly, async (req, res) => {
   const {
     memberId,
     status = 'Outstanding',
@@ -303,48 +324,76 @@ app.post('/api/admin/charges', auth, adminOnly, (req, res) => {
   if (!memberId || !amount || !dueDate) {
     return res.status(400).send('Missing fields');
   }
-  const charge = {
-    id: nextChargeId++,
-    memberId,
-    status,
-    amount,
-    dueDate,
-    description: description || '',
-    tags
-  };
-  charges.push(charge);
-  res.json(charge);
+  const { data, error } = await supabase
+    .from('charges')
+    .insert({
+      member_id: memberId,
+      status,
+      amount,
+      due_date: dueDate,
+      description: description || '',
+      tags
+    });
+  if (error) return res.status(500).json({ error: error.message });
+  const inserted = Array.isArray(data) ? data[0] : data;
+  res.json({
+    id: inserted.id,
+    memberId: inserted.member_id,
+    status: inserted.status,
+    amount: inserted.amount,
+    dueDate: inserted.due_date,
+    description: inserted.description,
+    tags: inserted.tags,
+    partialAmountPaid: inserted.partial_amount_paid || 0
+  });
 });
 
 // Update an existing charge by id
-app.put('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
-  const charge = charges.find((c) => c.id === Number(req.params.id));
-  if (!charge) return res.status(404).send('Not found');
+app.put('/api/admin/charges/:id', auth, adminOnly, async (req, res) => {
   const { status, amount, dueDate, description, tags } = req.body || {};
-  if (status !== undefined) charge.status = status;
-  if (amount !== undefined) charge.amount = amount;
-  if (dueDate !== undefined) charge.dueDate = dueDate;
-  if (description !== undefined) charge.description = description;
-  if (tags !== undefined) charge.tags = tags;
+  const { error } = await supabase
+    .from('charges')
+    .update({
+      status,
+      amount,
+      due_date: dueDate,
+      description,
+      tags
+    })
+    .eq('id', Number(req.params.id));
+  if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
 
 // Remove a charge from the system
-app.delete('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
-  const idx = charges.findIndex((c) => c.id === Number(req.params.id));
-  if (idx === -1) return res.status(404).send('Not found');
-  charges.splice(idx, 1);
+app.delete('/api/admin/charges/:id', auth, adminOnly, async (req, res) => {
+  const { error } = await supabase
+    .from('charges')
+    .delete()
+    .eq('id', Number(req.params.id));
+  if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
 
 // Payment review endpoints
 
 // List all submitted payment reviews
-app.get('/api/admin/reviews', auth, adminOnly, (req, res) => {
-  const enriched = reviews.map((r) => {
-    const charge = charges.find((c) => c.id === r.chargeId) || {};
+app.get('/api/admin/reviews', auth, adminOnly, async (req, res) => {
+  const { data: revs, error } = await supabase.from('reviews').select('*');
+  if (error) return res.status(500).json({ error: error.message });
+  const { data: chargeRows, error: cErr } = await supabase
+    .from('charges')
+    .select('*');
+  if (cErr) return res.status(500).json({ error: cErr.message });
+  const enriched = (revs || []).map((r) => {
+    const charge = (chargeRows || []).find((c) => c.id === r.charge_id) || {};
     return {
-      ...r,
+      id: r.id,
+      memberId: r.member_id,
+      chargeId: r.charge_id,
+      amount: r.amount,
+      memo: r.memo,
+      date: r.date,
       chargeDescription: charge.description,
       originalAmount: charge.amount,
       amountPaid: r.amount
@@ -354,28 +403,87 @@ app.get('/api/admin/reviews', auth, adminOnly, (req, res) => {
 });
 
 // Approve a review and mark the associated charge as paid
-app.post('/api/admin/reviews/:id/approve', auth, adminOnly, (req, res) => {
-  const reviewIdx = reviews.findIndex((r) => r.id === Number(req.params.id));
-  if (reviewIdx === -1) return res.status(404).send('Not found');
-  const review = reviews[reviewIdx];
-  const charge = charges.find((c) => c.id === review.chargeId);
-  if (charge) charge.status = 'Paid';
-  payments.push({
-    id: nextPaymentId++,
-    memberId: review.memberId,
+app.post('/api/admin/reviews/:id/approve', auth, adminOnly, async (req, res) => {
+  const reviewId = Number(req.params.id);
+  const { data: review, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('id', reviewId)
+    .single();
+  if (error || !review) return res.status(404).send('Not found');
+
+  let remaining = Number(review.amount);
+  let chargesQuery;
+  if (review.charge_id) {
+    chargesQuery = await supabase
+      .from('charges')
+      .select('*')
+      .eq('id', review.charge_id)
+      .single();
+    if (chargesQuery.error || !chargesQuery.data)
+      return res.status(400).send('Charge not found');
+    chargesQuery.data = [chargesQuery.data];
+  } else {
+    chargesQuery = await supabase
+      .from('charges')
+      .select('*')
+      .eq('member_id', review.member_id);
+    if (chargesQuery.error) return res.status(500).json({ error: chargesQuery.error.message });
+    chargesQuery.data = chargesQuery.data.filter(
+      (c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin'
+    ).sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+  }
+
+  const targets = chargesQuery.data;
+  const totalDue = targets.reduce(
+    (sum, c) => sum + (c.amount - (c.partial_amount_paid || 0)),
+    0
+  );
+  if (remaining > totalDue) {
+    return res.status(400).json({ error: 'Payment exceeds outstanding charges' });
+  }
+
+  for (const charge of targets) {
+    const paidSoFar = Number(charge.partial_amount_paid || 0);
+    const due = charge.amount - paidSoFar;
+    if (remaining >= due) {
+      charge.status = 'Paid';
+      charge.partial_amount_paid = 0;
+      remaining -= due;
+    } else if (remaining > 0) {
+      charge.status = 'Partially Paid';
+      charge.partial_amount_paid = paidSoFar + remaining;
+      remaining = 0;
+    }
+    await supabase
+      .from('charges')
+      .update({
+        status: charge.status,
+        partial_amount_paid: charge.partial_amount_paid
+      })
+      .eq('id', charge.id);
+    if (remaining === 0) break;
+  }
+
+  await supabase.from('payments').insert({
+    member_id: review.member_id,
+    charge_id: review.charge_id,
     amount: review.amount,
-    date: new Date().toISOString(),
+    date: review.date || new Date().toISOString(),
     memo: review.memo
   });
-  reviews.splice(reviewIdx, 1);
+
+  await supabase.from('reviews').delete().eq('id', reviewId);
   res.json({ success: true });
 });
 
 // Reject a payment review without applying a payment
-app.post('/api/admin/reviews/:id/reject', auth, adminOnly, (req, res) => {
-  const idx = reviews.findIndex((r) => r.id === Number(req.params.id));
-  if (idx === -1) return res.status(404).send('Not found');
-  reviews.splice(idx, 1);
+app.post('/api/admin/reviews/:id/reject', auth, adminOnly, async (req, res) => {
+  const { error } = await supabase
+    .from('reviews')
+    .delete()
+    .eq('id', Number(req.params.id));
+  if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
 

@@ -8,7 +8,11 @@ export default function ChargeList({
   onViewDetails = () => {},
   pendingReviewIds = [],
 }) {
-  if (!charges || charges.length === 0) {
+  const visible = (charges || []).filter(
+    (c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin'
+  );
+
+  if (visible.length === 0) {
     return <div className="charge-list-empty">No charges found.</div>;
   }
 
@@ -16,15 +20,16 @@ export default function ChargeList({
     <table className="charge-list">
       <thead>
         <tr>
-          <th>Status</th>
           <th>Description</th>
-          <th>Amount</th>
+          <th>Original Amount</th>
           <th>Due Date</th>
+          <th>Status</th>
+          <th>Partial Amount Paid</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {charges.map((charge) => (
+        {visible.map((charge) => (
           <ChargeItem
             key={charge.id || `${charge.status}-${charge.dueDate}`}
             {...charge}
