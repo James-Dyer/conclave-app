@@ -45,12 +45,13 @@ export function useApi() {
         ),
       fetchMember: () => request('/member'),
       fetchCharges: () => request('/my-charges'),
-      fetchPayments: () => request('/payments'),
-      submitReview: (review) =>
-        request('/review', {
+      fetchPayments: (status = '') =>
+        request(`/payments${status ? `?status=${encodeURIComponent(status)}` : ''}`),
+      submitPayment: (payment) =>
+        request('/payments', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(review)
+          body: JSON.stringify(payment)
         }),
 
       // Admin
@@ -88,11 +89,11 @@ export function useApi() {
       deleteCharge: (id) =>
         request(`/admin/charges/${id}`, { method: 'DELETE' }),
 
-      fetchReviews: () => request('/admin/reviews'),
-      approveReview: (id) =>
-        request(`/admin/reviews/${id}/approve`, { method: 'POST' }),
-      rejectReview: (id) =>
-        request(`/admin/reviews/${id}/reject`, { method: 'POST' })
+      fetchPendingPayments: () => request('/payments?status=Under%20Review'),
+      approvePayment: (id) =>
+        request(`/admin/payments/${id}/approve`, { method: 'POST' }),
+      denyPayment: (id) =>
+        request(`/admin/payments/${id}/deny`, { method: 'POST' })
     }),
     [request]
   );

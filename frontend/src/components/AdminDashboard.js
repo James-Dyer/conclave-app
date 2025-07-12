@@ -10,7 +10,7 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   useEffect(() => {
     async function load() {
       try {
-        const r = await api.fetchReviews();
+        const r = await api.fetchPendingPayments();
         setReviews(r || []);
       } catch (e) {
         setError(e.message);
@@ -20,12 +20,12 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   }, []);
 
   async function handleApprove(id) {
-    await api.approveReview(id);
+    await api.approvePayment(id);
     setReviews(reviews.filter((rev) => rev.id !== id));
   }
 
   async function handleReject(id) {
-    await api.rejectReview(id);
+    await api.denyPayment(id);
     setReviews(reviews.filter((rev) => rev.id !== id));
   }
 
