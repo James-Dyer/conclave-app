@@ -54,6 +54,10 @@ export default function MemberDashboard({
     pendingReviewIds.includes(c.id) ? { ...c, status: 'Under Review' } : c
   );
 
+  const sortedOutstanding = mergedCharges
+    .filter((c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin')
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
   const sortedPayments = [...paymentData].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
   );
@@ -133,9 +137,7 @@ export default function MemberDashboard({
       <section>
         <h2>Outstanding Charges</h2>
         <ChargeList
-          charges={mergedCharges.filter(
-            (c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin'
-          )}
+          charges={sortedOutstanding}
           onViewDetails={onViewDetails}
           pendingReviewIds={pendingReviewIds}
         />
