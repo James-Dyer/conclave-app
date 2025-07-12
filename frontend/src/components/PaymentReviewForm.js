@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/PaymentReviewForm.css';
 import useApi from '../apiClient';
 import { useNotifications } from '../NotificationContext';
 
-const sampleCharge = { id: 1, amount: '$200' };
+const sampleCharge = { id: 1, amount: '$200', description: 'Charge' };
 
-export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
+export default function PaymentReviewForm({
+  charge = sampleCharge,
+  onBack,
+  onSubmitted
+}) {
   const [memo, setMemo] = useState('');
   const [amountPaid, setAmountPaid] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const api = useApi();
   const { addNotification } = useNotifications();
+
+  useEffect(() => {
+    setAmountPaid(charge && charge.id ? charge.amount : '');
+  }, [charge]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +34,8 @@ export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
       setMessage('Review request submitted');
       setMemo('');
       setAmountPaid('');
-      addNotification('Review submitted successfully');
+      addNotification('Your payment review has been submitted successfully.');
+      if (onSubmitted && charge && charge.id) onSubmitted(charge.id);
       if (onBack) onBack();
     } catch (err) {
       setError(err.message);
@@ -38,7 +47,7 @@ export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
       <h1>Payment Review</h1>
       <form onSubmit={handleSubmit} className="review-form">
         <div className="static-field">
-          <strong>Charge ID:</strong> {charge.id}
+          <strong>Description:</strong> {charge.description || '-'}
         </div>
         <div className="static-field">
           <strong>Amount:</strong> {charge.amount}

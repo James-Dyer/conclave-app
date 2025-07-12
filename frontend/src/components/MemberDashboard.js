@@ -8,6 +8,7 @@ import { useAuth } from '../AuthContext';
 export default function MemberDashboard({
   onRequestReview = () => {},
   onViewDetails = () => {},
+  pendingReviewIds = [],
 }) {
   const [chargeData, setChargeData] = useState([]);
   const [paymentData, setPaymentData] = useState([]);
@@ -68,7 +69,7 @@ export default function MemberDashboard({
           data-testid="dashboard-review-button"
           onClick={() => onRequestReview()}
         >
-          Payment Review
+          Mark as Paid
         </button>
       </div>
 
@@ -78,6 +79,7 @@ export default function MemberDashboard({
           charges={chargeData}
           onRequestReview={onRequestReview}
           onViewDetails={onViewDetails}
+          pendingReviewIds={pendingReviewIds}
         />
       </section>
 

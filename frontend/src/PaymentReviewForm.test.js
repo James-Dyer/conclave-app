@@ -23,10 +23,8 @@ test('successful submit shows confirmation message', async () => {
       <PaymentReviewForm charge={{ id: 1, amount: 100 }} />
     </AuthProvider>
   );
-  await userEvent.type(
-    screen.getByLabelText(/amount paid/i),
-    '100'
-  );
+  const input = screen.getByLabelText(/amount paid/i);
+  expect(input).toHaveValue(100);
   await userEvent.click(screen.getByRole('button', { name: /submit/i }));
   expect(await screen.findByText(/submitted/i)).toBeInTheDocument();
 });
@@ -41,10 +39,9 @@ test('failed submit shows error message', async () => {
       <PaymentReviewForm charge={{ id: 1, amount: 100 }} />
     </AuthProvider>
   );
-  await userEvent.type(
-    screen.getByLabelText(/amount paid/i),
-    '50'
-  );
+  const input = screen.getByLabelText(/amount paid/i);
+  await userEvent.clear(input);
+  await userEvent.type(input, '50');
   await userEvent.click(screen.getByRole('button', { name: /submit/i }));
   expect(await screen.findByText('Bad request')).toBeInTheDocument();
 });

@@ -341,7 +341,16 @@ app.delete('/api/admin/charges/:id', auth, adminOnly, (req, res) => {
 
 // List all submitted payment reviews
 app.get('/api/admin/reviews', auth, adminOnly, (req, res) => {
-  res.json(reviews);
+  const enriched = reviews.map((r) => {
+    const charge = charges.find((c) => c.id === r.chargeId) || {};
+    return {
+      ...r,
+      chargeDescription: charge.description,
+      originalAmount: charge.amount,
+      amountPaid: r.amount
+    };
+  });
+  res.json(enriched);
 });
 
 // Approve a review and mark the associated charge as paid

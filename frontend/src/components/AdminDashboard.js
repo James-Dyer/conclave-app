@@ -50,18 +50,18 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Charge</th>
-              <th>Amount</th>
+              <th>Charge Description</th>
+              <th>Original Amount</th>
+              <th>Amount Paid</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {reviews.map((r) => (
               <tr key={r.id}>
-                <td>{r.id}</td>
-                <td>{r.chargeId}</td>
-                <td>{r.amount}</td>
+                <td>{r.chargeDescription}</td>
+                <td>{r.originalAmount}</td>
+                <td>{r.amountPaid ?? r.amount}</td>
                 <td className="flex space-x-2">
                   <button onClick={() => handleApprove(r.id)}>Approve</button>
                   <button onClick={() => handleReject(r.id)}>Reject</button>

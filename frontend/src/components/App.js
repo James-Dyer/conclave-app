@@ -14,6 +14,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [reviewCharge, setReviewCharge] = useState(null);
   const [detailsCharge, setDetailsCharge] = useState(null);
+  const [pendingReviewIds, setPendingReviewIds] = useState([]);
   const { setToken, setUser, user } = useAuth();
 
   const showDashboard = () => {
@@ -36,6 +37,9 @@ function App() {
     }
     setCurrentPage('review');
   };
+
+  const markPendingReview = (id) =>
+    setPendingReviewIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
   const showChargeDetails = (charge) => {
     if (charge) {
       setDetailsCharge(charge);
@@ -50,12 +54,17 @@ function App() {
         <MemberDashboard
           onRequestReview={showReview}
           onViewDetails={showChargeDetails}
+          pendingReviewIds={pendingReviewIds}
         />
       );
       break;
     case 'review':
       pageContent = (
-        <PaymentReviewForm charge={reviewCharge || undefined} onBack={showDashboard} />
+        <PaymentReviewForm
+          charge={reviewCharge || undefined}
+          onBack={showDashboard}
+          onSubmitted={markPendingReview}
+        />
       );
       break;
     case 'chargeDetails':
