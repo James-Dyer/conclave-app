@@ -18,7 +18,7 @@ export default function ChargeItem({
       <td>{amount}</td>
       <td>{new Date(dueDate).toLocaleDateString()}</td>
       <td>{displayStatus}</td>
-      <td>{status === 'Partially Paid' ? partialAmountPaid : ''}</td>
+      <td>{partialAmountPaid > 0 ? partialAmountPaid : ''}</td>
       <td className="flex space-x-2">
         <button
           type="button"
