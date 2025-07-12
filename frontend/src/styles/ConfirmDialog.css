@@ -45,3 +45,14 @@
 .cancel-button {
   padding: 6px 12px;
 }
+
+.confirm-input {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.confirm-input input {
+  padding: 6px;
+  font-size: 1rem;
+}

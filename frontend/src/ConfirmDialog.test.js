@@ -33,3 +33,21 @@ test('close button triggers onCancel', async () => {
   await userEvent.click(screen.getByRole('button', { name: /close/i }));
   expect(onCancel).toHaveBeenCalled();
 });
+
+test('input field renders and triggers onInputChange', async () => {
+  const onChange = jest.fn();
+  render(
+    <ConfirmDialog
+      open
+      onConfirm={noop}
+      onCancel={noop}
+      inputLabel="Reason"
+      inputValue=""
+      onInputChange={onChange}
+    />
+  );
+  const input = screen.getByLabelText(/reason/i);
+  expect(input).toBeInTheDocument();
+  await userEvent.type(input, 'abc');
+  expect(onChange).toHaveBeenCalled();
+});
