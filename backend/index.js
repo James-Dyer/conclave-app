@@ -416,7 +416,7 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
     .from('charges')
     .select('*')
     .eq('member_id', payment.member_id)
-    .not('status', 'in', "('Paid','Deleted by Admin')")
+    .in('status', ['Outstanding','Delinquent','Partially Paid'])
     .order('due_date', { ascending: true });
   if (chErr) {
     console.error('Error fetching charges:', chErr);
