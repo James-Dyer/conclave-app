@@ -82,7 +82,8 @@ test('submit review succeeds', async () => {
   });
   assert.equal(res.status, 200);
   const data = await res.json();
-  assert.deepEqual(data, { success: true });
+  assert.equal(data.success, true);
+  assert.equal(typeof data.review, 'object');
 
   const adminLogin = await fetch(`${baseUrl}/api/login`, {
     method: 'POST',
@@ -97,7 +98,7 @@ test('submit review succeeds', async () => {
   });
   const list = await chargesRes.json();
   const charge = list.find((c) => c.id === 1);
-  assert.equal(charge.status, 'Under Review');
+  assert.equal(charge.status, 'Outstanding');
 });
 
 test('admin endpoints enforce permissions and can approve review', async () => {

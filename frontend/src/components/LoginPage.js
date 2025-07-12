@@ -8,12 +8,14 @@ export default function LoginPage({ onLogin = () => {} }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { setToken, setUser } = useAuth();
   const api = useApi();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -32,6 +34,8 @@ export default function LoginPage({ onLogin = () => {} }) {
       onLogin();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,7 +62,13 @@ export default function LoginPage({ onLogin = () => {} }) {
           />
         </label>
         {error && <div className="error">{error}</div>}
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? (
+            <span className="spinner" aria-label="loading" />
+          ) : (
+            'Login'
+          )}
+        </button>
       </form>
     </div>
   );
