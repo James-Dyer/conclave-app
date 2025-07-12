@@ -78,7 +78,7 @@ test('submit review succeeds', async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
-    body: JSON.stringify({ chargeId: 1, amount: 100, memo: 'Test' })
+    body: JSON.stringify({ amount: 100, memo: 'Test' })
   });
   assert.equal(res.status, 200);
   const data = await res.json();
