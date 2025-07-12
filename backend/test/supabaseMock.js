@@ -34,18 +34,17 @@ const charges = loadCsv('charges.csv').map((row) => ({
   partial_amount_paid: 0
 }));
 
-let reviews = [];
 let payments = [
   {
     id: 1,
     member_id: profiles[0].id,
-    charge_id: 1,
     amount: 100,
     date: '2024-04-15',
-    memo: 'Dues'
+    memo: 'Dues',
+    status: 'Approved',
+    admin_id: profiles[1].id
   }
 ];
-let nextReviewId = 1;
 let nextPaymentId = 2;
 let nextChargeId = Math.max(...charges.map((c) => c.id)) + 1;
 
@@ -56,7 +55,6 @@ function clone(obj) {
 function table(name) {
   if (name === 'profiles') return profiles;
   if (name === 'charges') return charges;
-  if (name === 'reviews') return reviews;
   if (name === 'payments') return payments;
   throw new Error('Unknown table ' + name);
 }
@@ -89,8 +87,7 @@ function from(name) {
       const inserted = arr.map((row) => {
         const r = { ...row };
         if (!r.id) {
-          if (name === 'reviews') r.id = nextReviewId++;
-          else if (name === 'payments') r.id = nextPaymentId++;
+          if (name === 'payments') r.id = nextPaymentId++;
           else if (name === 'charges') r.id = nextChargeId++;
         }
         store.push(r);
@@ -111,7 +108,10 @@ function from(name) {
               updated.push(row);
             }
           });
-          return Promise.resolve({ data: updated, error: null });
+          const result = { data: updated, error: null };
+          const promise = Promise.resolve(result);
+          promise.select = () => Promise.resolve(result);
+          return promise;
         }
       };
     },

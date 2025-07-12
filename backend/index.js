@@ -157,59 +157,65 @@ app.get('/api/my-charges', auth, async (req, res) => {
   res.json(mapped);
 });
 
-// Retrieve the payment history for the authenticated member
-app.get('/api/payments', auth, async (req, res) => {
+async function isAdmin(userId) {
   const { data, error } = await supabase
-    .from('payments')
-    .select('*')
-    .eq('member_id', req.memberId);
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', userId)
+    .single();
+  if (error) return false;
+  return !!data.is_admin;
+}
+
+// Retrieve payments. Members get their own records.
+// Admins can filter by status to view pending submissions.
+app.get('/api/payments', auth, async (req, res) => {
+  const { status } = req.query;
+  const admin = await isAdmin(req.memberId);
+
+  let query = supabase.from('payments').select('*');
+  if (!admin || !status) {
+    query = query.eq('member_id', req.memberId);
+  }
+  if (status) query = query.eq('status', status);
+
+  const { data, error } = await query;
   if (error) return res.status(500).json({ error: error.message });
   res.json(
     (data || []).map((p) => ({
       id: p.id,
       memberId: p.member_id,
-      chargeId: p.charge_id,
       amount: p.amount,
       date: p.date,
-      memo: p.memo
+      memo: p.memo,
+      status: p.status,
+      adminId: p.admin_id
     }))
   );
 });
 
-// Allow a member to request a manual review of a payment
-// POST /api/review
-app.post('/api/review', auth, async (req, res) => {
-  // 1) Pull only the fields you need
+// Submit a payment for review
+app.post('/api/payments', auth, async (req, res) => {
   const { amount, memo, date } = req.body || {};
-
-  // 2) Validate
   if (amount == null) {
     return res.status(400).json({ error: 'Missing amount' });
   }
 
-  // 3) Reviews are independent of charges, so we don't modify charge status.
-
-  // 4) Insert a standalone review record
   const { data, error } = await supabase
-    .from('reviews')
+    .from('payments')
     .insert({
-      member_id: req.memberId, // who sent it
-      amount, // how much
-      memo: memo || '', // optional note
-      date: date || new Date().toISOString().slice(0, 10) // default today as YYYY-MM-DD
+      member_id: req.memberId,
+      amount,
+      date: date || new Date().toISOString().slice(0, 10),
+      memo: memo || '',
+      status: 'Under Review'
     })
     .select();
-
-  // 5) Error handling
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
-
+  if (error) return res.status(500).json({ error: error.message });
   const inserted = Array.isArray(data) ? data[0] : data;
-
-  // 6) Success
-  res.json({ success: true, review: inserted });
+  res.json({ success: true, payment: inserted });
 });
+
 
 
 // ------------------------------
@@ -389,94 +395,29 @@ app.delete('/api/admin/charges/:id', auth, adminOnly, async (req, res) => {
   res.json({ success: true });
 });
 
-// Payment review endpoints
-
-// List all submitted payment reviews
-app.get('/api/admin/reviews', auth, adminOnly, async (req, res) => {
-  const { data: revs, error } = await supabase.from('reviews').select('*');
+// Payment approval endpoints for the unified payments table
+app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) => {
+  const id = Number(req.params.id);
+  const { data, error } = await supabase
+    .from('payments')
+    .update({ status: 'Approved', admin_id: req.memberId })
+    .eq('id', id)
+    .select();
   if (error) return res.status(500).json({ error: error.message });
-  const mapped = (revs || []).map((r) => ({
-    id: r.id,
-    memberId: r.member_id,
-    amount: r.amount,
-    memo: r.memo,
-    date: r.date
-  }));
-  res.json(mapped);
+
+  res.json({ success: true, payment: Array.isArray(data) ? data[0] : data });
 });
 
-// Approve a review and mark the associated charge as paid
-app.post('/api/admin/reviews/:id/approve', auth, adminOnly, async (req, res) => {
-  const reviewId = Number(req.params.id);
-  const { data: review, error } = await supabase
-    .from('reviews')
-    .select('*')
-    .eq('id', reviewId)
-    .single();
-  if (error || !review) return res.status(404).send('Not found');
-
-  let remaining = Number(review.amount);
-  let chargesQuery;
-  chargesQuery = await supabase
-    .from('charges')
-    .select('*')
-    .eq('member_id', review.member_id);
-  if (chargesQuery.error)
-    return res.status(500).json({ error: chargesQuery.error.message });
-  chargesQuery.data = chargesQuery.data
-    .filter((c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin')
-    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
-
-  const targets = chargesQuery.data;
-  const totalDue = targets.reduce(
-    (sum, c) => sum + (c.amount - (c.partial_amount_paid || 0)),
-    0
-  );
-  if (remaining > totalDue) {
-    return res.status(400).json({ error: 'Payment exceeds outstanding charges' });
-  }
-
-  for (const charge of targets) {
-    const paidSoFar = Number(charge.partial_amount_paid || 0);
-    const due = charge.amount - paidSoFar;
-    if (remaining >= due) {
-      charge.status = 'Paid';
-      charge.partial_amount_paid = 0;
-      remaining -= due;
-    } else if (remaining > 0) {
-      charge.status = 'Partially Paid';
-      charge.partial_amount_paid = paidSoFar + remaining;
-      remaining = 0;
-    }
-    await supabase
-      .from('charges')
-      .update({
-        status: charge.status,
-        partial_amount_paid: charge.partial_amount_paid
-      })
-      .eq('id', charge.id);
-    if (remaining === 0) break;
-  }
-
-  await supabase.from('payments').insert({
-    member_id: review.member_id,
-    amount: review.amount,
-    date: review.date || new Date().toISOString(),
-    memo: review.memo
-  });
-
-  await supabase.from('reviews').delete().eq('id', reviewId);
-  res.json({ success: true });
-});
-
-// Reject a payment review without applying a payment
-app.post('/api/admin/reviews/:id/reject', auth, adminOnly, async (req, res) => {
-  const { error } = await supabase
-    .from('reviews')
-    .delete()
-    .eq('id', Number(req.params.id));
+app.post('/api/admin/payments/:id/deny', auth, adminOnly, async (req, res) => {
+  const id = Number(req.params.id);
+  const { data, error } = await supabase
+    .from('payments')
+    .update({ status: 'Denied', admin_id: req.memberId })
+    .eq('id', id)
+    .select();
   if (error) return res.status(500).json({ error: error.message });
-  res.json({ success: true });
+
+  res.json({ success: true, payment: Array.isArray(data) ? data[0] : data });
 });
 
 // Simple health check endpoint

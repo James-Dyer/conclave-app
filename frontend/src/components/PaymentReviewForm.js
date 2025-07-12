@@ -37,13 +37,12 @@ export default function PaymentReviewForm({
       return;
     }
     try {
-      await api.submitReview({
-        chargeId: charge.id,
+      await api.submitPayment({
         amount: amountPaid,
         memo,
         date: paymentDate
       });
-      setMessage('Review request submitted');
+      setMessage('Payment submitted');
       setMemo('');
       setAmountPaid('');
       setPaymentDate('');

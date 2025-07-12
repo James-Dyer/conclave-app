@@ -59,8 +59,8 @@ test('get member data requires auth', async () => {
   assert.equal(data.name, 'John Doe');
 });
 
-test('review endpoint validates fields', async () => {
-  const res = await fetch(`${baseUrl}/api/review`, {
+test('payment submission validates fields', async () => {
+  const res = await fetch(`${baseUrl}/api/payments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -71,8 +71,8 @@ test('review endpoint validates fields', async () => {
   assert.equal(res.status, 400);
 });
 
-test('submit review succeeds', async () => {
-  const res = await fetch(`${baseUrl}/api/review`, {
+test('submit payment succeeds', async () => {
+  const res = await fetch(`${baseUrl}/api/payments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ test('submit review succeeds', async () => {
   assert.equal(res.status, 200);
   const data = await res.json();
   assert.equal(data.success, true);
-  assert.equal(typeof data.review, 'object');
+  assert.equal(typeof data.payment, 'object');
 
   const adminLogin = await fetch(`${baseUrl}/api/login`, {
     method: 'POST',
@@ -93,15 +93,14 @@ test('submit review succeeds', async () => {
   const adminData = await adminLogin.json();
   const adminToken = adminData.token;
 
-  const chargesRes = await fetch(`${baseUrl}/api/admin/charges`, {
-    headers: { Authorization: `Bearer ${adminToken}` }
+  const list = await fetch(`${baseUrl}/api/payments`, {
+    headers: { Authorization: `Bearer ${token}` }
   });
-  const list = await chargesRes.json();
-  const charge = list.find((c) => c.id === 1);
-  assert.equal(charge.status, 'Outstanding');
+  const payments = await list.json();
+  assert.ok(payments.some(p => p.id === data.payment.id));
 });
 
-test('admin endpoints enforce permissions and can approve review', async () => {
+test('admin endpoints enforce permissions and can approve payment', async () => {
   // login as admin
   const adminLogin = await fetch(`${baseUrl}/api/login`, {
     method: 'POST',
@@ -126,13 +125,13 @@ test('admin endpoints enforce permissions and can approve review', async () => {
   const members = await listRes.json();
   assert.ok(Array.isArray(members));
 
-  // admin sees pending reviews
-  const revRes = await fetch(`${baseUrl}/api/admin/reviews`, {
+  // admin sees pending payments
+  const revRes = await fetch(`${baseUrl}/api/payments?status=Under%20Review`, {
     headers: { Authorization: `Bearer ${adminToken}` }
   });
   const rev = (await revRes.json())[0];
   const approve = await fetch(
-    `${baseUrl}/api/admin/reviews/${rev.id}/approve`,
+    `${baseUrl}/api/admin/payments/${rev.id}/approve`,
     {
       method: 'POST',
       headers: { Authorization: `Bearer ${adminToken}` }
@@ -148,9 +147,9 @@ test('admin endpoints enforce permissions and can approve review', async () => {
   assert.equal(payments.length, 2);
 });
 
-test('lump sum approval allocates across charges', async () => {
-  // member submits lump sum review
-  let res = await fetch(`${baseUrl}/api/review`, {
+test('admin can approve payment', async () => {
+  // member submits payment
+  let res = await fetch(`${baseUrl}/api/payments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -169,26 +168,16 @@ test('lump sum approval allocates across charges', async () => {
   const adminData = await adminLogin.json();
   const adminToken = adminData.token;
 
-  let list = await fetch(`${baseUrl}/api/admin/reviews`, {
+  let list = await fetch(`${baseUrl}/api/payments?status=Under%20Review`, {
     headers: { Authorization: `Bearer ${adminToken}` }
   });
   const revId = (await list.json()).pop().id;
 
-  res = await fetch(`${baseUrl}/api/admin/reviews/${revId}/approve`, {
+  res = await fetch(`${baseUrl}/api/admin/payments/${revId}/approve`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${adminToken}` }
   });
   assert.equal(res.status, 200);
-
-  const chargesRes = await fetch(`${baseUrl}/api/admin/charges`, {
-    headers: { Authorization: `Bearer ${adminToken}` }
-  });
-  const after = await chargesRes.json();
-  const c5 = after.find((c) => c.id === 5);
-  const c1 = after.find((c) => c.id === 1);
-  const c3 = after.find((c) => c.id === 3);
-  assert.equal(c5.status, 'Paid');
-  assert.ok(c1.status === 'Paid' || c1.partialAmountPaid === 175);
-  assert.equal(c3.status, 'Partially Paid');
-  assert.equal(c3.partialAmountPaid, 75);
+  const pay = await res.json();
+  assert.equal(pay.payment.status, 'Approved');
 });

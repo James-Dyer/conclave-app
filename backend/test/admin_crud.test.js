@@ -123,11 +123,11 @@ test('admin charge CRUD works', async () => {
   assert.deepEqual(await delRes.json(), { success: true });
 });
 
-// review rejection path
+// payment denial path
 
-test('admin can reject a review request', async () => {
-  // member submits review
-  const reviewRes = await fetch(`${baseUrl}/api/review`, {
+test('admin can deny a payment request', async () => {
+  // member submits payment
+  const reviewRes = await fetch(`${baseUrl}/api/payments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -137,19 +137,19 @@ test('admin can reject a review request', async () => {
   });
   assert.equal(reviewRes.status, 200);
 
-  let list = await fetch(`${baseUrl}/api/admin/reviews`, {
+  let list = await fetch(`${baseUrl}/api/payments?status=Under%20Review`, {
     headers: { Authorization: `Bearer ${adminToken}` }
   });
   list = await list.json();
   const revId = list[list.length - 1].id;
 
-  const rejRes = await fetch(`${baseUrl}/api/admin/reviews/${revId}/reject`, {
+  const rejRes = await fetch(`${baseUrl}/api/admin/payments/${revId}/deny`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${adminToken}` }
   });
   assert.equal(rejRes.status, 200);
 
-  const after = await fetch(`${baseUrl}/api/admin/reviews`, {
+  const after = await fetch(`${baseUrl}/api/payments?status=Under%20Review`, {
     headers: { Authorization: `Bearer ${adminToken}` }
   });
   const remaining = await after.json();
