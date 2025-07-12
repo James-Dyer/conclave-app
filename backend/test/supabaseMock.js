@@ -96,7 +96,10 @@ function from(name) {
         store.push(r);
         return r;
       });
-      return Promise.resolve({ data: inserted, error: null });
+      const result = { data: inserted, error: null };
+      const promise = Promise.resolve(result);
+      promise.select = () => Promise.resolve(result);
+      return promise;
     },
     update(fields) {
       return {
