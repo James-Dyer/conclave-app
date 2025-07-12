@@ -32,6 +32,10 @@ export default function PaymentReviewForm({
     e.preventDefault();
     setError('');
     setMessage('');
+    if (Number(amountPaid) > Number(charge.amount)) {
+      setError('Payment exceeds outstanding charges');
+      return;
+    }
     try {
       await api.submitReview({
         chargeId: charge.id,

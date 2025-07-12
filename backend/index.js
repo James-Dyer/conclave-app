@@ -195,15 +195,15 @@ app.get('/api/payments', auth, (req, res) => {
 
 // Allow a member to request a manual review of a payment
 app.post('/api/review', auth, (req, res) => {
-  const { chargeId, amount, memo, date } = req.body || {};
-  if (!chargeId || !amount) {
-    return res.status(400).send('Missing chargeId or amount');
+  const { chargeId = null, amount, memo, date } = req.body || {};
+  if (!amount) {
+    return res.status(400).send('Missing amount');
   }
   const review = {
     id: nextReviewId++,
     memberId: req.memberId,
     chargeId,
-    amount,
+    amount: Number(amount),
     memo: memo || '',
     date: date || new Date().toISOString().split('T')[0]
   };
@@ -359,8 +359,48 @@ app.post('/api/admin/reviews/:id/approve', auth, adminOnly, (req, res) => {
   const reviewIdx = reviews.findIndex((r) => r.id === Number(req.params.id));
   if (reviewIdx === -1) return res.status(404).send('Not found');
   const review = reviews[reviewIdx];
-  const charge = charges.find((c) => c.id === review.chargeId);
-  if (charge) charge.status = 'Paid';
+
+  let remaining = Number(review.amount);
+  let targets;
+
+  if (review.chargeId) {
+    const c = charges.find((ch) => ch.id === review.chargeId);
+    if (!c) return res.status(400).send('Charge not found');
+    targets = [c];
+  } else {
+    targets = charges
+      .filter(
+        (c) =>
+          c.memberId === review.memberId &&
+          c.status !== 'Paid' &&
+          c.status !== 'Deleted by Admin'
+      )
+      .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  }
+
+  const totalDue = targets.reduce(
+    (sum, c) => sum + (c.amount - (c.partialAmountPaid || 0)),
+    0
+  );
+  if (remaining > totalDue) {
+    return res.status(400).json({ error: 'Payment exceeds outstanding charges' });
+  }
+
+  for (const charge of targets) {
+    const paidSoFar = Number(charge.partialAmountPaid || 0);
+    const due = charge.amount - paidSoFar;
+    if (remaining >= due) {
+      charge.status = 'Paid';
+      charge.partialAmountPaid = 0;
+      remaining -= due;
+    } else if (remaining > 0) {
+      charge.status = 'Partially Paid';
+      charge.partialAmountPaid = paidSoFar + remaining;
+      remaining = 0;
+      break;
+    }
+  }
+
   payments.push({
     id: nextPaymentId++,
     memberId: review.memberId,

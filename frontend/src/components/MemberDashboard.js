@@ -50,7 +50,18 @@ export default function MemberDashboard({
     return <div>Loading…</div>;
   }
 
-  const breakdown = getBalanceBreakdown(chargeData);
+  let breakdownError = false;
+  let breakdown = {
+    totalBalance: 0,
+    overdueBalance: 0,
+    dueSoonBalance: 0,
+    upcomingBalance: 0
+  };
+  try {
+    breakdown = getBalanceBreakdown(chargeData);
+  } catch {
+    breakdownError = true;
+  }
   const {
     totalBalance,
     overdueBalance,
@@ -71,27 +82,34 @@ export default function MemberDashboard({
             <div className="amount">{`$${totalBalance}`}</div>
             <div className="label">Total Balance Due</div>
           </div>
-          <div
-            className="balance-card overdue"
-            data-testid="overdue-balance"
-          >
-            <div className="amount">{`$${overdueBalance}`}</div>
-            <div className="label">Overdue</div>
-          </div>
-          <div
-            className="balance-card due-soon"
-            data-testid="due-soon-balance"
-          >
-            <div className="amount">{`$${dueSoonBalance}`}</div>
-            <div className="label">Due Soon (≤7d)</div>
-          </div>
-          <div
-            className="balance-card upcoming"
-            data-testid="upcoming-balance"
-          >
-            <div className="amount">{`$${upcomingBalance}`}</div>
-            <div className="label">Upcoming</div>
-          </div>
+          {!breakdownError && (
+            <>
+              <div
+                className="balance-card overdue"
+                data-testid="overdue-balance"
+              >
+                <div className="amount">{`$${overdueBalance}`}</div>
+                <div className="label">Overdue</div>
+              </div>
+              <div
+                className="balance-card due-soon"
+                data-testid="due-soon-balance"
+              >
+                <div className="amount">{`$${dueSoonBalance}`}</div>
+                <div className="label">Due Soon (≤7d)</div>
+              </div>
+              <div
+                className="balance-card upcoming"
+                data-testid="upcoming-balance"
+              >
+                <div className="amount">{`$${upcomingBalance}`}</div>
+                <div className="label">Upcoming</div>
+              </div>
+            </>
+          )}
+          {breakdownError && (
+            <div className="breakdown-error">Unable to calculate breakdown.</div>
+          )}
         </div>
         <button
           type="button"
