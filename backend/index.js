@@ -208,6 +208,10 @@ app.post('/api/review', auth, (req, res) => {
     date: date || new Date().toISOString().split('T')[0]
   };
   reviews.push(review);
+  if (chargeId) {
+    const charge = charges.find((c) => c.id === Number(chargeId));
+    if (charge) charge.status = 'Under Review';
+  }
   res.json({ success: true });
 });
 

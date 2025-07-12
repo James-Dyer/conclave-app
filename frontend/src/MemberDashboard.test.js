@@ -74,3 +74,13 @@ test('dashboard payment review button triggers callback', async () => {
   await userEvent.click(button);
   expect(onRequestReview).toHaveBeenCalled();
 });
+
+test('pending review charges are excluded from totals', async () => {
+  render(
+    <AuthProvider>
+      <MemberDashboard pendingReviewIds={[1]} />
+    </AuthProvider>
+  );
+  const total = await screen.findByTestId('total-balance');
+  expect(total).toHaveTextContent('$0');
+});

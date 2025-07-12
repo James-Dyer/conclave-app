@@ -82,6 +82,21 @@ test('submit review succeeds', async () => {
   assert.equal(res.status, 200);
   const data = await res.json();
   assert.deepEqual(data, { success: true });
+
+  const adminLogin = await fetch(`${baseUrl}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: 'admin@example.com', password: 'admin' })
+  });
+  const adminData = await adminLogin.json();
+  const adminToken = adminData.token;
+
+  const chargesRes = await fetch(`${baseUrl}/api/admin/charges`, {
+    headers: { Authorization: `Bearer ${adminToken}` }
+  });
+  const list = await chargesRes.json();
+  const charge = list.find((c) => c.id === 1);
+  assert.equal(charge.status, 'Under Review');
 });
 
 test('admin endpoints enforce permissions and can approve review', async () => {

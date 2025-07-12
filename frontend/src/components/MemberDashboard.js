@@ -50,6 +50,10 @@ export default function MemberDashboard({
     return <div>Loading…</div>;
   }
 
+  const mergedCharges = chargeData.map((c) =>
+    pendingReviewIds.includes(c.id) ? { ...c, status: 'Under Review' } : c
+  );
+
   let breakdownError = false;
   let breakdown = {
     totalBalance: 0,
@@ -58,7 +62,7 @@ export default function MemberDashboard({
     upcomingBalance: 0
   };
   try {
-    breakdown = getBalanceBreakdown(chargeData);
+    breakdown = getBalanceBreakdown(mergedCharges);
   } catch {
     breakdownError = true;
   }
@@ -125,7 +129,7 @@ export default function MemberDashboard({
       <section>
         <h2>Outstanding Charges</h2>
         <ChargeList
-          charges={chargeData.filter(
+          charges={mergedCharges.filter(
             (c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin'
           )}
           onViewDetails={onViewDetails}

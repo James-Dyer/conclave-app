@@ -30,3 +30,13 @@ test('accounts for partial payments', () => {
   expect(result.totalBalance).toBe(125);
   expect(result.overdueBalance).toBe(125);
 });
+
+test('ignores charges under review', () => {
+  const charges = [
+    { id: 1, status: 'Under Review', amount: 100, dueDate: '2024-01-01' },
+    { id: 2, status: 'Outstanding', amount: 50, dueDate: '2024-01-02' }
+  ];
+  const result = getBalanceBreakdown(charges, new Date('2024-01-03'));
+  expect(result.totalBalance).toBe(50);
+  expect(result.overdueBalance).toBe(50);
+});

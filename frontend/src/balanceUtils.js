@@ -1,6 +1,9 @@
 export function getBalanceBreakdown(charges, today = new Date()) {
   const unpaid = charges.filter(
-    (c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin'
+    (c) =>
+      !['Paid', 'Deleted by Admin', 'Under Review', 'Pending Review'].includes(
+        c.status
+      )
   );
 
   const remaining = (c) =>
