@@ -115,3 +115,39 @@ test('payments are sorted most recent first', async () => {
   expect(rows[0]).toHaveTextContent('20');
   expect(rows[1]).toHaveTextContent('10');
 });
+
+test('partial amount paid displayed for charges', async () => {
+  jest.resetAllMocks();
+  global.fetch = jest.fn((url) => {
+    if (url.endsWith('/my-charges')) {
+      return Promise.resolve({
+        ok: true,
+        json: async () => [
+          {
+            id: 1,
+            status: 'Outstanding',
+            amount: 100,
+            dueDate: '2024-05-01',
+            partialAmountPaid: 25
+          }
+        ]
+      });
+    }
+    if (url.endsWith('/payments')) {
+      return Promise.resolve({ ok: true, json: async () => [] });
+    }
+    return Promise.resolve({ ok: true, json: async () => [] });
+  });
+  localStorage.setItem('authToken', 'token');
+  localStorage.setItem('authUser', JSON.stringify({ id: 1 }));
+  render(
+    <AuthProvider>
+      <MemberDashboard />
+    </AuthProvider>
+  );
+  const header = await screen.findByText(/partial amount paid/i);
+  const table = header.closest('table');
+  const row = within(table).getAllByRole('row')[1];
+  const cells = within(row).getAllByRole('cell');
+  expect(cells[4]).toHaveTextContent('25');
+});
