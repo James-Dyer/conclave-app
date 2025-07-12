@@ -397,15 +397,61 @@ app.delete('/api/admin/charges/:id', auth, adminOnly, async (req, res) => {
 
 // Payment approval endpoints for the unified payments table
 app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) => {
-  const id = Number(req.params.id);
-  const { data, error } = await supabase
+  const paymentId = Number(req.params.id);
+
+  // 1) Load the payment to get amount + member_id
+  const { data: [payment], error: payErr } = await supabase
+    .from('payments')
+    .select('*')
+    .eq('id', paymentId);
+  if (payErr || !payment) return res.status(404).json({ error: 'Payment not found' });
+
+  let remaining = Number(payment.amount);
+
+  // 2) Fetch all outstanding charges for that member, oldest first
+  const { data: charges, error: chErr } = await supabase
+    .from('charges')
+    .select('*')
+    .eq('member_id', payment.member_id)
+    .not('status', 'in', "('Paid','Deleted by Admin')")
+    .order('due_date', { ascending: true });
+  if (chErr) return res.status(500).json({ error: chErr.message });
+
+  // 3) Iterate and apply payment
+  for (const c of charges) {
+    const alreadyPaid = Number(c.partial_amount_paid || 0);
+    const stillDue   = Number(c.amount) - alreadyPaid;
+
+    if (remaining >= stillDue) {
+      // Fully cover this charge
+      await supabase
+        .from('charges')
+        .update({ status: 'Paid', partial_amount_paid: 0 })
+        .eq('id', c.id);
+      remaining -= stillDue;
+    } else if (remaining > 0) {
+      // Partially cover this charge
+      await supabase
+        .from('charges')
+        .update({
+          status: 'Partially Paid',
+          partial_amount_paid: alreadyPaid + remaining
+        })
+        .eq('id', c.id);
+      remaining = 0;
+    }
+    if (remaining <= 0) break;
+  }
+
+  // 4) Finally, mark the payment approved + record admin
+  const { data: updated, error: updErr } = await supabase
     .from('payments')
     .update({ status: 'Approved', admin_id: req.memberId })
-    .eq('id', id)
+    .eq('id', paymentId)
     .select();
-  if (error) return res.status(500).json({ error: error.message });
+  if (updErr) return res.status(500).json({ error: updErr.message });
 
-  res.json({ success: true, payment: Array.isArray(data) ? data[0] : data });
+  res.json({ success: true, payment: updated[0] });
 });
 
 app.post('/api/admin/payments/:id/deny', auth, adminOnly, async (req, res) => {
