@@ -175,29 +175,38 @@ app.get('/api/payments', auth, async (req, res) => {
 });
 
 // Allow a member to request a manual review of a payment
+// POST /api/review
 app.post('/api/review', auth, async (req, res) => {
-  const { chargeId = null, amount, memo, date } = req.body || {};
-  if (!amount) {
-    return res.status(400).send('Missing amount');
-  }
-  const { error: insErr } = await supabase.from('reviews').insert({
-    member_id: req.memberId,
-    charge_id: chargeId,
-    amount,
-    memo: memo || '',
-    date: date || new Date().toISOString().split('T')[0]
-  });
-  if (insErr) return res.status(500).json({ error: insErr.message });
+  // 1) Pull only the fields you need
+  const { amount, memo, date } = req.body || {};
 
-  if (chargeId) {
-    const { error: updErr } = await supabase
-      .from('charges')
-      .update({ status: 'Under Review' })
-      .eq('id', chargeId);
-    if (updErr) return res.status(500).json({ error: updErr.message });
+  // 2) Validate
+  if (amount == null) {
+    return res.status(400).json({ error: 'Missing amount' });
   }
-  res.json({ success: true });
+
+  // 3) Insert a standalone review record
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert({
+      member_id: req.memberId,                 // who sent it
+      amount,                                  // how much
+      memo: memo || '',                        // optional note
+      date: date || new Date().toISOString().slice(0, 10) // default today as YYYY-MM-DD
+    });
+
+  // 4) Error handling
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  // 5) Success
+  res.json({
+    success: true,
+    review: data[0]   // the inserted row, including its new id + created_at
+  });
 });
+
 
 // ------------------------------
 // Admin routes
