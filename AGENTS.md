@@ -33,3 +33,35 @@ set -a
 source .env
 set +a
 ```
+
+## Supabase Tables
+
+Conclave stores its data in three core tables:
+
+- **profiles** – member information and permissions
+  - `id` uuid primary key referencing `auth.users`
+  - `email`
+  - `display_name`
+  - `is_admin` boolean flag
+  - `status`
+  - `initiation_date`
+  - `amount_owed`
+  - `tags` text array
+  - `inserted_at` timestamp with time zone
+- **charges** – dues and fines assigned to members
+  - `id` bigserial primary key
+  - `member_id` uuid referencing `profiles.id`
+  - `status`
+  - `amount`
+  - `due_date`
+  - `description`
+  - `tags` text array
+  - `partial_amount_paid` numeric
+- **payments** – member payment submissions
+  - `id` bigserial primary key
+  - `member_id` uuid referencing `profiles.id`
+  - `amount`
+  - `date`
+  - `memo`
+  - `status`
+  - `admin_id` uuid of approving admin
