@@ -33,7 +33,9 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   }
 
   async function handleReject(id) {
-    await api.denyPayment(id);
+    const note = window.prompt('Reason for denial?');
+    if (!note) return;
+    await api.denyPayment(id, note);
     setReviews(reviews.filter((rev) => rev.id !== id));
   }
 

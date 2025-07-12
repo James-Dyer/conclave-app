@@ -14,6 +14,7 @@ export default function PaymentList({ payments }) {
           <th>Paid Date</th>
           <th>Memo</th>
           <th>Status</th>
+          <th>Admin Note</th>
         </tr>
       </thead>
       <tbody>
@@ -23,6 +24,7 @@ export default function PaymentList({ payments }) {
             <td>{new Date(p.date).toLocaleDateString()}</td>
             <td>{p.memo || '-'}</td>
             <td>{p.status}</td>
+            <td>{p.adminNote || '-'}</td>
           </tr>
         ))}
       </tbody>

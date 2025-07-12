@@ -92,8 +92,12 @@ export function useApi() {
       fetchPendingPayments: () => request('/payments?status=Under%20Review'),
       approvePayment: (id) =>
         request(`/admin/payments/${id}/approve`, { method: 'POST' }),
-      denyPayment: (id) =>
-        request(`/admin/payments/${id}/deny`, { method: 'POST' })
+      denyPayment: (id, note) =>
+        request(`/admin/payments/${id}/deny`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ note })
+        })
     }),
     [request]
   );

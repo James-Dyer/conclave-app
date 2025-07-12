@@ -42,7 +42,8 @@ let payments = [
     date: '2024-04-15',
     memo: 'Dues',
     status: 'Approved',
-    admin_id: profiles[1].id
+    admin_id: profiles[1].id,
+    admin_note: ''
   }
 ];
 let nextPaymentId = 2;
@@ -111,6 +112,7 @@ function from(name) {
           if (name === 'payments') r.id = nextPaymentId++;
           else if (name === 'charges') r.id = nextChargeId++;
         }
+        if (name === 'payments' && !('admin_note' in r)) r.admin_note = '';
         store.push(r);
         return r;
       });

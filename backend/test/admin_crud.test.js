@@ -145,9 +145,12 @@ test('admin can deny a payment request', async () => {
 
   const rejRes = await fetch(`${baseUrl}/api/admin/payments/${revId}/deny`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${adminToken}` }
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+    body: JSON.stringify({ note: 'Duplicate charge' })
   });
   assert.equal(rejRes.status, 200);
+  const denied = await rejRes.json();
+  assert.equal(denied.payment.admin_note, 'Duplicate charge');
 
   const after = await fetch(`${baseUrl}/api/payments?status=Under%20Review`, {
     headers: { Authorization: `Bearer ${adminToken}` }

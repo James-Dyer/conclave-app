@@ -189,7 +189,8 @@ app.get('/api/payments', auth, async (req, res) => {
       date: p.date,
       memo: p.memo,
       status: p.status,
-      adminId: p.admin_id
+      adminId: p.admin_id,
+      adminNote: p.admin_note
     }))
   );
 });
@@ -208,7 +209,8 @@ app.post('/api/payments', auth, async (req, res) => {
       amount,
       date: date || new Date().toISOString().slice(0, 10),
       memo: memo || '',
-      status: 'Under Review'
+      status: 'Under Review',
+      admin_note: ''
     })
     .select();
   if (error) return res.status(500).json({ error: error.message });
@@ -456,9 +458,11 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
 
 app.post('/api/admin/payments/:id/deny', auth, adminOnly, async (req, res) => {
   const id = Number(req.params.id);
+  const { note } = req.body || {};
+  if (!note) return res.status(400).json({ error: 'Missing denial note' });
   const { data, error } = await supabase
     .from('payments')
-    .update({ status: 'Denied', admin_id: req.memberId })
+    .update({ status: 'Denied', admin_id: req.memberId, admin_note: note })
     .eq('id', id)
     .select();
   if (error) return res.status(500).json({ error: error.message });
