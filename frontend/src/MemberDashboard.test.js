@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MemberDashboard from './components/MemberDashboard';
 import { AuthProvider } from './AuthContext';
@@ -83,4 +83,35 @@ test('pending review charges are excluded from totals', async () => {
   );
   const total = await screen.findByTestId('total-balance');
   expect(total).toHaveTextContent('$0');
+});
+
+test('payments are sorted most recent first', async () => {
+  jest.resetAllMocks();
+  global.fetch = jest.fn((url) => {
+    if (url.endsWith('/my-charges')) {
+      return Promise.resolve({ ok: true, json: async () => [] });
+    }
+    if (url.endsWith('/payments')) {
+      return Promise.resolve({
+        ok: true,
+        json: async () => [
+          { id: 1, amount: 10, date: '2024-04-01', status: 'Approved' },
+          { id: 2, amount: 20, date: '2024-05-01', status: 'Approved' }
+        ]
+      });
+    }
+    return Promise.resolve({ ok: true, json: async () => [] });
+  });
+  localStorage.setItem('authToken', 'token');
+  localStorage.setItem('authUser', JSON.stringify({ id: 1 }));
+  render(
+    <AuthProvider>
+      <MemberDashboard />
+    </AuthProvider>
+  );
+  const header = await screen.findByText(/amount paid/i);
+  const table = header.closest('table');
+  const rows = within(table).getAllByRole('row').slice(1);
+  expect(rows[0]).toHaveTextContent('20');
+  expect(rows[1]).toHaveTextContent('10');
 });
