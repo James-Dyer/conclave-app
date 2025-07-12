@@ -178,33 +178,39 @@ app.get('/api/payments', auth, async (req, res) => {
 // POST /api/review
 app.post('/api/review', auth, async (req, res) => {
   // 1) Pull only the fields you need
-  const { amount, memo, date } = req.body || {};
+  const { chargeId, amount, memo, date } = req.body || {};
 
   // 2) Validate
   if (amount == null) {
     return res.status(400).json({ error: 'Missing amount' });
   }
 
-  // 3) Insert a standalone review record
+  // 3) If a charge id was provided, mark that charge under review
+  if (chargeId) {
+    await supabase
+      .from('charges')
+      .update({ status: 'Under Review' })
+      .eq('id', chargeId);
+  }
+
+  // 4) Insert a standalone review record
   const { data, error } = await supabase
     .from('reviews')
     .insert({
       member_id: req.memberId,                 // who sent it
+      charge_id: chargeId || null,
       amount,                                  // how much
       memo: memo || '',                        // optional note
       date: date || new Date().toISOString().slice(0, 10) // default today as YYYY-MM-DD
     });
 
-  // 4) Error handling
+  // 5) Error handling
   if (error) {
     return res.status(500).json({ error: error.message });
   }
 
-  // 5) Success
-  res.json({
-    success: true,
-    review: data[0]   // the inserted row, including its new id + created_at
-  });
+  // 6) Success
+  res.json({ success: true });
 });
 
 
