@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const crypto = require('node:crypto');
 const supabase = require('./db');
 const supabaseAdmin = require('./adminClient');
@@ -11,13 +12,9 @@ const app = express();
 // In tests we skip starting external connections.
 const PORT = process.env.PORT || 3001;
 
+// Handle CORS and preflight requests
+app.use(cors());
 app.use(express.json());
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
 
 app.use('/api/members', membersRoute);
 app.use('/api/charges', chargesRoute);
