@@ -1,6 +1,7 @@
-// Indicate to the application code that we are running in a test
-// environment so that it can skip actions that require external services.
-process.env.NODE_ENV = 'test';
+// Provide mock Supabase clients for the server
+const dbMock = require('./supabaseMock');
+require.cache[require.resolve('../db')] = { exports: dbMock.supabase };
+require.cache[require.resolve('../adminClient')] = { exports: dbMock.supabaseAdmin };
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
