@@ -12,6 +12,7 @@ export default function PaymentReviewForm({
 }) {
   const [memo, setMemo] = useState('');
   const [amountPaid, setAmountPaid] = useState('');
+  const [paymentDate, setPaymentDate] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const api = useApi();
@@ -20,8 +21,10 @@ export default function PaymentReviewForm({
   useEffect(() => {
     if (charge && (charge.id || charge.amount)) {
       setAmountPaid(charge.amount);
+      setPaymentDate(new Date().toISOString().split('T')[0]);
     } else {
       setAmountPaid('');
+      setPaymentDate(new Date().toISOString().split('T')[0]);
     }
   }, [charge]);
 
@@ -33,11 +36,13 @@ export default function PaymentReviewForm({
       await api.submitReview({
         chargeId: charge.id,
         amount: amountPaid,
-        memo
+        memo,
+        date: paymentDate
       });
       setMessage('Review request submitted');
       setMemo('');
       setAmountPaid('');
+      setPaymentDate('');
       addNotification('Your payment review has been submitted successfully.');
       if (onSubmitted && charge && charge.id) onSubmitted(charge.id);
       if (onBack) onBack();
@@ -51,10 +56,7 @@ export default function PaymentReviewForm({
       <h1>Payment Review</h1>
       <form onSubmit={handleSubmit} className="review-form">
         <div className="static-field">
-          <strong>Description:</strong> {charge.description || '-'}
-        </div>
-        <div className="static-field">
-          <strong>Amount:</strong> {charge.amount}
+          <strong>Total Amount:</strong> {charge.amount}
         </div>
         <label>
           Amount Paid
@@ -62,6 +64,14 @@ export default function PaymentReviewForm({
             type="number"
             value={amountPaid}
             onChange={(e) => setAmountPaid(e.target.value)}
+          />
+        </label>
+        <label>
+          Payment Date
+          <input
+            type="date"
+            value={paymentDate}
+            onChange={(e) => setPaymentDate(e.target.value)}
           />
         </label>
         <label>

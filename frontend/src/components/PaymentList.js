@@ -10,8 +10,8 @@ export default function PaymentList({ payments }) {
     <table className="payment-list">
       <thead>
         <tr>
-          <th>Amount</th>
-          <th>Date</th>
+          <th>Amount Paid</th>
+          <th>Paid Date</th>
           <th>Memo</th>
         </tr>
       </thead>

@@ -4,17 +4,19 @@ export default function ChargeItem({
   description,
   amount,
   dueDate,
+  partialAmountPaid,
   onRequestReview = () => {},
   onViewDetails = () => {},
   pending = false,
 }) {
   return (
     <tr className="charge-item">
-      <td>{status}</td>
       <td>{description || '-'}</td>
       <td>{amount}</td>
       <td>{new Date(dueDate).toLocaleDateString()}</td>
-      <td className="flex space-x-2">  {/* Tailwind flex + gap */}
+      <td>{status}</td>
+      <td>{status === 'Partially Paid' ? partialAmountPaid : ''}</td>
+      <td className="flex space-x-2">
         <button
           type="button"
           onClick={() => onViewDetails({ id, status, amount, dueDate })}

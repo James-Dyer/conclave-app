@@ -107,7 +107,7 @@ test('dashboard review button opens form with charge data', async () => {
   await userEvent.click(reviewButton);
   const heading = await screen.findByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();
-  expect(screen.getByText(/description:/i)).toBeInTheDocument();
+  expect(screen.getByText(/total amount:/i)).toBeInTheDocument();
 });
 
 test('dashboard tile review button opens form', async () => {

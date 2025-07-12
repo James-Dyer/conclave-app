@@ -107,7 +107,9 @@ export default function MemberDashboard({
       <section>
         <h2>Outstanding Charges</h2>
         <ChargeList
-          charges={chargeData}
+          charges={chargeData.filter(
+            (c) => c.status !== 'Paid' && c.status !== 'Deleted by Admin'
+          )}
           onViewDetails={onViewDetails}
           pendingReviewIds={pendingReviewIds}
         />

@@ -195,7 +195,7 @@ app.get('/api/payments', auth, (req, res) => {
 
 // Allow a member to request a manual review of a payment
 app.post('/api/review', auth, (req, res) => {
-  const { chargeId, amount, memo } = req.body || {};
+  const { chargeId, amount, memo, date } = req.body || {};
   if (!chargeId || !amount) {
     return res.status(400).send('Missing chargeId or amount');
   }
@@ -204,7 +204,8 @@ app.post('/api/review', auth, (req, res) => {
     memberId: req.memberId,
     chargeId,
     amount,
-    memo: memo || ''
+    memo: memo || '',
+    date: date || new Date().toISOString().split('T')[0]
   };
   reviews.push(review);
   res.json({ success: true });
@@ -364,7 +365,7 @@ app.post('/api/admin/reviews/:id/approve', auth, adminOnly, (req, res) => {
     id: nextPaymentId++,
     memberId: review.memberId,
     amount: review.amount,
-    date: new Date().toISOString(),
+    date: review.date || new Date().toISOString(),
     memo: review.memo
   });
   reviews.splice(reviewIdx, 1);
