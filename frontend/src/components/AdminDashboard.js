@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import useApi from '../apiClient';
+import ConfirmDialog from './ConfirmDialog';
 import '../styles/AdminDashboard.css';
 
 export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   const api = useApi();
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState('');
+  const [reviewToApprove, setReviewToApprove] = useState(null);
 
   useEffect(() => {
     async function load() {
@@ -19,9 +21,15 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
     load();
   }, []);
 
-  async function handleApprove(id) {
-    await api.approvePayment(id);
-    setReviews(reviews.filter((rev) => rev.id !== id));
+  function openApproveDialog(review) {
+    setReviewToApprove(review);
+  }
+
+  async function confirmApprove() {
+    if (!reviewToApprove) return;
+    await api.approvePayment(reviewToApprove.id);
+    setReviews(reviews.filter((rev) => rev.id !== reviewToApprove.id));
+    setReviewToApprove(null);
   }
 
   async function handleReject(id) {
@@ -63,7 +71,7 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
                 <td>{r.originalAmount}</td>
                 <td>{r.amountPaid ?? r.amount}</td>
                 <td className="flex space-x-2">
-                  <button onClick={() => handleApprove(r.id)}>Approve</button>
+                  <button onClick={() => openApproveDialog(r)}>Approve</button>
                   <button onClick={() => handleReject(r.id)}>Reject</button>
                 </td>
               </tr>
@@ -71,6 +79,29 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
           </tbody>
         </table>
       </section>
+      <ConfirmDialog
+        open={!!reviewToApprove}
+        title="Approve Payment"
+        confirmText="Approve"
+        cancelText="Cancel"
+        onConfirm={confirmApprove}
+        onCancel={() => setReviewToApprove(null)}
+      >
+        {reviewToApprove && (
+          <div className="space-y-1">
+            <div>
+              <strong>Description:</strong> {reviewToApprove.chargeDescription}
+            </div>
+            <div>
+              <strong>Original:</strong> {reviewToApprove.originalAmount}
+            </div>
+            <div>
+              <strong>Amount Paid:</strong>{' '}
+              {reviewToApprove.amountPaid ?? reviewToApprove.amount}
+            </div>
+          </div>
+        )}
+      </ConfirmDialog>
     </div>
   );
 }
