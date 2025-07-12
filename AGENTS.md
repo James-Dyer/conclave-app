@@ -76,5 +76,6 @@ Several React components in `frontend/src/components` provide shared functionali
 - **FilterMenu** – Checkbox lists for filtering by status and tags. Accepts options and change handlers for each.
 - **SearchBar** – Generic text input used for searching tables.
 - **DataTable** – Basic table renderer configured via column definitions, data rows and an optional actions render function.
+- **NotificationContainer / NotificationContext** – Global toast system for temporary messages. Call `addNotification` to display a message; the container renders them stacked in the corner.
 
 These keep common UI logic centralized so pages like `MembersList` and `ChargesList` stay concise.
