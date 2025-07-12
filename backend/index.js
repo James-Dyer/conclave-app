@@ -419,10 +419,10 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
     .not('status', 'in', "('Paid','Deleted by Admin')")
     .order('due_date', { ascending: true });
   if (chErr) {
-    console.error('❌ Error fetching charges:', chErr);
+    console.error('Error fetching charges:', chErr);
     return res.status(500).json({ error: chErr.message });
   }
-  console.log('📋 Outstanding charges:', charges);
+  console.log('Outstanding charges:', charges);
 
   // Allocate
   for (const c of charges) {
@@ -450,7 +450,7 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
       console.error(`❌ Failed to update charge ${c.id}:`, updErr);
       return res.status(500).json({ error: updErr.message });
     }
-    console.log(`✅ Charge ${c.id} updated to`, upd);
+    console.log(`Charge ${c.id} updated to`, upd);
   }
 
   // Mark payment approved
@@ -460,7 +460,7 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
     .eq('id', paymentId)
     .select();
   if (updPayErr) {
-    console.error('❌ Failed to update payment status:', updPayErr);
+    console.error('Failed to update payment status:', updPayErr);
     return res.status(500).json({ error: updPayErr.message });
   }
 
