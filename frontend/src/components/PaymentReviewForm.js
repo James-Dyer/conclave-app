@@ -18,7 +18,11 @@ export default function PaymentReviewForm({
   const { addNotification } = useNotifications();
 
   useEffect(() => {
-    setAmountPaid(charge && charge.id ? charge.amount : '');
+    if (charge && (charge.id || charge.amount)) {
+      setAmountPaid(charge.amount);
+    } else {
+      setAmountPaid('');
+    }
   }, [charge]);
 
   const handleSubmit = async (e) => {

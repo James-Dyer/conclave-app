@@ -103,8 +103,8 @@ test('dashboard review button opens form with charge data', async () => {
     </AuthProvider>
   );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
-  const reviewButtons = await screen.findAllByRole('button', { name: /mark as paid/i });
-  await userEvent.click(reviewButtons[0]);
+  const reviewButton = await screen.findByRole('button', { name: /mark as paid/i });
+  await userEvent.click(reviewButton);
   const heading = await screen.findByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();
   expect(screen.getByText(/description:/i)).toBeInTheDocument();
@@ -134,9 +134,7 @@ test('dashboard details button opens details page then review form', async () =>
   await userEvent.click(detailButtons[0]);
   const detailHeading = await screen.findByRole('heading', { name: /charge details/i });
   expect(detailHeading).toBeInTheDocument();
-  const requestBtn = await screen.findByRole('button', { name: /mark as paid/i });
-  await userEvent.click(requestBtn);
-  expect(await screen.findByRole('heading', { name: /payment review/i })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /mark as paid/i })).not.toBeInTheDocument();
 });
 
 test('charge details back button returns to dashboard', async () => {

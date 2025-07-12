@@ -45,3 +45,14 @@ test('failed submit shows error message', async () => {
   await userEvent.click(screen.getByRole('button', { name: /submit/i }));
   expect(await screen.findByText('Bad request')).toBeInTheDocument();
 });
+
+test('prefills amount for lump sum payment', () => {
+  setupLocalStorage();
+  render(
+    <AuthProvider>
+      <PaymentReviewForm charge={{ amount: 250 }} />
+    </AuthProvider>
+  );
+  const input = screen.getByLabelText(/amount paid/i);
+  expect(input).toHaveValue(250);
+});

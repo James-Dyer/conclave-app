@@ -19,16 +19,46 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 4px;
+  gap: 8px;
 }
 
-.balance-amount {
-  font-size: 2.5rem;
+.balance-summary {
+  display: flex;
+  gap: 8px;
+}
+
+.balance-card {
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-width: 110px;
+}
+
+.balance-card .amount {
+  font-size: 1.8rem;
   font-weight: bold;
 }
 
-.balance-text {
-  font-size: 1.1rem;
+.balance-card .label {
+  font-size: 0.9rem;
+}
+
+.balance-card.total {
+  background-color: #e0e0e0;
+}
+
+.balance-card.overdue {
+  background-color: #ffe6e6;
+  color: #b30000;
+}
+
+.balance-card.due-soon {
+  background-color: #fff5e6;
+  color: #e65100;
+}
+
+.balance-card.upcoming {
+  background-color: #e6f2ff;
+  color: #1a73e8;
 }
 
 .dashboard-review-button {

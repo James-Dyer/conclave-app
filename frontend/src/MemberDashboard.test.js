@@ -46,23 +46,11 @@ test('renders dashboard sections', async () => {
     name: /recent payments/i
   });
   expect(paymentsHeading).toBeInTheDocument();
-  const amount = screen.getByText('$200');
-  expect(amount).toBeInTheDocument();
-  const instructions = screen.getByText(
-    /please send payment to the chapter zelle/i
-  );
-  expect(instructions).toBeInTheDocument();
+  const total = screen.getByTestId('total-balance');
+  expect(total).toHaveTextContent('$200');
+  expect(screen.getByTestId('overdue-balance')).toHaveTextContent('$200');
 });
 
-test('shows review payment button for charges', async () => {
-  render(
-    <AuthProvider>
-      <MemberDashboard />
-    </AuthProvider>
-  );
-  const reviewButtons = await screen.findAllByRole('button', { name: /mark as paid/i });
-  expect(reviewButtons.length).toBeGreaterThan(0);
-});
 
 test('shows details button for charges', async () => {
   render(
@@ -81,7 +69,7 @@ test('dashboard payment review button triggers callback', async () => {
       <MemberDashboard onRequestReview={onRequestReview} />
     </AuthProvider>
   );
-  await screen.findByText('$200');
+  await screen.findByTestId('total-balance');
   const button = screen.getByTestId('dashboard-review-button');
   await userEvent.click(button);
   expect(onRequestReview).toHaveBeenCalled();
