@@ -211,6 +211,15 @@ app.post('/api/review', auth, (req, res) => {
   if (chargeId) {
     const charge = charges.find((c) => c.id === Number(chargeId));
     if (charge) charge.status = 'Under Review';
+    if (process.env.NODE_ENV !== 'test') {
+      supabase
+        .from('charges')
+        .update({ status: 'Under Review' })
+        .eq('id', chargeId)
+        .then(({ error }) => {
+          if (error) console.error('Supabase update failed', error.message);
+        });
+    }
   }
   res.json({ success: true });
 });

@@ -48,7 +48,7 @@ export default function PaymentReviewForm({
       setAmountPaid('');
       setPaymentDate('');
       addNotification('Your payment review has been submitted successfully.');
-      if (onSubmitted && charge && charge.id) onSubmitted(charge.id);
+      if (onSubmitted) onSubmitted(charge?.id);
       if (onBack) onBack();
     } catch (err) {
       setError(err.message);

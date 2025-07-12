@@ -38,8 +38,10 @@ function App() {
     setCurrentPage('review');
   };
 
-  const markPendingReview = (id) =>
+  const markPendingReview = (id) => {
+    if (!id) return;
     setPendingReviewIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
+  };
   const showChargeDetails = (charge) => {
     if (charge) {
       setDetailsCharge(charge);
