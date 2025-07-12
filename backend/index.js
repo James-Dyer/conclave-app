@@ -401,60 +401,73 @@ app.delete('/api/admin/charges/:id', auth, adminOnly, async (req, res) => {
 app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) => {
   const paymentId = Number(req.params.id);
 
-  // 1) Load the payment to get amount + member_id
+  // Load the payment
   const { data: [payment], error: payErr } = await supabase
     .from('payments')
     .select('*')
     .eq('id', paymentId);
   if (payErr || !payment) return res.status(404).json({ error: 'Payment not found' });
+  console.log('👉 Approving payment:', payment);
 
   let remaining = Number(payment.amount);
 
-  // 2) Fetch all outstanding charges for that member, oldest first
+  // Fetch outstanding charges
   const { data: charges, error: chErr } = await supabase
     .from('charges')
     .select('*')
     .eq('member_id', payment.member_id)
     .not('status', 'in', "('Paid','Deleted by Admin')")
     .order('due_date', { ascending: true });
-  if (chErr) return res.status(500).json({ error: chErr.message });
+  if (chErr) {
+    console.error('❌ Error fetching charges:', chErr);
+    return res.status(500).json({ error: chErr.message });
+  }
+  console.log('📋 Outstanding charges:', charges);
 
-  // 3) Iterate and apply payment
+  // Allocate
   for (const c of charges) {
-    const alreadyPaid = Number(c.partial_amount_paid || 0);
-    const stillDue   = Number(c.amount) - alreadyPaid;
+    const paidSoFar = Number(c.partial_amount_paid || 0);
+    const due       = Number(c.amount) - paidSoFar;
+    console.log(`— charge ${c.id}: due ${due}, remaining ${remaining}`);
 
-    if (remaining >= stillDue) {
-      // Fully cover this charge
-      await supabase
-        .from('charges')
-        .update({ status: 'Paid', partial_amount_paid: 0 })
-        .eq('id', c.id);
-      remaining -= stillDue;
+    let upd;
+    if (remaining >= due) {
+      upd = { status: 'Paid', partial_amount_paid: 0 };
+      remaining -= due;
     } else if (remaining > 0) {
-      // Partially cover this charge
-      await supabase
-        .from('charges')
-        .update({
-          status: 'Partially Paid',
-          partial_amount_paid: alreadyPaid + remaining
-        })
-        .eq('id', c.id);
+      upd = { status: 'Partially Paid', partial_amount_paid: paidSoFar + remaining };
       remaining = 0;
+    } else {
+      break;
     }
-    if (remaining <= 0) break;
+
+    const { error: updErr } = await supabase
+      .from('charges')
+      .update(upd)
+      .eq('id', c.id);
+
+    if (updErr) {
+      console.error(`❌ Failed to update charge ${c.id}:`, updErr);
+      return res.status(500).json({ error: updErr.message });
+    }
+    console.log(`✅ Charge ${c.id} updated to`, upd);
   }
 
-  // 4) Finally, mark the payment approved + record admin
-  const { data: updated, error: updErr } = await supabase
+  // Mark payment approved
+  const { data: updated, error: updPayErr } = await supabase
     .from('payments')
     .update({ status: 'Approved', admin_id: req.memberId })
     .eq('id', paymentId)
     .select();
-  if (updErr) return res.status(500).json({ error: updErr.message });
+  if (updPayErr) {
+    console.error('❌ Failed to update payment status:', updPayErr);
+    return res.status(500).json({ error: updPayErr.message });
+  }
 
+  console.log('🎉 Payment approved:', updated[0]);
   res.json({ success: true, payment: updated[0] });
 });
+
 
 app.post('/api/admin/payments/:id/deny', auth, adminOnly, async (req, res) => {
   const id = Number(req.params.id);
