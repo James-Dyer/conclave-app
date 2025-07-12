@@ -52,17 +52,9 @@ test('renders dashboard sections', async () => {
     /please send payment to the chapter zelle/i
   );
   expect(instructions).toBeInTheDocument();
+  expect(screen.getByText(/overdue balance: \$200/i)).toBeInTheDocument();
 });
 
-test('shows review payment button for charges', async () => {
-  render(
-    <AuthProvider>
-      <MemberDashboard />
-    </AuthProvider>
-  );
-  const reviewButtons = await screen.findAllByRole('button', { name: /mark as paid/i });
-  expect(reviewButtons.length).toBeGreaterThan(0);
-});
 
 test('shows details button for charges', async () => {
   render(

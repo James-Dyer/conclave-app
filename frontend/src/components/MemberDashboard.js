@@ -49,8 +49,28 @@ export default function MemberDashboard({
     return <div>Loading…</div>;
   }
 
-  const totalBalance = chargeData
-    .filter((c) => c.status !== 'Paid')
+  const unpaidCharges = chargeData.filter((c) => c.status !== 'Paid');
+  const totalBalance = unpaidCharges.reduce(
+    (sum, c) => sum + Number(c.amount || 0),
+    0
+  );
+  const today = new Date();
+  const overdueBalance = unpaidCharges
+    .filter((c) => new Date(c.dueDate) < today)
+    .reduce((sum, c) => sum + Number(c.amount || 0), 0);
+  const dueSoonBalance = unpaidCharges
+    .filter((c) => {
+      const due = new Date(c.dueDate);
+      const diff = (due - today) / (1000 * 60 * 60 * 24);
+      return diff >= 0 && diff <= 7;
+    })
+    .reduce((sum, c) => sum + Number(c.amount || 0), 0);
+  const upcomingBalance = unpaidCharges
+    .filter((c) => {
+      const due = new Date(c.dueDate);
+      const diff = (due - today) / (1000 * 60 * 60 * 24);
+      return diff > 7;
+    })
     .reduce((sum, c) => sum + Number(c.amount || 0), 0);
 
   return (
@@ -63,11 +83,17 @@ export default function MemberDashboard({
           Total balance due. Please send payment to the chapter Zelle and submit
           a payment review when complete.
         </div>
+        <div className="balance-breakdown">
+          <div>{`Overdue Balance: $${overdueBalance}`}</div>
+          <div>{`Due Soon (≤7 days): $${dueSoonBalance}`}</div>
+          <div>{`Upcoming (>7 days): $${upcomingBalance}`}</div>
+        </div>
         <button
           type="button"
           className="dashboard-review-button"
           data-testid="dashboard-review-button"
-          onClick={() => onRequestReview()}
+          disabled={totalBalance === 0}
+          onClick={() => onRequestReview({ amount: totalBalance })}
         >
           Mark as Paid
         </button>
@@ -77,7 +103,6 @@ export default function MemberDashboard({
         <h2>Outstanding Charges</h2>
         <ChargeList
           charges={chargeData}
-          onRequestReview={onRequestReview}
           onViewDetails={onViewDetails}
           pendingReviewIds={pendingReviewIds}
         />

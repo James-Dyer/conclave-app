@@ -38,15 +38,6 @@ export default function ChargeDetails({ charge, onRequestReview, onBack }) {
       </table>
 
       <div className="charge-actions">
-        {onRequestReview && (
-          <button
-            type="button"
-            className="request-review-button"
-            onClick={() => onRequestReview(displayCharge)}
-          >
-            Mark as Paid
-          </button>
-        )}
         {onBack && (
           <button type="button" onClick={onBack} className="back-button">
             Back
