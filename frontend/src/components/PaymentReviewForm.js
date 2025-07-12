@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import '../styles/PaymentReviewForm.css';
 import useApi from '../apiClient';
+import { useNotifications } from '../NotificationContext';
 
 const sampleCharge = { id: 1, amount: '$200' };
 
@@ -10,6 +11,7 @@ export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const api = useApi();
+  const { addNotification } = useNotifications();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +26,8 @@ export default function PaymentReviewForm({ charge = sampleCharge, onBack }) {
       setMessage('Review request submitted');
       setMemo('');
       setAmountPaid('');
+      addNotification('Review submitted successfully');
+      if (onBack) onBack();
     } catch (err) {
       setError(err.message);
     }
