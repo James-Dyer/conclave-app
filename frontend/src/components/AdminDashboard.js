@@ -6,6 +6,7 @@ import '../styles/AdminDashboard.css';
 export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   const api = useApi();
   const [reviews, setReviews] = useState([]);
+  const [members, setMembers] = useState({});
   const [error, setError] = useState('');
   const [reviewToApprove, setReviewToApprove] = useState(null);
   const [reviewToDeny, setReviewToDeny] = useState(null);
@@ -14,8 +15,16 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   useEffect(() => {
     async function load() {
       try {
-        const r = await api.fetchPendingPayments();
+        const [r, m] = await Promise.all([
+          api.fetchPendingPayments(),
+          api.fetchMembers()
+        ]);
         setReviews(r || []);
+        const map = {};
+        (m || []).forEach((mem) => {
+          map[mem.id] = mem.name;
+        });
+        setMembers(map);
       } catch (e) {
         setError(e.message);
       }
@@ -68,18 +77,20 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Charge Description</th>
-              <th>Original Amount</th>
+              <th>Member</th>
               <th>Amount Paid</th>
+              <th>Payment Date</th>
+              <th>Memo</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {reviews.map((r) => (
               <tr key={r.id}>
-                <td>{r.chargeDescription}</td>
-                <td>{r.originalAmount}</td>
+                <td>{members[r.memberId] || r.memberId}</td>
                 <td>{r.amountPaid ?? r.amount}</td>
+                <td>{new Date(r.date).toLocaleDateString()}</td>
+                <td>{r.memo || '-'}</td>
                 <td className="flex space-x-2">
                   <button onClick={() => openApproveDialog(r)}>Approve</button>
                   <button onClick={() => openDenyDialog(r)}>Reject</button>
@@ -100,14 +111,16 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
         {reviewToApprove && (
           <div className="space-y-1">
             <div>
-              <strong>Description:</strong> {reviewToApprove.chargeDescription}
+              <strong>Member:</strong> {members[reviewToApprove.memberId] || reviewToApprove.memberId}
             </div>
             <div>
-              <strong>Original:</strong> {reviewToApprove.originalAmount}
+              <strong>Amount Paid:</strong> {reviewToApprove.amountPaid ?? reviewToApprove.amount}
             </div>
             <div>
-              <strong>Amount Paid:</strong>{' '}
-              {reviewToApprove.amountPaid ?? reviewToApprove.amount}
+              <strong>Payment Date:</strong> {new Date(reviewToApprove.date).toLocaleDateString()}
+            </div>
+            <div>
+              <strong>Memo:</strong> {reviewToApprove.memo || '-'}
             </div>
           </div>
         )}
@@ -126,13 +139,16 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
         {reviewToDeny && (
           <div className="space-y-1">
             <div>
-              <strong>Description:</strong> {reviewToDeny.chargeDescription}
-            </div>
-            <div>
-              <strong>Original:</strong> {reviewToDeny.originalAmount}
+              <strong>Member:</strong> {members[reviewToDeny.memberId] || reviewToDeny.memberId}
             </div>
             <div>
               <strong>Amount Paid:</strong> {reviewToDeny.amountPaid ?? reviewToDeny.amount}
+            </div>
+            <div>
+              <strong>Payment Date:</strong> {new Date(reviewToDeny.date).toLocaleDateString()}
+            </div>
+            <div>
+              <strong>Memo:</strong> {reviewToDeny.memo || '-'}
             </div>
           </div>
         )}
@@ -140,3 +156,4 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
     </div>
   );
 }
+

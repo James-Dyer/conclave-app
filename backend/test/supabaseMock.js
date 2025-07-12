@@ -70,6 +70,16 @@ function from(name) {
           data = data.filter((r) => r[col] === val);
           return q;
         },
+        in(col, vals) {
+          const arr = Array.isArray(vals)
+            ? vals.map((v) => String(v))
+            : String(vals)
+                .replace(/[()']/g, '')
+                .split(',')
+                .map((v) => v.trim());
+          data = data.filter((r) => arr.includes(String(r[col])));
+          return q;
+        },
         not(col, op, val) {
           if (op === 'in') {
             const arr = val
