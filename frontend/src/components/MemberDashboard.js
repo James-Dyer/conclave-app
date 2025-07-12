@@ -4,6 +4,7 @@ import PaymentList from './PaymentList';
 import '../styles/MemberDashboard.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
+import { getBalanceBreakdown } from '../balanceUtils';
 
 export default function MemberDashboard({
   onRequestReview = () => {},
@@ -49,44 +50,48 @@ export default function MemberDashboard({
     return <div>Loading…</div>;
   }
 
-  const unpaidCharges = chargeData.filter((c) => c.status !== 'Paid');
-  const totalBalance = unpaidCharges.reduce(
-    (sum, c) => sum + Number(c.amount || 0),
-    0
-  );
-  const today = new Date();
-  const overdueBalance = unpaidCharges
-    .filter((c) => new Date(c.dueDate) < today)
-    .reduce((sum, c) => sum + Number(c.amount || 0), 0);
-  const dueSoonBalance = unpaidCharges
-    .filter((c) => {
-      const due = new Date(c.dueDate);
-      const diff = (due - today) / (1000 * 60 * 60 * 24);
-      return diff >= 0 && diff <= 7;
-    })
-    .reduce((sum, c) => sum + Number(c.amount || 0), 0);
-  const upcomingBalance = unpaidCharges
-    .filter((c) => {
-      const due = new Date(c.dueDate);
-      const diff = (due - today) / (1000 * 60 * 60 * 24);
-      return diff > 7;
-    })
-    .reduce((sum, c) => sum + Number(c.amount || 0), 0);
+  const breakdown = getBalanceBreakdown(chargeData);
+  const {
+    totalBalance,
+    overdueBalance,
+    dueSoonBalance,
+    upcomingBalance
+  } = breakdown;
 
   return (
     <div className="member-dashboard">
       <h1>Dashboard</h1>
 
       <div className="balance-info" data-testid="balance-info">
-        <div className="balance-amount">{`$${totalBalance}`}</div>
-        <div className="balance-text">
-          Total balance due. Please send payment to the chapter Zelle and submit
-          a payment review when complete.
-        </div>
-        <div className="balance-breakdown">
-          <div>{`Overdue Balance: $${overdueBalance}`}</div>
-          <div>{`Due Soon (≤7 days): $${dueSoonBalance}`}</div>
-          <div>{`Upcoming (>7 days): $${upcomingBalance}`}</div>
+        <div className="balance-summary">
+          <div
+            className="balance-card total"
+            data-testid="total-balance"
+          >
+            <div className="amount">{`$${totalBalance}`}</div>
+            <div className="label">Total Balance Due</div>
+          </div>
+          <div
+            className="balance-card overdue"
+            data-testid="overdue-balance"
+          >
+            <div className="amount">{`$${overdueBalance}`}</div>
+            <div className="label">Overdue</div>
+          </div>
+          <div
+            className="balance-card due-soon"
+            data-testid="due-soon-balance"
+          >
+            <div className="amount">{`$${dueSoonBalance}`}</div>
+            <div className="label">Due Soon (≤7d)</div>
+          </div>
+          <div
+            className="balance-card upcoming"
+            data-testid="upcoming-balance"
+          >
+            <div className="amount">{`$${upcomingBalance}`}</div>
+            <div className="label">Upcoming</div>
+          </div>
         </div>
         <button
           type="button"
