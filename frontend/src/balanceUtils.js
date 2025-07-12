@@ -9,10 +9,6 @@ export function getBalanceBreakdown(charges, today = new Date()) {
     Number(c.amount || 0) - Number(c.partialAmountPaid || 0);
 
   // 3) Totals
-  console.log('frontend balanceUtils.js: unpaid charges:', unpaid.map(c => ({
-    id: c.id, status: c.status, remaining: remaining(c)
-  })));
-
   const totalBalance = unpaid.reduce((sum, c) => sum + remaining(c), 0);
 
   const overdueBalance = unpaid
