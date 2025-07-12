@@ -8,6 +8,8 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState('');
   const [reviewToApprove, setReviewToApprove] = useState(null);
+  const [reviewToDeny, setReviewToDeny] = useState(null);
+  const [denyNote, setDenyNote] = useState('');
 
   useEffect(() => {
     async function load() {
@@ -32,11 +34,17 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
     setReviewToApprove(null);
   }
 
-  async function handleReject(id) {
-    const note = window.prompt('Reason for denial?');
+  function openDenyDialog(review) {
+    setReviewToDeny(review);
+    setDenyNote('');
+  }
+
+  async function confirmDeny(note) {
+    if (!reviewToDeny) return;
     if (!note) return;
-    await api.denyPayment(id, note);
-    setReviews(reviews.filter((rev) => rev.id !== id));
+    await api.denyPayment(reviewToDeny.id, note);
+    setReviews(reviews.filter((rev) => rev.id !== reviewToDeny.id));
+    setReviewToDeny(null);
   }
 
   return (
@@ -74,7 +82,7 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
                 <td>{r.amountPaid ?? r.amount}</td>
                 <td className="flex space-x-2">
                   <button onClick={() => openApproveDialog(r)}>Approve</button>
-                  <button onClick={() => handleReject(r.id)}>Reject</button>
+                  <button onClick={() => openDenyDialog(r)}>Reject</button>
                 </td>
               </tr>
             ))}
@@ -100,6 +108,31 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
             <div>
               <strong>Amount Paid:</strong>{' '}
               {reviewToApprove.amountPaid ?? reviewToApprove.amount}
+            </div>
+          </div>
+        )}
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={!!reviewToDeny}
+        title="Deny Payment"
+        confirmText="Deny"
+        cancelText="Cancel"
+        onConfirm={confirmDeny}
+        onCancel={() => setReviewToDeny(null)}
+        inputLabel="Reason for denial"
+        inputValue={denyNote}
+        onInputChange={setDenyNote}
+      >
+        {reviewToDeny && (
+          <div className="space-y-1">
+            <div>
+              <strong>Description:</strong> {reviewToDeny.chargeDescription}
+            </div>
+            <div>
+              <strong>Original:</strong> {reviewToDeny.originalAmount}
+            </div>
+            <div>
+              <strong>Amount Paid:</strong> {reviewToDeny.amountPaid ?? reviewToDeny.amount}
             </div>
           </div>
         )}

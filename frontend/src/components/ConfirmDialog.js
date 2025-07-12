@@ -8,9 +8,19 @@ export default function ConfirmDialog({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   onConfirm,
-  onCancel
+  onCancel,
+  inputLabel,
+  inputValue = '',
+  onInputChange = () => {}
 }) {
   if (!open) return null;
+  const handleConfirm = () => {
+    if (inputLabel) {
+      onConfirm(inputValue);
+    } else {
+      onConfirm();
+    }
+  };
   return (
     <div className="confirm-dialog-overlay" role="dialog" aria-modal="true">
       <div className="confirm-dialog">
@@ -25,9 +35,21 @@ export default function ConfirmDialog({
             ×
           </button>
         </header>
-        <div className="confirm-dialog-body">{children}</div>
+        <div className="confirm-dialog-body">
+          {children}
+          {inputLabel && (
+            <label className="confirm-input">
+              {inputLabel}
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => onInputChange(e.target.value)}
+              />
+            </label>
+          )}
+        </div>
         <div className="confirm-dialog-actions">
-          <button type="button" onClick={onConfirm} className="confirm-button">
+          <button type="button" onClick={handleConfirm} className="confirm-button">
             {confirmText}
           </button>
           <button type="button" onClick={onCancel} className="cancel-button">
