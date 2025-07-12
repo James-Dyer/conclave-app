@@ -80,6 +80,38 @@ This project will be maintained in its own repository (`conclave-app`) and will 
 - Conclave is accessed via a “Conclave” button, linking to `/conclave` or a subdomain like `members.chapter-domain.org` - TBD
 - Auth is required for all access to Conclave
 
+## Supabase Tables
+
+The application uses three Postgres tables managed through Supabase:
+
+- **profiles** — basic member information and permissions
+  - `id` (uuid) primary key referencing `auth.users`
+  - `email` (text)
+  - `display_name` (text)
+  - `is_admin` (boolean)
+  - `status` (text)
+  - `initiation_date` (date)
+  - `amount_owed` (numeric)
+  - `tags` (text array)
+  - `inserted_at` (timestamp with time zone)
+- **charges** — dues, fines and other amounts owed
+  - `id` (bigserial) primary key
+  - `member_id` (uuid) references `profiles.id`
+  - `status` (text)
+  - `amount` (numeric)
+  - `due_date` (date)
+  - `description` (text)
+  - `tags` (text array)
+  - `partial_amount_paid` (numeric, portion already paid)
+- **payments** — payment submissions awaiting review
+  - `id` (bigserial) primary key
+  - `member_id` (uuid) references `profiles.id`
+  - `amount` (numeric)
+  - `date` (date)
+  - `memo` (text)
+  - `status` (text)
+  - `admin_id` (uuid, approver)
+
 ## Running the App Locally
 
 1. **Start the frontend**
