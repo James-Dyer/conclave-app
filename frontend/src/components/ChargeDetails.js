@@ -44,7 +44,7 @@ export default function ChargeDetails({ charge, onRequestReview, onBack }) {
             className="request-review-button"
             onClick={() => onRequestReview(displayCharge)}
           >
-            Request Review
+            Mark as Paid
           </button>
         )}
         {onBack && (

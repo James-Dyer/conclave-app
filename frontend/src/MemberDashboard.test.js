@@ -60,7 +60,7 @@ test('shows review payment button for charges', async () => {
       <MemberDashboard />
     </AuthProvider>
   );
-  const reviewButtons = await screen.findAllByRole('button', { name: /request review/i });
+  const reviewButtons = await screen.findAllByRole('button', { name: /mark as paid/i });
   expect(reviewButtons.length).toBeGreaterThan(0);
 });
 
