@@ -1,30 +1,43 @@
 import { useState } from 'react';
 import useApi from '../apiClient';
+import ConfirmDialog from './ConfirmDialog';
+import { useNotifications } from '../NotificationContext';
 import '../styles/AddMember.css';
 
 export default function AddMember({ onCancel }) {
   const api = useApi();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { addNotification } = useNotifications();
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('Active');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setMessage('');
-    if (!email || !password || !name) {
-      setError('Email, password and name are required');
+    if (!name.trim() || !email.trim()) {
+      setError('Name and email are required');
+      return;
+    }
+    const emailRe = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    if (!emailRe.test(email)) {
+      setError('Invalid email format');
       return;
     }
     try {
-      await api.createMember({ email, password, name, isAdmin });
-      setMessage('Member created');
-      setEmail('');
-      setPassword('');
+      await api.createMember({
+        email,
+        password: 'password',
+        name,
+        status,
+        isAdmin
+      });
+      addNotification('Member added successfully.');
       setName('');
+      setEmail('');
+      setStatus('Active');
       setIsAdmin(false);
       if (onCancel) onCancel();
     } catch (err) {
@@ -32,10 +45,32 @@ export default function AddMember({ onCancel }) {
     }
   };
 
+  const handleAdminToggle = (e) => {
+    if (e.target.checked) setShowConfirm(true);
+    else setIsAdmin(false);
+  };
+
+  const confirmAdmin = () => {
+    setIsAdmin(true);
+    setShowConfirm(false);
+  };
+  const cancelAdmin = () => {
+    setIsAdmin(false);
+    setShowConfirm(false);
+  };
+
   return (
     <div className="add-member-page">
       <h1>Add Member</h1>
       <form onSubmit={handleSubmit} className="add-member-form">
+        <label>
+          Full Name
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </label>
         <label>
           Email
           <input
@@ -45,31 +80,24 @@ export default function AddMember({ onCancel }) {
           />
         </label>
         <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        <label>
-          Display Name
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          Status
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="Active">Active</option>
+            <option value="Alumni">Alumni</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Suspended">Suspended</option>
+            <option value="Expelled">Expelled</option>
+          </select>
         </label>
         <label className="checkbox">
           <input
             type="checkbox"
             checked={isAdmin}
-            onChange={(e) => setIsAdmin(e.target.checked)}
+            onChange={handleAdminToggle}
           />{' '}
           Admin
         </label>
         {error && <div className="error">{error}</div>}
-        {message && <div className="success">{message}</div>}
         <div className="form-actions">
           <button type="submit">Submit</button>
           {onCancel && (
@@ -79,6 +107,14 @@ export default function AddMember({ onCancel }) {
           )}
         </div>
       </form>
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirm Admin"
+        onConfirm={confirmAdmin}
+        onCancel={cancelAdmin}
+      >
+        <p>Grant administrative privileges to this user?</p>
+      </ConfirmDialog>
     </div>
   );
 }

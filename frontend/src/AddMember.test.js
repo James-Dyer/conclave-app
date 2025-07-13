@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AddMember from './components/AddMember';
 import { AuthProvider } from './AuthContext';
@@ -22,8 +22,22 @@ test('requires fields before submitting', async () => {
   );
   await userEvent.click(screen.getByRole('button', { name: /submit/i }));
   expect(
-    await screen.findByText(/email, password and name are required/i)
+    await screen.findByText(/name and email are required/i)
   ).toBeInTheDocument();
+});
+
+test('admin checkbox requires confirmation', async () => {
+  setupLocalStorage();
+  render(
+    <AuthProvider>
+      <AddMember />
+    </AuthProvider>
+  );
+  const box = screen.getByRole('checkbox', { name: /admin/i });
+  await userEvent.click(box);
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+  await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+  expect(box).not.toBeChecked();
 });
 
 test('successful submit calls API', async () => {
@@ -36,10 +50,8 @@ test('successful submit calls API', async () => {
       <AddMember />
     </AuthProvider>
   );
+  await userEvent.type(screen.getByLabelText(/full name/i), 'User');
   await userEvent.type(screen.getByLabelText(/email/i), 'user@test.com');
-  await userEvent.type(screen.getByLabelText(/^password/i), 'pass');
-  await userEvent.type(screen.getByLabelText(/display name/i), 'User');
   await userEvent.click(screen.getByRole('button', { name: /submit/i }));
-  await screen.findByText(/member created/i);
-  expect(global.fetch).toHaveBeenCalled();
+  await waitFor(() => expect(global.fetch).toHaveBeenCalled());
 });

@@ -20,7 +20,7 @@
 
 .add-member-form input[type="text"],
 .add-member-form input[type="email"],
-.add-member-form input[type="password"] {
+.add-member-form select {
   padding: 8px;
   font-size: 1rem;
 }
