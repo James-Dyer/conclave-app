@@ -2,7 +2,7 @@ import { useState } from 'react';
 import '../styles/LoginPage.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
-import { supabase } from '../supabaseClient';
+import { supabase, authFetch } from '../supabaseClient';
 
 export default function LoginPage({ onLogin = () => {} }) {
   const [email, setEmail] = useState('');
@@ -26,9 +26,7 @@ export default function LoginPage({ onLogin = () => {} }) {
       }
       const token = data.session.access_token;
       setToken(token);
-      const res = await fetch('/api/member', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await authFetch('/api/member');
       const member = await res.json();
       setUser(member);
       onLogin();
