@@ -80,7 +80,7 @@ export default function AdminDashboard({
       <section className="quick-links">
         <button className="quick-link" onClick={onCreateCharges}>
           Manage Charges
-          <span className="desc">Assign, update, or delete charges to members</span>
+          <span className="desc">Create, update, or delete charges for members</span>
         </button>
         <button className="quick-link" onClick={onShowMembers}>
           Manage Members
