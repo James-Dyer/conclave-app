@@ -4,11 +4,11 @@ import SearchBar from './SearchBar';
 import FilterMenu from './FilterMenu';
 import ConfirmDialog from './ConfirmDialog';
 import { useNotifications } from '../NotificationContext';
-import '../styles/CreateCharges.css';
+import '../styles/ManageCharges.css';
 
 const STATUS_OPTIONS = ['Active', 'Alumni', 'Inactive', 'Suspended', 'Expelled'];
 
-export default function CreateCharges({ onBack }) {
+export default function ManageCharges({ onBack }) {
   const api = useApi();
   const { addNotification } = useNotifications();
   const [step, setStep] = useState(1);
@@ -108,9 +108,9 @@ export default function CreateCharges({ onBack }) {
   };
 
   return (
-    <div className="create-charges-page">
+    <div className="manage-charges-page">
       <header>
-        <h1>Create Charges</h1>
+        <h1>Manage Charges</h1>
         <div className="step-indicator">Step {step} of 3</div>
       </header>
       {error && <div className="error">{error}</div>}
@@ -262,14 +262,14 @@ export default function CreateCharges({ onBack }) {
         )}
         {step === 3 && (
           <button type="button" onClick={() => setShowConfirm(true)}>
-            Confirm
+            Create Charge
           </button>
         )}
       </div>
       <ConfirmDialog
         open={showConfirm}
         title="Confirm Charges"
-        confirmText="Confirm"
+        confirmText="Create Charge"
         cancelText="Cancel"
         onConfirm={submit}
         onCancel={() => setShowConfirm(false)}

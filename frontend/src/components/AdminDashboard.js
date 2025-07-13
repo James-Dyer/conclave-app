@@ -5,7 +5,7 @@ import DataTable from './DataTable';
 import '../styles/AdminDashboard.css';
 
 export default function AdminDashboard({
-  onCreateCharges,
+  onManageCharges,
   onShowMembers,
   onShowCharges
 }) {
@@ -78,7 +78,7 @@ export default function AdminDashboard({
       </header>
       {error && <div className="error">{error}</div>}
       <section className="quick-links">
-        <button className="quick-link" onClick={onCreateCharges}>
+        <button className="quick-link" onClick={onManageCharges}>
           Manage Charges
           <span className="desc">Create, update, or delete charges for members</span>
         </button>

@@ -6,7 +6,7 @@ import MemberDashboard from './MemberDashboard';
 import AdminDashboard from './AdminDashboard';
 import MembersList from './MembersList';
 import ChargesList from './ChargesList';
-import CreateCharges from './CreateCharges';
+import ManageCharges from './ManageCharges';
 import AddMember from './AddMember';
 import PaymentReviewForm from './PaymentReviewForm';
 import ChargeDetails from './ChargeDetails';
@@ -33,7 +33,7 @@ function App() {
   const showAdmin = () => setCurrentPage('admin');
   const showMembersList = () => setCurrentPage('members');
   const showChargesList = () => setCurrentPage('charges');
-  const showCreateCharges = () => setCurrentPage('createCharges');
+  const showManageCharges = () => setCurrentPage('manageCharges');
   const showAddMember = () => setCurrentPage('addMember');
   const showReview = (charge) => {
     if (charge) {
@@ -85,14 +85,14 @@ function App() {
     case 'admin':
       pageContent = (
         <AdminDashboard
-          onCreateCharges={showCreateCharges}
+          onManageCharges={showManageCharges}
           onShowMembers={showMembersList}
           onShowCharges={showChargesList}
         />
       );
       break;
-    case 'createCharges':
-      pageContent = <CreateCharges onBack={showAdmin} />;
+    case 'manageCharges':
+      pageContent = <ManageCharges onBack={showAdmin} />;
       break;
     case 'members':
       pageContent = (
@@ -105,8 +105,8 @@ function App() {
     case 'charges':
       pageContent = <ChargesList onBack={showAdmin} />;
       break;
-    case 'createCharges':
-      pageContent = <CreateCharges onBack={showAdmin} />;
+    case 'manageCharges':
+      pageContent = <ManageCharges onBack={showAdmin} />;
       break;
     default:
       pageContent = <LoginPage onLogin={showDashboard} />;
