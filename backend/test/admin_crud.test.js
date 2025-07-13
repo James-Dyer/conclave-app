@@ -137,6 +137,14 @@ test('admin can deny a payment request', async () => {
   });
   assert.equal(reviewRes.status, 200);
 
+  // charge 5 should now be under review
+  let res = await fetch(`${baseUrl}/api/my-charges`, {
+    headers: { Authorization: `Bearer ${memberToken}` }
+  });
+  let charges = await res.json();
+  let c5 = charges.find(c => c.id === 5);
+  assert.equal(c5.status, 'Under Review');
+
   let list = await fetch(`${baseUrl}/api/payments?status=Under%20Review`, {
     headers: { Authorization: `Bearer ${adminToken}` }
   });
@@ -157,4 +165,13 @@ test('admin can deny a payment request', async () => {
   });
   const remaining = await after.json();
   assert.ok(!remaining.some(r => r.id === revId));
+
+  // charge should revert
+  res = await fetch(`${baseUrl}/api/my-charges`, {
+    headers: { Authorization: `Bearer ${memberToken}` }
+  });
+  charges = await res.json();
+  c5 = charges.find(c => c.id === 5);
+  assert.equal(c5.status, 'Delinquent');
+  assert.equal(c5.partialAmountPaid, 0);
 });
