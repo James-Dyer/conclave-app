@@ -96,7 +96,7 @@ function App() {
       pageContent = <MembersList onBack={showAdmin} />;
       break;
     case 'charges':
-      pageContent = <ChargesList />;
+      pageContent = <ChargesList onBack={showAdmin} />;
       break;
     default:
       pageContent = <LoginPage onLogin={showDashboard} />;
