@@ -34,6 +34,8 @@ entire API can be exercised without a real database.
 - **two charges one payment approved** – payment larger than the first charge rolls the remainder to the next charge.
 - **two charges two payments mixed** – mix of approved and denied payments affects charge statuses accordingly.
 - **two charges three payments complex** – complex sequence of approvals and denials covering edge scenarios.
+- **three charges two payments sequential approvals** – multi-charge flow exercising leftover allocation.
+- **three charges four payments complex mix** – mixture of approvals and denials across several payments.
 
 Run all tests with:
 

@@ -234,3 +234,78 @@ test('two charges three payments complex', async () => {
   assert.equal(pay2.status, 'Approved');
   assert.equal(pay3.status, 'Approved');
 });
+
+// three charges two payments, remainder rolls forward
+
+test('three charges two payments sequential approvals', async () => {
+  await clearCharges();
+  await createCharge(20, '2025-01-01');
+  await createCharge(30, '2025-02-01');
+  await createCharge(40, '2025-03-01');
+
+  const p1 = await submitPayment(60); // fully pays c1/c2, partial c3
+  await approvePayment(p1);
+
+  let charges = await listCharges();
+  let c1 = charges.find(c => c.amount === 20);
+  let c2 = charges.find(c => c.amount === 30);
+  let c3 = charges.find(c => c.amount === 40);
+  assert.equal(c1.status, 'Paid');
+  assert.equal(c2.status, 'Paid');
+  assert.equal(c3.status, 'Partially Paid');
+  assert.equal(c3.partialAmountPaid, 10);
+
+  const p2 = await submitPayment(30); // pay rest of c3
+  await approvePayment(p2);
+  charges = await listCharges();
+  c1 = charges.find(c => c.amount === 20);
+  c2 = charges.find(c => c.amount === 30);
+  c3 = charges.find(c => c.amount === 40);
+  assert.equal(c1.status, 'Paid');
+  assert.equal(c2.status, 'Paid');
+  assert.equal(c3.status, 'Paid');
+  assert.equal(c3.partialAmountPaid, 0);
+});
+
+// three charges multiple payments with mix of approvals and denials
+
+test('three charges four payments complex mix', async () => {
+  await clearCharges();
+  await createCharge(30, '2025-01-01');
+  await createCharge(40, '2025-02-01');
+  await createCharge(50, '2025-03-01');
+
+  const p1 = await submitPayment(20); // toward charge1
+  const p2 = await submitPayment(70); // charge2 + part of charge3
+  await approvePayment(p2);           // approve second payment first
+  await denyPayment(p1, 'bad');       // deny first payment
+
+  let charges = await listCharges();
+  let c1 = charges.find(c => c.amount === 30);
+  let c2 = charges.find(c => c.amount === 40);
+  let c3 = charges.find(c => c.amount === 50);
+  assert.equal(c1.status, 'Outstanding');
+  assert.equal(c2.status, 'Paid');
+  assert.equal(c3.status, 'Partially Paid');
+  assert.equal(c3.partialAmountPaid, 30);
+
+  const p3 = await submitPayment(45); // c1 + partial c3
+  await approvePayment(p3);
+
+  charges = await listCharges();
+  c1 = charges.find(c => c.amount === 30);
+  c2 = charges.find(c => c.amount === 40);
+  c3 = charges.find(c => c.amount === 50);
+  assert.equal(c1.status, 'Paid');
+  assert.equal(c2.status, 'Paid');
+  assert.equal(c3.status, 'Partially Paid');
+  assert.equal(c3.partialAmountPaid, 45);
+
+  const p4 = await submitPayment(5);  // finish c3
+  await approvePayment(p4);
+
+  charges = await listCharges();
+  c3 = charges.find(c => c.amount === 50);
+  assert.equal(c3.status, 'Paid');
+  assert.equal(c3.partialAmountPaid, 0);
+});
