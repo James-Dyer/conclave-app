@@ -67,6 +67,22 @@ Conclave stores its data in three core tables:
   - `admin_id` uuid of approving admin
   - `admin_note` text reason when payment denied
 
+## Supabase Clients
+
+The backend exposes two Supabase client instances:
+
+- **`supabase`** – defined in `backend/db.js` using the anon public key. It is
+  used for all regular queries against tables like `profiles`, `charges` and
+  `payments`.
+- **`supabaseAdmin`** – defined in `backend/adminClient.js` using the service
+  role key when available. This client has elevated privileges and is only used
+  for privileged actions such as verifying JWTs with
+  `supabaseAdmin.auth.getUser()` and calling the `create_user_with_profile`
+  function during admin member creation.
+
+In general, use `supabase` for standard CRUD operations and reach for
+`supabaseAdmin` only when a service role is required.
+
 ## Reusable Frontend Components
 
 Several React components in `frontend/src/components` provide shared functionality used across the application:
