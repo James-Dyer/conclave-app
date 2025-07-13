@@ -96,9 +96,6 @@ function App() {
     case 'addMember':
       pageContent = <AddMember onCancel={showMembersList} />;
       break;
-    case 'manageCharges':
-      pageContent = <ManageChargesPage onBack={showAdmin} />;
-      break;
     default:
       pageContent = <LoginPage onLogin={showDashboard} />;
   }
