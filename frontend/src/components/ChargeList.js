@@ -28,8 +28,7 @@ export default function ChargeList({
   const rows = visible.map((charge) => {
     const pending = pendingReviewIds.includes(charge.id);
     const effectiveStatus = pending ? 'Under Review' : charge.status;
-    const statusDisplay =
-      effectiveStatus === 'Outstanding' ? 'Not Paid' : effectiveStatus;
+    const statusDisplay = effectiveStatus;
     return {
       id: charge.id,
       description: charge.description || '-',

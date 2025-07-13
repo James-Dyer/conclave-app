@@ -19,6 +19,7 @@ Conclave serves as the Lambda Delta chapter's platform for:
 - Submit a payment review request if a Zelle payment has not been recorded
   - Include memo/note with transaction details
 - Track the status of each charge: `Delinquent`, `Outstanding`, `Under Review`, or `Paid`
+  - Status names are displayed exactly as stored (e.g., unpaid charges show `Outstanding`)
 
 ### Admin Functionality
 - View and search the member directory
