@@ -10,8 +10,7 @@ export default function ChargeItem({
   pending = false,
 }) {
   const effectiveStatus = pending ? 'Under Review' : status;
-  const displayStatus =
-    effectiveStatus === 'Outstanding' ? 'Not Paid' : effectiveStatus;
+  const displayStatus = effectiveStatus;
   return (
     <tr className="charge-item">
       <td>{description || '-'}</td>

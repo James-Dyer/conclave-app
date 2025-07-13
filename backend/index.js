@@ -22,7 +22,7 @@ const JWT_SECRET = process.env.SUPABASE_JWT_SECRET || 'test-secret';
 
 // Create a new user account and profile entry using Supabase authentication
 app.post('/signup', async (req, res) => {
-  const { email, password, displayName } = req.body;
+  const { email, password, name } = req.body;
   const { data: userData, error: authErr } = await supabase.auth.signUp({
     email,
     password
@@ -31,7 +31,7 @@ app.post('/signup', async (req, res) => {
 
   const { data, error: dbErr } = await supabase
     .from('profiles')
-    .insert({ id: userData.user.id, email, display_name: displayName })
+    .insert({ id: userData.user.id, email, name })
     .select();
   if (dbErr) return res.status(500).json({ error: dbErr.message });
   const inserted = Array.isArray(data) ? data[0] : data;
@@ -126,7 +126,7 @@ app.get('/api/member', auth, async (req, res) => {
   res.json({
     id: data.id,
     email: data.email,
-    name: data.display_name,
+    name: data.name,
     isAdmin: data.is_admin
   });
 });
@@ -228,7 +228,7 @@ app.get('/api/admin/members', auth, adminOnly, async (req, res) => {
     (data || []).map((m) => ({
       id: m.id,
       email: m.email,
-      name: m.display_name,
+      name: m.name,
       isAdmin: m.is_admin,
       status: m.status,
       initiationDate: m.initiation_date,
@@ -271,6 +271,7 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
     .from('profiles')
     .update({ initiation_date: initiationDate, amount_owed: amountOwed, tags })
     .eq('id', id);
+
   if (error) return res.status(500).json({ error: error.message });
 
   res.json({ id });
@@ -291,7 +292,7 @@ app.put('/api/admin/members/:id', auth, adminOnly, async (req, res) => {
     .from('profiles')
     .update({
       email,
-      display_name: name,
+      name: name,
       is_admin: isAdmin,
       status,
       initiation_date: initiationDate,

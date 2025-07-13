@@ -230,3 +230,10 @@ test('payment approval updates member charges', async () => {
   assert.equal(c1.partialAmountPaid, 0);
   assert.equal(c3.status, 'Paid');
 });
+
+test('search members by status', async () => {
+  const res = await fetch(`${baseUrl}/api/members?search=Active`);
+  assert.equal(res.status, 200);
+  const members = await res.json();
+  assert.equal(members.length, 2);
+});

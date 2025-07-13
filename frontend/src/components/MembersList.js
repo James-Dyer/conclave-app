@@ -19,6 +19,7 @@ export default function MembersList({ onBack, onAdd }) {
   const api = useApi();
   const [members, setMembers] = useState([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('nameAsc');
   const [statusFilter, setStatusFilter] = useState([]);
@@ -26,11 +27,14 @@ export default function MembersList({ onBack, onAdd }) {
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
       try {
         const data = await api.fetchMembers(search);
         setMembers(data || []);
       } catch (e) {
         setError(e.message);
+      } finally {
+        setLoading(false);
       }
     }
     load();
@@ -63,6 +67,7 @@ export default function MembersList({ onBack, onAdd }) {
         onChangeTags={setTagFilter}
       />
       <DataTable
+        loading={loading}
         columns={[
           { header: 'Name', accessor: 'name' },
           { header: 'Email', accessor: 'email' },

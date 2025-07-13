@@ -20,6 +20,7 @@ export default function ChargesList({ onBack }) {
   const [charges, setCharges] = useState([]);
   const [members, setMembers] = useState([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('dueAsc');
   const [statusFilter, setStatusFilter] = useState([]);
@@ -27,6 +28,7 @@ export default function ChargesList({ onBack }) {
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
       try {
         const [c, m] = await Promise.all([
           api.fetchAllCharges(search),
@@ -36,6 +38,8 @@ export default function ChargesList({ onBack }) {
         setMembers(m || []);
       } catch (e) {
         setError(e.message);
+      } finally {
+        setLoading(false);
       }
     }
     load();
@@ -78,6 +82,7 @@ export default function ChargesList({ onBack }) {
         onChangeTags={setTagFilter}
       />
       <DataTable
+        loading={loading}
         columns={[
           { header: 'Member', accessor: 'memberName' },
           { header: 'Description', accessor: 'description' },
