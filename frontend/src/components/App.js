@@ -87,6 +87,7 @@ function App() {
         <AdminDashboard
           onCreateCharges={showCreateCharges}
           onShowMembers={showMembersList}
+          onShowCharges={showChargesList}
         />
       );
       break;
