@@ -4,7 +4,6 @@ import '../styles/AdminDashboard.css';
 
 export default function CreateCharges({ onBack }) {
   const [showForm, setShowForm] = useState(false);
-
   return (
     <div className="admin-dashboard">
       <header className="admin-dash-header">

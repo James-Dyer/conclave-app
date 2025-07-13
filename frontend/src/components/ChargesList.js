@@ -15,7 +15,7 @@ const SORT_OPTIONS = [
   { label: 'Amount ↓', value: 'amountDesc' }
 ];
 
-export default function ChargesList() {
+export default function ChargesList({ onBack }) {
   const api = useApi();
   const [charges, setCharges] = useState([]);
   const [members, setMembers] = useState([]);
@@ -60,6 +60,9 @@ export default function ChargesList() {
     <div className="admin-dashboard">
       <header className="admin-dash-header">
         <h1>Charge List</h1>
+        {onBack && (
+          <button onClick={onBack} className="back-button">Back</button>
+        )}
       </header>
       {error && <div className="error">{error}</div>}
       <div className="control-bar">

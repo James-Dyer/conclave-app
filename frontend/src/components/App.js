@@ -83,16 +83,20 @@ function App() {
     case 'admin':
       pageContent = (
         <AdminDashboard
+          onCreateCharges={showCreateCharges}
           onShowMembers={showMembersList}
           onShowCharges={showCreateCharges}
         />
       );
       break;
+    case 'createCharges':
+      pageContent = <CreateCharges onBack={showAdmin} />;
+      break;
     case 'members':
       pageContent = <MembersList onBack={showAdmin} />;
       break;
     case 'charges':
-      pageContent = <ChargesList />;
+      pageContent = <ChargesList onBack={showAdmin} />;
       break;
     case 'createCharges':
       pageContent = <CreateCharges onBack={showAdmin} />;

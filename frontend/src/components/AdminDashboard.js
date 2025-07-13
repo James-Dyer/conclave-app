@@ -3,7 +3,11 @@ import useApi from '../apiClient';
 import ConfirmDialog from './ConfirmDialog';
 import '../styles/AdminDashboard.css';
 
-export default function AdminDashboard({ onShowMembers, onShowCharges }) {
+export default function AdminDashboard({
+  onCreateCharges,
+  onShowMembers,
+  onShowCharges
+}) {
   const api = useApi();
   const [reviews, setReviews] = useState([]);
   const [members, setMembers] = useState({});
@@ -69,8 +73,12 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
       </header>
       {error && <div className="error">{error}</div>}
       <section className="quick-links">
+        <button className="quick-link" onClick={onCreateCharges}>
+          Manage Charges
+          <span className="desc">Assign, update, or delete charges to members</span>
+        </button>
         <button className="quick-link" onClick={onShowMembers}>
-          Members
+          Manage Members
           <span className="desc">Browse and manage all member accounts</span>
         </button>
         <button className="quick-link" onClick={onShowCharges}>

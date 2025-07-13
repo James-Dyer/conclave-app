@@ -1,23 +1,15 @@
-import { useAuth } from './AuthContext';
 import { useCallback, useMemo } from 'react';
+import { authFetch } from './supabaseClient';
 
 // Use the deployed API directly without relying on an environment variable
 const API_BASE = 'https://conclave-app.onrender.com/api';
 
 export function useApi() {
-  const { token } = useAuth();
-
-  const withAuth = useCallback(
-    (headers = {}) =>
-      token ? { ...headers, Authorization: `Bearer ${token}` } : headers,
-    [token]
-  );
 
   const request = useCallback(
     async (path, options = {}, includeAuth = true) => {
-      const headers = includeAuth ? withAuth(options.headers) : options.headers;
-      const opts = { ...options, headers };
-      const res = await fetch(`${API_BASE}${path}`, opts);
+      const fetcher = includeAuth ? authFetch : fetch;
+      const res = await fetcher(`${API_BASE}${path}`, options);
       if (!res.ok) {
         const text = await res.text();
         throw new Error(text || 'API request failed');
@@ -28,7 +20,7 @@ export function useApi() {
         return null;
       }
     },
-    [withAuth]
+    []
   );
 
   return useMemo(
