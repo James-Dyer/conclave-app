@@ -7,6 +7,7 @@ import AdminDashboard from './AdminDashboard';
 import MembersList from './MembersList';
 import ChargesList from './ChargesList';
 import CreateCharges from './CreateCharges';
+import AddMember from './AddMember';
 import PaymentReviewForm from './PaymentReviewForm';
 import ChargeDetails from './ChargeDetails';
 import AppShell from './AppShell';
@@ -33,6 +34,7 @@ function App() {
   const showMembersList = () => setCurrentPage('members');
   const showChargesList = () => setCurrentPage('charges');
   const showCreateCharges = () => setCurrentPage('createCharges');
+  const showAddMember = () => setCurrentPage('addMember');
   const showReview = (charge) => {
     if (charge) {
       setReviewCharge(charge);
@@ -92,7 +94,12 @@ function App() {
       pageContent = <CreateCharges onBack={showAdmin} />;
       break;
     case 'members':
-      pageContent = <MembersList onBack={showAdmin} />;
+      pageContent = (
+        <MembersList onBack={showAdmin} onAdd={showAddMember} />
+      );
+      break;
+    case 'addMember':
+      pageContent = <AddMember onCancel={showMembersList} />;
       break;
     case 'charges':
       pageContent = <ChargesList onBack={showAdmin} />;

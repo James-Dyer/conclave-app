@@ -186,6 +186,24 @@ const supabaseAdmin = {
         return { data: { user: null }, error: err };
       }
     }
+  },
+  async rpc(fn, params) {
+    if (fn !== 'create_user_with_profile') {
+      return { data: null, error: new Error('Unknown function') };
+    }
+    const id = crypto.randomUUID();
+    profiles.push({
+      id,
+      email: params.p_email,
+      password: 'password',
+      display_name: params.p_full_name,
+      is_admin: params.p_is_admin,
+      status: params.p_status,
+      initiation_date: new Date().toISOString().slice(0, 10),
+      amount_owed: 0,
+      tags: []
+    });
+    return { data: id, error: null };
   }
 };
 
