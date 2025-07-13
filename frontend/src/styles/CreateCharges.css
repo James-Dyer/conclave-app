@@ -1,0 +1,55 @@
+.create-charges-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.step-indicator {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.charge-form {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
+  max-width: 500px;
+}
+
+.charge-form label {
+  display: contents;
+}
+
+.charge-form textarea,
+.charge-form input {
+  padding: 8px;
+  font-size: 1rem;
+}
+
+.select-assignees .filters {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.wizard-footer {
+  display: flex;
+  gap: 8px;
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding: 10px 0;
+}
+
+.summary-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+}
