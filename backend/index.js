@@ -163,6 +163,52 @@ async function isAdmin(userId) {
   return !!data.is_admin;
 }
 
+// Allocate a submitted payment across outstanding charges but mark them
+// as Under Review rather than paid. Returns array of affected charge info.
+async function allocateForReview(memberId, amount) {
+  let remaining = Number(amount);
+  const { data: charges, error } = await supabase
+    .from('charges')
+    .select('*')
+    .eq('member_id', memberId)
+    .in('status', ['Outstanding', 'Delinquent', 'Partially Paid'])
+    .order('due_date', { ascending: true });
+  if (error) throw error;
+
+  const affected = [];
+  for (const c of charges) {
+    if (remaining <= 0) break;
+    const paidSoFar = Number(c.partial_amount_paid || 0);
+    const due = Number(c.amount) - paidSoFar;
+    let newPaid = paidSoFar;
+    if (remaining >= due) {
+      newPaid += due;
+      remaining -= due;
+    } else {
+      newPaid += remaining;
+      remaining = 0;
+    }
+
+    affected.push({
+      id: c.id,
+      prev_status: c.status,
+      prev_partial_amount_paid: paidSoFar
+    });
+
+    await supabase
+      .from('charges')
+      .update({
+        status: 'Under Review',
+        partial_amount_paid: newPaid,
+        prev_status: c.status,
+        prev_partial_amount_paid: paidSoFar
+      })
+      .eq('id', c.id);
+  }
+
+  return affected;
+}
+
 // Retrieve payments. Members get their own records.
 // Admins can filter by status to view pending submissions.
 app.get('/api/payments', auth, async (req, res) => {
@@ -198,6 +244,7 @@ app.post('/api/payments', auth, async (req, res) => {
     return res.status(400).json({ error: 'Missing amount' });
   }
 
+  // record the payment first
   const { data, error } = await supabase
     .from('payments')
     .insert({
@@ -211,6 +258,20 @@ app.post('/api/payments', auth, async (req, res) => {
     .select();
   if (error) return res.status(500).json({ error: error.message });
   const inserted = Array.isArray(data) ? data[0] : data;
+
+  // apply to member charges immediately
+  try {
+    const affected = await allocateForReview(req.memberId, amount);
+    await supabase
+      .from('payments')
+      .update({ affected_charges: JSON.stringify(affected) })
+      .eq('id', inserted.id);
+    inserted.affected_charges = JSON.stringify(affected);
+  } catch (err) {
+    console.error('Failed to allocate payment:', err);
+    return res.status(500).json({ error: err.message });
+  }
+
   res.json({ success: true, payment: inserted });
 });
 
@@ -234,7 +295,12 @@ app.get('/api/admin/members', auth, adminOnly, async (req, res) => {
 
   const totals = {};
   for (const c of chargeRows || []) {
-    if (['Outstanding', 'Delinquent', 'Partially Paid'].includes(c.status)) {
+    const unpaidStatus = ['Outstanding', 'Delinquent', 'Partially Paid'].includes(c.status);
+    const underReviewUnpaid =
+      c.status === 'Under Review' &&
+      Number(c.partial_amount_paid || 0) > 0 &&
+      Number(c.partial_amount_paid || 0) < Number(c.amount);
+    if (unpaidStatus || underReviewUnpaid) {
       const due = Number(c.amount) - Number(c.partial_amount_paid || 0);
       totals[c.member_id] = (totals[c.member_id] || 0) + due;
     }
@@ -427,48 +493,23 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
   if (payErr || !payment) return res.status(404).json({ error: 'Payment not found' });
   console.log('👉 Approving payment:', payment);
 
-  let remaining = Number(payment.amount);
+  const affected = JSON.parse(payment.affected_charges || '[]');
 
-  // Fetch outstanding charges
-  const { data: charges, error: chErr } = await supabase
-    .from('charges')
-    .select('*')
-    .eq('member_id', payment.member_id)
-    .in('status', ['Outstanding','Delinquent','Partially Paid'])
-    .order('due_date', { ascending: true });
-  if (chErr) {
-    console.error('Error fetching charges:', chErr);
-    return res.status(500).json({ error: chErr.message });
-  }
-  console.log('Outstanding charges:', charges);
-
-  // Allocate
-  for (const c of charges) {
-    const paidSoFar = Number(c.partial_amount_paid || 0);
-    const due       = Number(c.amount) - paidSoFar;
-    console.log(`— charge ${c.id}: due ${due}, remaining ${remaining}`);
-
-    let upd;
-    if (remaining >= due) {
-      upd = { status: 'Paid', partial_amount_paid: 0 };
-      remaining -= due;
-    } else if (remaining > 0) {
-      upd = { status: 'Partially Paid', partial_amount_paid: paidSoFar + remaining };
-      remaining = 0;
-    } else {
-      break;
-    }
-
-    const { error: updErr } = await supabase
+  for (const info of affected) {
+    const { data: [c] } = await supabase
       .from('charges')
-      .update(upd)
-      .eq('id', c.id);
+      .select('*')
+      .eq('id', info.id);
+    if (!c) continue;
+    const upd =
+      Number(c.partial_amount_paid || 0) >= Number(c.amount)
+        ? { status: 'Paid', partial_amount_paid: 0 }
+        : { status: 'Partially Paid' };
 
-    if (updErr) {
-      console.error(`❌ Failed to update charge ${c.id}:`, updErr);
-      return res.status(500).json({ error: updErr.message });
-    }
-    console.log(`Charge ${c.id} updated to`, upd);
+    await supabase
+      .from('charges')
+      .update({ ...upd, prev_status: null, prev_partial_amount_paid: null })
+      .eq('id', c.id);
   }
 
   // Mark payment approved
@@ -491,6 +532,25 @@ app.post('/api/admin/payments/:id/deny', auth, adminOnly, async (req, res) => {
   const id = Number(req.params.id);
   const { note } = req.body || {};
   if (!note) return res.status(400).json({ error: 'Missing denial note' });
+  const { data: [payment], error: payErr } = await supabase
+    .from('payments')
+    .select('*')
+    .eq('id', id);
+  if (payErr || !payment) return res.status(404).json({ error: 'Payment not found' });
+
+  const affected = JSON.parse(payment.affected_charges || '[]');
+  for (const info of affected) {
+    await supabase
+      .from('charges')
+      .update({
+        status: info.prev_status,
+        partial_amount_paid: info.prev_partial_amount_paid,
+        prev_status: null,
+        prev_partial_amount_paid: null
+      })
+      .eq('id', info.id);
+  }
+
   const { data, error } = await supabase
     .from('payments')
     .update({ status: 'Denied', admin_id: req.memberId, admin_note: note })
