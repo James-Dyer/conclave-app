@@ -79,7 +79,9 @@ export default function AdminDashboard({
         </button>
         <button className="quick-link" onClick={onShowMembers}>
           Manage Members
-          <span className="desc">Browse and manage all member accounts</span>
+          <span className="desc">
+            Add, browse, and manage all member accounts
+          </span>
         </button>
         <button className="quick-link" onClick={onShowCharges}>
           Charges

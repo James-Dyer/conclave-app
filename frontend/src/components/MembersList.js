@@ -15,7 +15,7 @@ const SORT_OPTIONS = [
   { label: 'Amount Owed', value: 'amountDesc' }
 ];
 
-export default function MembersList({ onBack }) {
+export default function MembersList({ onBack, onAdd }) {
   const api = useApi();
   const [members, setMembers] = useState([]);
   const [error, setError] = useState('');
@@ -40,9 +40,14 @@ export default function MembersList({ onBack }) {
     <div className="admin-dashboard">
       <header className="admin-dash-header">
         <h1>Members List</h1>
-        {onBack && (
-          <button onClick={onBack} className="back-button">Back</button>
-        )}
+        <div className="action-buttons">
+          {onAdd && (
+            <button onClick={onAdd} className="add-button">Add Member</button>
+          )}
+          {onBack && (
+            <button onClick={onBack} className="back-button">Back</button>
+          )}
+        </div>
       </header>
       {error && <div className="error">{error}</div>}
       <div className="control-bar">
