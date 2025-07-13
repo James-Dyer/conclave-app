@@ -5,7 +5,6 @@ import LoginPage from './LoginPage';
 import MemberDashboard from './MemberDashboard';
 import AdminDashboard from './AdminDashboard';
 import MembersList from './MembersList';
-import ChargesList from './ChargesList';
 import ManageChargesPage from './ManageChargesPage';
 import AddMember from './AddMember';
 import PaymentReviewForm from './PaymentReviewForm';
@@ -32,7 +31,6 @@ function App() {
   };
   const showAdmin = () => setCurrentPage('admin');
   const showMembersList = () => setCurrentPage('members');
-  const showChargesList = () => setCurrentPage('charges');
   const showManageCharges = () => setCurrentPage('manageCharges');
   const showAddMember = () => setCurrentPage('addMember');
   const showReview = (charge) => {
@@ -87,7 +85,6 @@ function App() {
         <AdminDashboard
           onManageCharges={showManageCharges}
           onShowMembers={showMembersList}
-          onShowCharges={showChargesList}
         />
       );
       break;
@@ -98,9 +95,6 @@ function App() {
       break;
     case 'addMember':
       pageContent = <AddMember onCancel={showMembersList} />;
-      break;
-    case 'charges':
-      pageContent = <ChargesList onBack={showAdmin} />;
       break;
     case 'manageCharges':
       pageContent = <ManageChargesPage onBack={showAdmin} />;

@@ -5,17 +5,16 @@ This document outlines the redesign of the admin dashboard by splitting key func
 ## Quick Links Section
 
 - **Members** – "Browse and manage all member accounts"
-- **Charges** – "View and update all assigned charges"
 
 
-Each quick link will be presented as a button with a short 5–8 word description so admins can immediately navigate to the appropriate tool. The Members and Charges links open their own pages. Payment Reviews remain on the dashboard with a reserved section for future enhancements.
+Each quick link will be presented as a button with a short 5–8 word description so admins can immediately navigate to the appropriate tool. The Members link opens its own page. Payment Reviews remain on the dashboard with a reserved section for future enhancements.
 
 ## Dashboard Layout
 
 1. **Header**
    - Displays the page title and any temporary navigation controls required during development.
 2. **Quick Links**
-   - Horizontally arranged buttons for Members, Charges and Payment Reviews.
+   - Horizontally arranged buttons for Members and Payment Reviews.
    - Each button includes a concise description underneath.
 3. **Payment Reviews Section**
    - Displays a table of pending review requests.
@@ -26,10 +25,10 @@ Each quick link will be presented as a button with a short 5–8 word descriptio
 ## Navigation Strategy
 
 - The header contains temporary buttons to reach new pages during development per `AGENTS.md` guidelines.
-- Members and Charges buttons direct to the new `MembersList` and `ChargeList` pages respectively.
+- The Members button directs to the new `MembersList` page.
 - The Payment Reviews area stays on the main dashboard due to its priority status.
 
 ## Component Reuse
 
-- Shared components such as search bars or sort/filter menus should be abstracted so they can be reused on both the Members and Charges pages.
+- Shared components such as search bars or sort/filter menus should be abstracted so they can be reused across admin pages.
 
