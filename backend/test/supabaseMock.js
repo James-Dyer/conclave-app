@@ -11,7 +11,7 @@ function loadCsv(file) {
   return parse(csv, { columns: true, skip_empty_lines: true });
 }
 
-const profiles = loadCsv('profiles.csv').map((row) => ({
+let profiles = loadCsv('profiles.csv').map((row) => ({
   id: row.id,
   email: row.email,
   password: row.email === 'admin@example.com' ? 'admin' : 'password',
@@ -23,7 +23,7 @@ const profiles = loadCsv('profiles.csv').map((row) => ({
   tags: row.tags ? row.tags.replace(/[{}]/g, '').split(',').map((t) => t.trim()).filter(Boolean) : []
 }));
 
-const charges = loadCsv('charges.csv').map((row) => ({
+let charges = loadCsv('charges.csv').map((row) => ({
   id: Number(row.id),
   member_id: row.member_id,
   status: row.status,
@@ -176,6 +176,7 @@ const supabase = {
 };
 
 const supabaseAdmin = {
+  from,
   auth: {
     async getUser(token) {
       try {
@@ -210,4 +211,56 @@ const supabaseAdmin = {
   }
 };
 
-module.exports = { supabase, supabaseAdmin };
+function reset() {
+  profiles = loadCsv('profiles.csv').map((row) => ({
+    id: row.id,
+    email: row.email,
+    password: row.email === 'admin@example.com' ? 'admin' : 'password',
+    name: row.name,
+    is_admin: row.is_admin === 'true' || row.is_admin === true,
+    status: row.status,
+    initiation_date: row.initiation_date,
+    amount_owed: Number(row.amount_owed),
+    tags: row.tags
+      ? row.tags
+          .replace(/[{}]/g, '')
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : []
+  }));
+
+  charges = loadCsv('charges.csv').map((row) => ({
+    id: Number(row.id),
+    member_id: row.member_id,
+    status: row.status,
+    amount: Number(row.amount),
+    due_date: row.due_date,
+    description: row.description,
+    tags: row.tags
+      ? row.tags
+          .replace(/[{}]/g, '')
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : [],
+    partial_amount_paid: 0
+  }));
+
+  payments = [
+    {
+      id: 1,
+      member_id: profiles[0].id,
+      amount: 100,
+      date: '2024-04-15',
+      memo: 'Dues',
+      status: 'Approved',
+      admin_id: profiles[1].id,
+      admin_note: ''
+    }
+  ];
+  nextPaymentId = 2;
+  nextChargeId = Math.max(...charges.map((c) => c.id)) + 1;
+}
+
+module.exports = { supabase, supabaseAdmin, reset };
