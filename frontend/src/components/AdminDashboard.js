@@ -6,7 +6,8 @@ import '../styles/AdminDashboard.css';
 
 export default function AdminDashboard({
   onCreateCharges,
-  onShowMembers
+  onShowMembers,
+  onShowCharges
 }) {
   const api = useApi();
   const [reviews, setReviews] = useState([]);
