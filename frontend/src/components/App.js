@@ -59,6 +59,7 @@ function App() {
           onRequestReview={showReview}
           onViewDetails={showChargeDetails}
           pendingReviewIds={pendingReviewIds}
+          onShowAdmin={user?.isAdmin ? showAdmin : undefined}
         />
       );
       break;
@@ -85,6 +86,7 @@ function App() {
         <AdminDashboard
           onManageCharges={showManageCharges}
           onShowMembers={showMembersList}
+          onShowMemberDashboard={showDashboard}
         />
       );
       break;
