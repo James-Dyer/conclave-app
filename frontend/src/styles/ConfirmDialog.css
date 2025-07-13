@@ -56,3 +56,8 @@
   padding: 6px;
   font-size: 1rem;
 }
+
+.error {
+  color: red;
+  margin-top: 4px;
+}
