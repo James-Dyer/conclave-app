@@ -6,7 +6,7 @@ import MemberDashboard from './MemberDashboard';
 import AdminDashboard from './AdminDashboard';
 import MembersList from './MembersList';
 import ChargesList from './ChargesList';
-import ManageCharges from './ManageCharges';
+import ManageChargesPage from './ManageChargesPage';
 import AddMember from './AddMember';
 import PaymentReviewForm from './PaymentReviewForm';
 import ChargeDetails from './ChargeDetails';
@@ -91,9 +91,6 @@ function App() {
         />
       );
       break;
-    case 'manageCharges':
-      pageContent = <ManageCharges onBack={showAdmin} />;
-      break;
     case 'members':
       pageContent = (
         <MembersList onBack={showAdmin} onAdd={showAddMember} />
@@ -106,7 +103,7 @@ function App() {
       pageContent = <ChargesList onBack={showAdmin} />;
       break;
     case 'manageCharges':
-      pageContent = <ManageCharges onBack={showAdmin} />;
+      pageContent = <ManageChargesPage onBack={showAdmin} />;
       break;
     default:
       pageContent = <LoginPage onLogin={showDashboard} />;
