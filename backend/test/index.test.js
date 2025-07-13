@@ -237,3 +237,22 @@ test('search members by status', async () => {
   const members = await res.json();
   assert.equal(members.length, 2);
 });
+
+test('admin members endpoint returns aggregated balances', async () => {
+  const login = await fetch(`${baseUrl}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: 'admin@example.com', password: 'admin' })
+  });
+  const { token: adminToken } = await login.json();
+
+  const res = await fetch(`${baseUrl}/api/admin/members`, {
+    headers: { Authorization: `Bearer ${adminToken}` }
+  });
+  assert.equal(res.status, 200);
+  const members = await res.json();
+  const member = members.find(m => m.email === 'member@example.com');
+  const admin = members.find(m => m.email === 'admin@example.com');
+  assert.equal(member.amountOwed, 0);
+  assert.equal(admin.amountOwed, 120);
+});

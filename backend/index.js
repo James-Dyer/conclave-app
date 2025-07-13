@@ -222,17 +222,33 @@ app.post('/api/payments', auth, async (req, res) => {
 
 // Return a list of all members without exposing passwords
 app.get('/api/admin/members', auth, adminOnly, async (req, res) => {
-  const { data, error } = await supabase.from('profiles').select('*');
-  if (error) return res.status(500).json({ error: error.message });
+  const { data: profiles, error: profErr } = await supabase
+    .from('profiles')
+    .select('*');
+  if (profErr) return res.status(500).json({ error: profErr.message });
+
+  const { data: chargeRows, error: chargeErr } = await supabase
+    .from('charges')
+    .select('member_id,status,amount,partial_amount_paid');
+  if (chargeErr) return res.status(500).json({ error: chargeErr.message });
+
+  const totals = {};
+  for (const c of chargeRows || []) {
+    if (['Outstanding', 'Delinquent', 'Partially Paid'].includes(c.status)) {
+      const due = Number(c.amount) - Number(c.partial_amount_paid || 0);
+      totals[c.member_id] = (totals[c.member_id] || 0) + due;
+    }
+  }
+
   res.json(
-    (data || []).map((m) => ({
+    (profiles || []).map((m) => ({
       id: m.id,
       email: m.email,
       name: m.name,
       isAdmin: m.is_admin,
       status: m.status,
       initiationDate: m.initiation_date,
-      amountOwed: m.amount_owed,
+      amountOwed: totals[m.id] || 0,
       tags: m.tags
     }))
   );
