@@ -14,7 +14,7 @@ Run the following SQL in the Supabase SQL editor to create the required tables. 
 create table if not exists profiles (
   id uuid references auth.users not null primary key,
   email text not null,
-  display_name text,
+  name text,
   is_admin boolean default false,
   status text default 'Active',
   initiation_date date,

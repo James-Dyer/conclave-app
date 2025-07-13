@@ -87,7 +87,7 @@ The application uses three Postgres tables managed through Supabase:
 - **profiles** — basic member information and permissions
   - `id` (uuid) primary key referencing `auth.users`
   - `email` (text)
-  - `display_name` (text)
+  - `name` (text)
   - `is_admin` (boolean)
   - `status` (text)
   - `initiation_date` (date)

@@ -41,7 +41,7 @@ Conclave stores its data in three core tables:
 - **profiles** – member information and permissions
   - `id` uuid primary key referencing `auth.users`
   - `email`
-  - `display_name`
+  - `name`
   - `is_admin` boolean flag
   - `status`
   - `initiation_date`
