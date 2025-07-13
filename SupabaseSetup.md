@@ -54,3 +54,36 @@ editor using the **Import Data** option.
 3. Deploy the backend to Render as a web service pointing to `backend/index.js`.
 
 The `/signup` endpoint in `index.js` demonstrates how to create a user with Supabase auth and store additional info in the `profiles` table.
+
+## 4. create_user_with_profile function
+
+New members are created through a Postgres function executed with the service role key. Define it in the SQL editor:
+
+```sql
+create or replace function public.create_user_with_profile(
+  p_email text,
+  p_full_name text,
+  p_status text,
+  p_is_admin boolean
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+declare
+  new_user_id uuid;
+begin
+  insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data)
+  values (gen_random_uuid(), p_email, crypt('password', gen_salt('bf')), now(), '{}')
+  returning id into new_user_id;
+
+  insert into public.profiles (id, email, name, status, is_admin)
+  values (new_user_id, p_email, p_full_name, p_status, p_is_admin);
+
+  return new_user_id;
+end;
+$$;
+```
+
+The backend calls this procedure via `supabaseAdmin.rpc('create_user_with_profile')`. Ensure the environment variable `SUPABASE_SERVICE_ROLE_KEY` is set so the server can authenticate as the service role. If either the function or key is missing, posting to `/api/admin/members` will fail with **"permission denied for table users"**.
