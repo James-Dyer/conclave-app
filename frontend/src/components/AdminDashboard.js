@@ -6,7 +6,8 @@ import '../styles/AdminDashboard.css';
 
 export default function AdminDashboard({
   onManageCharges,
-  onShowMembers
+  onShowMembers,
+  onShowMemberDashboard
 }) {
   const api = useApi();
   const [reviews, setReviews] = useState([]);
@@ -74,6 +75,11 @@ export default function AdminDashboard({
     <div className="admin-dashboard">
       <header className="admin-dash-header">
         <h1>Admin Dashboard</h1>
+        {onShowMemberDashboard && (
+          <button className="toggle-button" onClick={onShowMemberDashboard}>
+            Member View
+          </button>
+        )}
       </header>
       {error && <div className="error">{error}</div>}
       <section className="quick-links">

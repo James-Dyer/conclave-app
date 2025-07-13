@@ -75,3 +75,13 @@
 .dashboard-review-button:hover {
   background-color: #4db8d6;
 }
+
+.member-dash-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.toggle-button {
+  margin-left: auto;
+}
