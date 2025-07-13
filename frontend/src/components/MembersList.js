@@ -49,11 +49,11 @@ export default function MembersList({ onBack, onAdd }) {
       <header className="admin-dash-header">
         <h1>Members List</h1>
         <div className="action-buttons">
-          {onAdd && (
-            <button onClick={onAdd} className="add-button">Add Member</button>
-          )}
           {onBack && (
             <button onClick={onBack} className="back-button">Back</button>
+          )}
+          {onAdd && (
+            <button onClick={onAdd} className="add-button">Add Member</button>
           )}
         </div>
       </header>
