@@ -167,43 +167,48 @@ async function isAdmin(userId) {
 // as Under Review rather than paid. Returns array of affected charge info.
 async function allocateForReview(memberId, amount) {
   let remaining = Number(amount);
-  const { data: charges, error } = await supabase
+  const { data: charges, error: fetchErr } = await supabaseAdmin
     .from('charges')
     .select('*')
     .eq('member_id', memberId)
     .in('status', ['Outstanding', 'Delinquent', 'Partially Paid'])
     .order('due_date', { ascending: true });
-  if (error) throw error;
+
+  if (fetchErr) throw fetchErr;
 
   const affected = [];
+
   for (const c of charges) {
     if (remaining <= 0) break;
-    const paidSoFar = Number(c.partial_amount_paid || 0);
-    const due = Number(c.amount) - paidSoFar;
-    let newPaid = paidSoFar;
-    if (remaining >= due) {
-      newPaid += due;
-      remaining -= due;
-    } else {
-      newPaid += remaining;
-      remaining = 0;
-    }
 
-    affected.push({
-      id: c.id,
-      prev_status: c.status,
-      prev_partial_amount_paid: paidSoFar
-    });
+    const prevPaid = Number(c.partial_amount_paid || 0);
+    const due       = Number(c.amount) - prevPaid;
+    const payNow    = Math.min(remaining, due);
+    const newPaid   = prevPaid + payNow;
 
-    await supabase
+    // perform the update via the admin client, *and* select so you get back any errors
+    const { data: updated, error: updateErr } = await supabaseAdmin
       .from('charges')
       .update({
         status: 'Under Review',
         partial_amount_paid: newPaid,
         prev_status: c.status,
-        prev_partial_amount_paid: paidSoFar
+        prev_partial_amount_paid: prevPaid
       })
-      .eq('id', c.id);
+      .eq('id', c.id)
+      .select();
+
+    if (updateErr) {
+      console.error('Failed to mark charge under review:', c.id, updateErr);
+      throw updateErr;
+    }
+
+    remaining -= payNow;
+    affected.push({
+      id: c.id,
+      prev_status: c.status,
+      prev_partial_amount_paid: prevPaid
+    });
   }
 
   return affected;
