@@ -93,6 +93,9 @@ function App() {
         <MembersList onBack={showAdmin} onAdd={showAddMember} />
       );
       break;
+    case 'manageCharges':
+      pageContent = <ManageChargesPage onBack={showAdmin} />;
+      break;
     case 'addMember':
       pageContent = <AddMember onCancel={showMembersList} />;
       break;
