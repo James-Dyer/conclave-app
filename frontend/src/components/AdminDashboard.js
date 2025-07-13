@@ -74,8 +74,8 @@ export default function AdminDashboard({
       {error && <div className="error">{error}</div>}
       <section className="quick-links">
         <button className="quick-link" onClick={onCreateCharges}>
-          Create Charges
-          <span className="desc">Assign new charges to members</span>
+          Manage Charges
+          <span className="desc">Assign, update, or delete charges to members</span>
         </button>
         <button className="quick-link" onClick={onShowMembers}>
           Manage Members
