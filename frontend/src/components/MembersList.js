@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import useApi from '../apiClient';
+import { useAuth } from '../AuthContext';
 import SearchBar from './SearchBar';
 import SortMenu from './SortMenu';
 import FilterMenu from './FilterMenu';
@@ -17,6 +18,7 @@ const SORT_OPTIONS = [
 
 export default function MembersList({ onBack, onAdd }) {
   const api = useApi();
+  const { user } = useAuth();
   const [members, setMembers] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,9 @@ export default function MembersList({ onBack, onAdd }) {
     async function load() {
       setLoading(true);
       try {
-        const data = await api.fetchMembers(search);
+        const data = user?.isAdmin
+          ? await api.fetchAdminMembers(search)
+          : await api.fetchMembers(search);
         setMembers(data || []);
       } catch (e) {
         setError(e.message);
@@ -38,7 +42,7 @@ export default function MembersList({ onBack, onAdd }) {
       }
     }
     load();
-  }, [search]);
+  }, [search, user]);
 
   return (
     <div className="admin-dashboard">
