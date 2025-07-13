@@ -15,7 +15,7 @@ const profiles = loadCsv('profiles.csv').map((row) => ({
   id: row.id,
   email: row.email,
   password: row.email === 'admin@example.com' ? 'admin' : 'password',
-  display_name: row.name,
+  name: row.name,
   is_admin: row.is_admin === 'true' || row.is_admin === true,
   status: row.status,
   initiation_date: row.initiation_date,
