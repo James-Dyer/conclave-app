@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
 
   if (search) {
     query = query.or(
-      `name.ilike.%${search}%,email.ilike.%${search}%`
+      `name.ilike.%${search}%,email.ilike.%${search}%,status.ilike.%${search}%`
     );
   }
 
