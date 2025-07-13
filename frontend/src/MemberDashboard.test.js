@@ -46,7 +46,8 @@ test('renders dashboard sections', async () => {
     name: /recent payments/i
   });
   expect(paymentsHeading).toBeInTheDocument();
-  const total = screen.getByTestId('total-balance');
+  const total = await screen.findByTestId('total-balance');
+  await screen.findAllByText('$200');
   expect(total).toHaveTextContent('$200');
   expect(screen.getByTestId('overdue-balance')).toHaveTextContent('$200');
 });
@@ -69,7 +70,7 @@ test('dashboard payment review button triggers callback', async () => {
       <MemberDashboard onRequestReview={onRequestReview} />
     </AuthProvider>
   );
-  await screen.findByTestId('total-balance');
+  await screen.findAllByText('$200');
   const button = screen.getByTestId('dashboard-review-button');
   await userEvent.click(button);
   expect(onRequestReview).toHaveBeenCalled();
@@ -147,7 +148,9 @@ test('partial amount paid displayed for charges', async () => {
   );
   const header = await screen.findByText(/partial amount paid/i);
   const table = header.closest('table');
-  const row = within(table).getAllByRole('row')[1];
+  await screen.findByText('25');
+  const rows = within(table).getAllByRole('row');
+  const row = rows[1];
   const cells = within(row).getAllByRole('cell');
   expect(cells[4]).toHaveTextContent('25');
 });
@@ -178,6 +181,7 @@ test('outstanding charges are sorted oldest first', async () => {
   );
   const header = await screen.findByText(/due date/i);
   const table = header.closest('table');
+  await screen.findByText('20');
   const rows = within(table).getAllByRole('row').slice(1);
   expect(rows[0]).toHaveTextContent('20');
   expect(rows[1]).toHaveTextContent('10');
