@@ -10,12 +10,13 @@ export default function MemberDashboard({
   onRequestReview = () => {},
   onViewDetails = () => {},
   pendingReviewIds = [],
+  onShowAdmin,
 }) {
   const [chargeData, setChargeData] = useState([]);
   const [paymentData, setPaymentData] = useState([]);
   const [loading, setLoading] = useState(true);
   const api = useApi();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   useEffect(() => {
     window.api = api;
@@ -80,7 +81,14 @@ export default function MemberDashboard({
 
   return (
     <div className="member-dashboard">
-      <h1>Dashboard</h1>
+      <header className="member-dash-header">
+        <h1>Dashboard</h1>
+        {user?.isAdmin && onShowAdmin && (
+          <button className="toggle-button" onClick={onShowAdmin}>
+            Admin
+          </button>
+        )}
+      </header>
 
       <div className="balance-info" data-testid="balance-info">
         <div className="balance-summary">

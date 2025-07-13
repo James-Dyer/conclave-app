@@ -38,6 +38,10 @@
   margin-bottom: 10px;
 }
 
+.toggle-button {
+  margin-left: auto;
+}
+
 .admin-table {
   width: 100%;
   border-collapse: collapse;
