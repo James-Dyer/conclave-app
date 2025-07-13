@@ -51,7 +51,7 @@ Mark as Paid
 Marks the charge paid.
 Interaction Flow
 
-Admin clicks Charges in Quick Links on the Dashboard.
+Admin navigates to the Manage Charges page.
 All charges load in the table by default.
 Admin may:
 Type to search
