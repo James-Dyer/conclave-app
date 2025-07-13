@@ -51,3 +51,10 @@ test('input field renders and triggers onInputChange', async () => {
   await userEvent.type(input, 'abc');
   expect(onChange).toHaveBeenCalled();
 });
+
+test('displays error text when provided', () => {
+  render(
+    <ConfirmDialog open onConfirm={noop} onCancel={noop} errorText="Required" />
+  );
+  expect(screen.getByText(/required/i)).toBeInTheDocument();
+});

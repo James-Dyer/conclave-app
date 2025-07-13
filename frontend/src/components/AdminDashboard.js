@@ -11,6 +11,7 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   const [reviewToApprove, setReviewToApprove] = useState(null);
   const [reviewToDeny, setReviewToDeny] = useState(null);
   const [denyNote, setDenyNote] = useState('');
+  const [denyError, setDenyError] = useState('');
 
   useEffect(() => {
     async function load() {
@@ -46,14 +47,19 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
   function openDenyDialog(review) {
     setReviewToDeny(review);
     setDenyNote('');
+    setDenyError('');
   }
 
   async function confirmDeny(note) {
     if (!reviewToDeny) return;
-    if (!note) return;
+    if (!note) {
+      setDenyError('Reason is required');
+      return;
+    }
     await api.denyPayment(reviewToDeny.id, note);
     setReviews(reviews.filter((rev) => rev.id !== reviewToDeny.id));
     setReviewToDeny(null);
+    setDenyError('');
   }
 
   return (
@@ -131,10 +137,14 @@ export default function AdminDashboard({ onShowMembers, onShowCharges }) {
         confirmText="Deny"
         cancelText="Cancel"
         onConfirm={confirmDeny}
-        onCancel={() => setReviewToDeny(null)}
+        onCancel={() => {
+          setReviewToDeny(null);
+          setDenyError('');
+        }}
         inputLabel="Reason for denial"
         inputValue={denyNote}
         onInputChange={setDenyNote}
+        errorText={denyError}
       >
         {reviewToDeny && (
           <div className="space-y-1">

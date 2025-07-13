@@ -11,7 +11,8 @@ export default function ConfirmDialog({
   onCancel,
   inputLabel,
   inputValue = '',
-  onInputChange = () => {}
+  onInputChange = () => {},
+  errorText
 }) {
   if (!open) return null;
   const handleConfirm = () => {
@@ -47,6 +48,7 @@ export default function ConfirmDialog({
               />
             </label>
           )}
+          {errorText && <div className="error">{errorText}</div>}
         </div>
         <div className="confirm-dialog-actions">
           <button type="button" onClick={handleConfirm} className="confirm-button">
