@@ -501,34 +501,46 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
 
   try {
     // Loop and update each affected charge
+    console.log(`${affected.length} charge(s) to update:`, affected);
     for (const info of affected) {
+      console.log(`→ processing charge ${info.id} (prev status="${info.prev_status}")`);
+
+      // 2a. Reload the charge
       const { data: [c], error: fetchErr } = await supabaseAdmin
         .from('charges')
         .select('*')
         .eq('id', info.id);
       if (fetchErr) {
-        console.error('Failed to reload charge', info.id, fetchErr);
+        console.error(`✖ failed to fetch charge ${info.id}:`, fetchErr);
         throw fetchErr;
       }
-      if (!c) continue;
+      if (!c) {
+        console.warn(`⚠ charge ${info.id} not found, skipping`);
+        continue;
+      }
 
-      // Decide new status
-      const upd =
-        Number(c.partial_amount_paid || 0) >= Number(c.amount)
-          ? { status: 'Paid', partial_amount_paid: 0 }
-          : { status: 'Partially Paid' };
+      // 2b. Decide its new status
+      const isFullyPaid = Number(c.partial_amount_paid || 0) >= Number(c.amount);
+      const upd = isFullyPaid
+        ? { status: 'Paid', partial_amount_paid: 0 }
+        : { status: 'Partially Paid' };
+      console.log(`   → updating to`, upd);
 
-      // Perform the update *and* select to catch errors
-      const { data: updatedCharge, error: updateErr } = await supabaseAdmin
+      // 2c. Perform the update *and* select so we get back errors or the updated row
+      const { data: [updatedCharge], error: updateErr } = await supabaseAdmin
         .from('charges')
-        .update({ ...upd, prev_status: null, prev_partial_amount_paid: null })
-        .eq('id', c.id)
+        .update({ 
+          ...upd, 
+          prev_status: null, 
+          prev_partial_amount_paid: null 
+        })
+        .eq('id', info.id)
         .select();
       if (updateErr) {
-        console.error(`Failed to update charge ${c.id}:`, updateErr);
+        console.error(`✖ failed to update charge ${info.id}:`, updateErr);
         throw updateErr;
       }
-      console.log(`Charge ${c.id} updated:`, updatedCharge[0]);
+      console.log(`✔ charge ${info.id} now:`, updatedCharge);
     }
 
     // Finally mark the payment itself approved
