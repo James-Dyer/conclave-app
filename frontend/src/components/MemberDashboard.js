@@ -46,9 +46,6 @@ export default function MemberDashboard({
 
 
   // Render
-  if (loading) {
-    return <div>Loading…</div>;
-  }
 
   const mergedCharges = chargeData.map((c) =>
     pendingReviewIds.includes(c.id) ? { ...c, status: 'Under Review' } : c
@@ -127,7 +124,7 @@ export default function MemberDashboard({
           type="button"
           className="dashboard-review-button"
           data-testid="dashboard-review-button"
-          disabled={totalBalance === 0}
+          disabled={loading || totalBalance === 0}
           onClick={() => onRequestReview({ amount: totalBalance })}
         >
           Mark as Paid
@@ -140,12 +137,13 @@ export default function MemberDashboard({
           charges={sortedOutstanding}
           onViewDetails={onViewDetails}
           pendingReviewIds={pendingReviewIds}
+          loading={loading}
         />
       </section>
 
       <section>
         <h2>Recent Payments</h2>
-        <PaymentList payments={sortedPayments} />
+        <PaymentList payments={sortedPayments} loading={loading} />
       </section>
     </div>
   );

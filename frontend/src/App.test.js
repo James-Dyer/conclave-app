@@ -104,6 +104,7 @@ test('dashboard review button opens form with charge data', async () => {
   );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
   const reviewButton = await screen.findByRole('button', { name: /mark as paid/i });
+  await screen.findAllByText('$200');
   await userEvent.click(reviewButton);
   const heading = await screen.findByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();
@@ -118,6 +119,7 @@ test('dashboard tile review button opens form', async () => {
   );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
   const button = await screen.findByTestId('dashboard-review-button');
+  await screen.findAllByText('$200');
   await userEvent.click(button);
   const heading = await screen.findByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();
