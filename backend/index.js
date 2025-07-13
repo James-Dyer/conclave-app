@@ -163,8 +163,8 @@ async function isAdmin(userId) {
   return !!data.is_admin;
 }
 
-// Allocate a submitted payment across outstanding charges but mark them
-// as Under Review rather than paid. Returns array of affected charge info.
+// Allocate a submitted payment across outstanding charges and mark them
+// as Under Review. Returns array of affected charge info.
 async function allocateForReview(memberId, amount) {
   let remaining = Number(amount);
   const { data: charges, error: fetchErr } = await supabaseAdmin
@@ -486,12 +486,11 @@ app.delete('/api/admin/charges/:id', auth, adminOnly, async (req, res) => {
   res.json({ success: true });
 });
 
-// Payment approval endpoints for the unified payments table
 app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) => {
   const paymentId = Number(req.params.id);
 
-  // Load the payment
-  const { data: [payment], error: payErr } = await supabase
+  // Load the payment with the service role
+  const { data: [payment], error: payErr } = await supabaseAdmin
     .from('payments')
     .select('*')
     .eq('id', paymentId);
@@ -500,44 +499,64 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
 
   const affected = JSON.parse(payment.affected_charges || '[]');
 
-  for (const info of affected) {
-    const { data: [c] } = await supabase
-      .from('charges')
-      .select('*')
-      .eq('id', info.id);
-    if (!c) continue;
-    const upd =
-      Number(c.partial_amount_paid || 0) >= Number(c.amount)
-        ? { status: 'Paid', partial_amount_paid: 0 }
-        : { status: 'Partially Paid' };
+  try {
+    // Loop and update each affected charge
+    for (const info of affected) {
+      const { data: [c], error: fetchErr } = await supabaseAdmin
+        .from('charges')
+        .select('*')
+        .eq('id', info.id);
+      if (fetchErr) {
+        console.error('Failed to reload charge', info.id, fetchErr);
+        throw fetchErr;
+      }
+      if (!c) continue;
 
-    await supabase
-      .from('charges')
-      .update({ ...upd, prev_status: null, prev_partial_amount_paid: null })
-      .eq('id', c.id);
+      // Decide new status
+      const upd =
+        Number(c.partial_amount_paid || 0) >= Number(c.amount)
+          ? { status: 'Paid', partial_amount_paid: 0 }
+          : { status: 'Partially Paid' };
+
+      // Perform the update *and* select to catch errors
+      const { data: updatedCharge, error: updateErr } = await supabaseAdmin
+        .from('charges')
+        .update({ ...upd, prev_status: null, prev_partial_amount_paid: null })
+        .eq('id', c.id)
+        .select();
+      if (updateErr) {
+        console.error(`Failed to update charge ${c.id}:`, updateErr);
+        throw updateErr;
+      }
+      console.log(`Charge ${c.id} updated:`, updatedCharge[0]);
+    }
+
+    // Finally mark the payment itself approved
+    const { data: [updatedPayment], error: updPayErr } = await supabaseAdmin
+      .from('payments')
+      .update({ status: 'Approved', admin_id: req.memberId })
+      .eq('id', paymentId)
+      .select();
+    if (updPayErr) {
+      console.error('Failed to update payment status:', updPayErr);
+      return res.status(500).json({ error: updPayErr.message });
+    }
+
+    console.log('🎉 Payment approved:', updatedPayment);
+    res.json({ success: true, payment: updatedPayment });
+  } catch (err) {
+    // If anything went wrong mid-loop, let the client know
+    return res.status(500).json({ error: err.message });
   }
-
-  // Mark payment approved
-  const { data: updated, error: updPayErr } = await supabase
-    .from('payments')
-    .update({ status: 'Approved', admin_id: req.memberId })
-    .eq('id', paymentId)
-    .select();
-  if (updPayErr) {
-    console.error('Failed to update payment status:', updPayErr);
-    return res.status(500).json({ error: updPayErr.message });
-  }
-
-  console.log('🎉 Payment approved:', updated[0]);
-  res.json({ success: true, payment: updated[0] });
 });
+
 
 
 app.post('/api/admin/payments/:id/deny', auth, adminOnly, async (req, res) => {
   const id = Number(req.params.id);
   const { note } = req.body || {};
   if (!note) return res.status(400).json({ error: 'Missing denial note' });
-  const { data: [payment], error: payErr } = await supabase
+  const { data: [payment], error: payErr } = await supabaseAdmin
     .from('payments')
     .select('*')
     .eq('id', id);
@@ -545,7 +564,7 @@ app.post('/api/admin/payments/:id/deny', auth, adminOnly, async (req, res) => {
 
   const affected = JSON.parse(payment.affected_charges || '[]');
   for (const info of affected) {
-    await supabase
+    await supabaseAdmin
       .from('charges')
       .update({
         status: info.prev_status,
@@ -556,7 +575,7 @@ app.post('/api/admin/payments/:id/deny', auth, adminOnly, async (req, res) => {
       .eq('id', info.id);
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('payments')
     .update({ status: 'Denied', admin_id: req.memberId, admin_note: note })
     .eq('id', id)
