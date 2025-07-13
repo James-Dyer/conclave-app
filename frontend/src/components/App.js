@@ -85,7 +85,7 @@ function App() {
         <AdminDashboard
           onCreateCharges={showCreateCharges}
           onShowMembers={showMembersList}
-          onShowCharges={showChargesList}
+          onShowCharges={showCreateCharges}
         />
       );
       break;
@@ -97,6 +97,9 @@ function App() {
       break;
     case 'charges':
       pageContent = <ChargesList onBack={showAdmin} />;
+      break;
+    case 'createCharges':
+      pageContent = <CreateCharges onBack={showAdmin} />;
       break;
     default:
       pageContent = <LoginPage onLogin={showDashboard} />;
