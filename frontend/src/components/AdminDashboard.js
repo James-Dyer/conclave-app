@@ -24,7 +24,7 @@ export default function AdminDashboard({
       try {
         const [r, m] = await Promise.all([
           api.fetchPendingPayments(),
-          api.fetchMembers()
+          api.fetchAdminMembers()
         ]);
         setReviews(r || []);
         const map = {};

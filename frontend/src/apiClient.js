@@ -49,6 +49,8 @@ export function useApi() {
       // Admin
       fetchMembers: (search = '') =>
         request(`/members?search=${encodeURIComponent(search)}`),
+      fetchAdminMembers: (search = '') =>
+        request(`/admin/members?search=${encodeURIComponent(search)}`),
       createMember: (member) =>
         request('/admin/members', {
           method: 'POST',
