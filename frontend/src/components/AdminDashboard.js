@@ -6,8 +6,7 @@ import '../styles/AdminDashboard.css';
 
 export default function AdminDashboard({
   onCreateCharges,
-  onShowMembers,
-  onShowCharges
+  onShowMembers
 }) {
   const api = useApi();
   const [reviews, setReviews] = useState([]);
@@ -85,10 +84,6 @@ export default function AdminDashboard({
         <button className="quick-link" onClick={onShowMembers}>
           Manage Members
           <span className="desc">Create, browse and manage all member accounts</span>
-        </button>
-        <button className="quick-link" onClick={onShowCharges}>
-          Create Charges
-          <span className="desc">Add new charges and manage existing</span>
         </button>
       </section>
       <section>
