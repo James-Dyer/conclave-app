@@ -29,7 +29,6 @@ export default function AddMember({ onCancel }) {
     try {
       await api.createMember({
         email,
-        password: 'password',
         name,
         status,
         isAdmin

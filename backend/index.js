@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const crypto = require('node:crypto');
 const supabase = require('./db');
 const supabaseAdmin = require('./adminClient');
 const jwt = require('jsonwebtoken');
@@ -243,7 +242,6 @@ app.get('/api/admin/members', auth, adminOnly, async (req, res) => {
 app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
   const {
     email,
-    password,
     name,
     isAdmin = false,
     status = 'Active',
@@ -251,22 +249,30 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
     amountOwed = 0,
     tags = []
   } = req.body || {};
-  if (!email || !password || !name) {
+  if (!email || !name) {
     return res.status(400).send('Missing fields');
   }
-  const id = crypto.randomUUID();
-  const { error } = await supabase.from('profiles').insert({
-    id,
-    email,
-    display_name: name,
-    is_admin: isAdmin,
-    status,
-    initiation_date: initiationDate,
-    amount_owed: amountOwed,
-    tags,
-    password
-  });
+
+  // create auth user + profile using service role
+  const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc(
+    'create_user_with_profile',
+    {
+      p_email: email,
+      p_full_name: name,
+      p_status: status,
+      p_is_admin: isAdmin
+    }
+  );
+  if (rpcErr) return res.status(500).json({ error: rpcErr.message });
+  const id = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+
+  // set additional fields not handled by the function
+  const { error } = await supabase
+    .from('profiles')
+    .update({ initiation_date: initiationDate, amount_owed: amountOwed, tags })
+    .eq('id', id);
   if (error) return res.status(500).json({ error: error.message });
+
   res.json({ id });
 });
 
@@ -274,7 +280,6 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
 app.put('/api/admin/members/:id', auth, adminOnly, async (req, res) => {
   const {
     email,
-    password,
     name,
     isAdmin,
     status,
@@ -286,7 +291,6 @@ app.put('/api/admin/members/:id', auth, adminOnly, async (req, res) => {
     .from('profiles')
     .update({
       email,
-      password,
       display_name: name,
       is_admin: isAdmin,
       status,

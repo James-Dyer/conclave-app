@@ -54,7 +54,7 @@ test('admin member CRUD works', async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${adminToken}`
     },
-    body: JSON.stringify({ email: 'new@example.com', password: 'pw', name: 'New' })
+    body: JSON.stringify({ email: 'new@example.com', name: 'New' })
   });
   assert.equal(createRes.status, 200);
   const { id } = await createRes.json();
