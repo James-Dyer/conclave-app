@@ -95,3 +95,6 @@ Several React components in `frontend/src/components` provide shared functionali
 - **NotificationContainer / NotificationContext** – Global toast system for temporary messages. Call `addNotification` to display a message; the container renders them stacked in the corner.
 
 These keep common UI logic centralized so pages like `MembersList` and `ChargesList` stay concise.
+## Documenting Database Schema Changes
+When implementing features that require new Supabase columns or tables, clearly describe the required schema updates in your pull request summary.
+Note any new column names, types and defaults so the Supabase instance can be updated accordingly.
