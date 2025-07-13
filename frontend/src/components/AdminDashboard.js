@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import useApi from '../apiClient';
 import ConfirmDialog from './ConfirmDialog';
+import DataTable from './DataTable';
 import '../styles/AdminDashboard.css';
 
 export default function AdminDashboard({
@@ -12,6 +13,7 @@ export default function AdminDashboard({
   const [reviews, setReviews] = useState([]);
   const [members, setMembers] = useState({});
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
   const [reviewToApprove, setReviewToApprove] = useState(null);
   const [reviewToDeny, setReviewToDeny] = useState(null);
   const [denyNote, setDenyNote] = useState('');
@@ -19,6 +21,7 @@ export default function AdminDashboard({
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
       try {
         const [r, m] = await Promise.all([
           api.fetchPendingPayments(),
@@ -32,6 +35,8 @@ export default function AdminDashboard({
         setMembers(map);
       } catch (e) {
         setError(e.message);
+      } finally {
+        setLoading(false);
       }
     }
     load();
@@ -88,31 +93,29 @@ export default function AdminDashboard({
       </section>
       <section>
         <h2>Payment Reviews</h2>
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Member</th>
-              <th>Amount Paid</th>
-              <th>Payment Date</th>
-              <th>Memo</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reviews.map((r) => (
-              <tr key={r.id}>
-                <td>{members[r.memberId] || r.memberId}</td>
-                <td>{r.amountPaid ?? r.amount}</td>
-                <td>{new Date(r.date).toLocaleDateString()}</td>
-                <td>{r.memo || '-'}</td>
-                <td className="flex space-x-2">
-                  <button onClick={() => openApproveDialog(r)}>Approve</button>
-                  <button onClick={() => openDenyDialog(r)}>Reject</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          loading={loading}
+          columns={[
+            { header: 'Member', accessor: 'member' },
+            { header: 'Amount Paid', accessor: 'amount' },
+            { header: 'Payment Date', accessor: 'date' },
+            { header: 'Memo', accessor: 'memo' }
+          ]}
+          data={reviews.map((r) => ({
+            id: r.id,
+            member: members[r.memberId] || r.memberId,
+            amount: r.amountPaid ?? r.amount,
+            date: new Date(r.date).toLocaleDateString(),
+            memo: r.memo || '-',
+            original: r
+          }))}
+          renderActions={(row) => (
+            <div className="flex space-x-2">
+              <button onClick={() => openApproveDialog(row.original)}>Approve</button>
+              <button onClick={() => openDenyDialog(row.original)}>Reject</button>
+            </div>
+          )}
+        />
       </section>
       <ConfirmDialog
         open={!!reviewToApprove}
