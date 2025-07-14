@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import useApi from '../apiClient';
 import ConfirmDialog from './ConfirmDialog';
 import DataTable from './DataTable';
+import ViewToggle from './ViewToggle';
 import '../styles/AdminDashboard.css';
 
 export default function AdminDashboard({
@@ -74,12 +75,10 @@ export default function AdminDashboard({
   return (
     <div className="admin-dashboard">
       <header className="admin-dash-header">
-        <h1>Admin Dashboard</h1>
         {onShowMemberDashboard && (
-          <button className="toggle-button" onClick={onShowMemberDashboard}>
-            Member View
-          </button>
+          <ViewToggle isAdminView={true} onToggle={onShowMemberDashboard} />
         )}
+        <h1>Admin Dashboard</h1>
       </header>
       {error && <div className="error">{error}</div>}
       <section className="quick-links">
