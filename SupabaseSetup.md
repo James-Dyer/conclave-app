@@ -73,10 +73,15 @@ set search_path = public, auth
 as $$
 declare
   new_user_id uuid;
+
 begin
   insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data)
   values (gen_random_uuid(), p_email, crypt('password', gen_salt('bf')), now(), '{}')
   returning id into new_user_id;
+
+  -- ensure email logins work immediately
+  insert into auth.identities (provider_id, user_id, identity_data, provider)
+  values (p_email, new_user_id, json_build_object('email', p_email), 'email');
 
   insert into public.profiles (id, email, name, status, is_admin)
   values (new_user_id, p_email, p_full_name, p_status, p_is_admin);
@@ -87,3 +92,7 @@ $$;
 ```
 
 The backend calls this procedure via `supabaseAdmin.rpc('create_user_with_profile')`. Ensure the environment variable `SUPABASE_SERVICE_ROLE_KEY` is set so the server can authenticate as the service role. If either the function or key is missing, posting to `/api/admin/members` will fail with **"permission denied for table users"**.
+
+Users created through the admin panel are inserted with the default password
+`password` and an email identity so they can sign in immediately after being
+added.

@@ -28,6 +28,9 @@ Conclave serves as the Lambda Delta chapter's platform for:
 - Mark charges as fulfilled
 - Review and approve or reject payment confirmations
 
+New members created through the admin panel are automatically given the password
+`password` and can sign in immediately after being added.
+
 
 ## Payment Workflow
 

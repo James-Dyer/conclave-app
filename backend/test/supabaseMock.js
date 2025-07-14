@@ -194,7 +194,8 @@ const supabaseAdmin = {
     }
     const id = crypto.randomUUID();
 
-    // emulate the SQL procedure which inserts into auth.users and profiles
+    // emulate the SQL procedure which inserts into auth.users, auth.identities
+    // and public.profiles
     profiles.push({
       id,
       email: params.p_email,
