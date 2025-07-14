@@ -1,0 +1,18 @@
+.view-toggle {
+  display: inline-flex;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.view-toggle button {
+  padding: 4px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.view-toggle button.active {
+  background-color: #282c34;
+  color: #fff;
+}

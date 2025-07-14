@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ChargeList from './ChargeList';
 import PaymentList from './PaymentList';
 import '../styles/MemberDashboard.css';
+import ViewToggle from './ViewToggle';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import { getBalanceBreakdown } from '../balanceUtils';
@@ -82,12 +83,10 @@ export default function MemberDashboard({
   return (
     <div className="member-dashboard">
       <header className="member-dash-header">
-        <h1>Dashboard</h1>
         {user?.isAdmin && onShowAdmin && (
-          <button className="toggle-button" onClick={onShowAdmin}>
-            Admin
-          </button>
+          <ViewToggle isAdminView={false} onToggle={onShowAdmin} />
         )}
+        <h1>Dashboard</h1>
       </header>
 
       <div className="balance-info" data-testid="balance-info">
