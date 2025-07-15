@@ -85,10 +85,10 @@ export default function MemberDashboard({
   return (
     <div className="member-dashboard">
       <header className="member-dash-header">
+        <h1>Dashboard</h1>
         {user?.isAdmin && onShowAdmin && (
           <ViewToggle isAdminView={false} onToggle={onShowAdmin} />
         )}
-        <h1>Dashboard</h1>
         {onShowActivity && (
           <PrimaryButton
             type="button"

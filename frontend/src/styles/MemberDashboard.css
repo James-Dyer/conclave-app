@@ -14,10 +14,11 @@
   padding: var(--space-sm);
 }
 
+
 .balance-info {
   grid-column: 2 / span 10;
   background-color: var(--color-background);
-  padding: 16px;
+  padding: var(--space-sm);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -56,12 +57,12 @@
 
 .balance-card.overdue {
   background-color: #ffe6e6;
-  color: var(--color-error);
+  color: #8b0000;
 }
 
 .balance-card.due-soon {
   background-color: #fff5e6;
-  color: #e65100;
+  color: #9e2b00;
 }
 
 .balance-card.upcoming {
@@ -112,4 +113,25 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+}
+
+.activity-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .member-dash-header {
+    flex-wrap: wrap;
+  }
+  .member-dash-header h1 {
+    flex-basis: 100%;
+  }
+  .balance-info,
+  .dashboard-content {
+    grid-column: 1 / -1;
+  }
 }
