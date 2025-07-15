@@ -9,6 +9,7 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 - **Accent:** Sky blue `#5e90db` (hover `#3d5f91`)
 - **Surfaces:** Light gray `#F5F5F5` with darker `#E0E0E0` for emphasis
 - **Status Highlights:** Success `#4CAF50`, error `#B30000`
+- **Cards** Background: White #FFFFFF; Border / Shadow: 0 1px 3px rgba(0,0,0,0.1)
 
 ## Typography
 
@@ -74,7 +75,7 @@ Gutter (gap): `var(--space-lg)` (24px)
 
 **Section Margins:**
 
-- Use `margin-block: var(--space-xl)` (~32px) between major sections to keep pages visually open and consistent.
+- TBD
 
 ## 5. Core UI Components
 
@@ -143,40 +144,3 @@ Gutter (gap): `var(--space-lg)` (24px)
 - **Context API:** `useNotifications()` returns `{ notifications, addNotification, removeNotification }` from `NotificationContext`.
 - **Behaviors:**
   - Vertical stack of toasts, auto-dismiss after 5s, pause on hover, manual close button.
-
-
-
-## 6. Define Interaction Patterns
-
-- **Hover / Focus Transitions:** 150–200ms cubic-bezier fade
-- **Button Press Feedback:** slight scale (0.97) on click
-- **Form Validation States:** inline error text shown in red
-
-## 7. Accessibility & Contrast
-
-- **Contrast checks:**
-  - Body text on dark blue: `#FFFFFF` vs `#282C34` → ratio ≈ 14:1 ✅
-  - Accent text on dark panels: ensure at least 4.5:1 for smaller text
-- **Keyboard navigation:**
-  - Visible focus outlines, skip-to-content link
-- **ARIA roles & landmarks** for `nav`, `main`, `footer`
-
-### Accessibility Checklist
-
-- **Contrast Ratios:**
-  - Text vs. background >= 4.5:1 (normal text), >= 3:1 (large text)
-- **Focus Indicators:**
-  - Visible focus outline on all interactive elements
-- **Skip to Content:**
-  - "Skip to main content" link present at top
-- **ARIA Roles & Landmarks:**
-  - `nav`, `main`, `footer` landmarks correctly applied
-- **Semantic HTML:**
-  - Proper heading order (H1 → H2 → H3...)
-- **Keyboard Navigation:**
-  - All interactive elements reachable and operable via keyboard
-- **Live Regions:**
-  - Loading overlays announce status changes via ARIA live regions
-- **Error Messaging:**
-  - Form errors announced and visually clear with inline messages
-
