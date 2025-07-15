@@ -12,6 +12,7 @@ export default function MemberDashboard({
   onViewDetails = () => {},
   pendingReviewIds = [],
   onShowAdmin,
+  onShowActivity,
 }) {
   const [chargeData, setChargeData] = useState([]);
   const [paymentData, setPaymentData] = useState([]);
@@ -87,6 +88,15 @@ export default function MemberDashboard({
           <ViewToggle isAdminView={false} onToggle={onShowAdmin} />
         )}
         <h1>Dashboard</h1>
+        {onShowActivity && (
+          <button
+            type="button"
+            className="activity-button"
+            onClick={onShowActivity}
+          >
+            Account Activity
+          </button>
+        )}
       </header>
 
       <div className="balance-info" data-testid="balance-info">
