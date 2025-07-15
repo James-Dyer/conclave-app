@@ -74,50 +74,73 @@ Gutter (gap): `var(--space-lg)` (24px)
 
 **Section Margins:**
 
-- \*\*FILL IN\*\*
+- Use `margin-block: var(--space-xl)` (~32px) between major sections to keep pages visually open and consistent.
 
 ## 5. Core UI Components
 
 ### DataTable
 
 - **Purpose:** Renders tabular data with a loading overlay for async states.
-- **Props: \*\*FILL IN\*\***
+- **Props:**
+  - `columns` array of `{ header, accessor }`
+  - `data` array of row objects
+  - `renderActions` callback for optional actions column
+  - `loading` boolean to show a spinner overlay
 - **States:**
   - Internal sorting state (sort column & direction).
-- **Accessibility: \*\*FILL IN\*\***
-
+- **Accessibility:** Uses semantic `<table>` markup; spinner has `aria-label="loading"` for screen readers.
 ### ConfirmDialog
 
 - **Purpose:** Modal dialog prompting confirmation, with Confirm/Cancel and optional text input.
-- **Props: \*\*FILL IN\*\***
+- **Props:**
+  - `open` boolean to show the dialog
+  - `title` heading text
+  - `children` content within the body
+  - `confirmText` and `cancelText` button labels
+  - `onConfirm` and `onCancel` callbacks
+  - `inputLabel`, `inputValue`, `onInputChange` for optional text input
+  - `errorText` to display validation errors
 - **States:**
-  - \*\*FILL IN\*\*
+  - Controlled by the `open` prop
+  - Optional input value managed externally
 
 ### SearchBar
 
 - **Purpose:** Styled input for entering search queries.
-- **Props: \*\*FILL IN\*\***
+- **Props:**
+  - `value` string for the input value
+  - `onChange` callback receiving the new value
+  - `placeholder` text, default "Search"
 - **Styles:**
   - Full-width, rounded corners, inset shadow, search icon on the left.
 
 ### FilterMenu
 
 - **Purpose:** Panel of checkbox filters grouped by status and tags.
-- **Props: \*\*FILL IN\*\***
+- **Props:**
+  - `statusOptions` array of status strings
+  - `selectedStatuses` current selected statuses
+  - `tagOptions` array of tag strings
+  - `selectedTags` current selected tags
+  - `onChangeStatuses` callback
+  - `onChangeTags` callback
 - **UX:**
   - Collapsible dropdown sections per category; sticky header for long lists.
 
 ### SortMenu
 
 - **Purpose:** Select dropdown for choosing sort field and order.
-- **Props: \*\*FILL IN\*\***
+- **Props:**
+  - `options` array of `{ label, value }`
+  - `value` current selection
+  - `onChange` callback
 - **Styles:**
   - Compact button that expands into a list of options.
 
 ### NotificationContainer
 
 - **Purpose:** Displays toast messages via `NotificationContext`.
-- **Context API: \*\*FILL IN\*\***
+- **Context API:** `useNotifications()` returns `{ notifications, addNotification, removeNotification }` from `NotificationContext`.
 - **Behaviors:**
   - Vertical stack of toasts, auto-dismiss after 5s, pause on hover, manual close button.
 
