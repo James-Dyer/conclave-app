@@ -144,7 +144,7 @@ export default function MemberDashboard({
           disabled={loading || totalBalance === 0}
           onClick={() => onRequestReview({ amount: totalBalance })}
         >
-          Mark as Paid
+          Log Payment
         </button>
       </div>
 
