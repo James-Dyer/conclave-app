@@ -87,6 +87,7 @@ export default function ChargesList({ onBack }) {
       />
       <DataTable
         loading={loading}
+        actionsPosition="left"
         columns={[
           { header: 'Member', accessor: 'memberName' },
           { header: 'Description', accessor: 'description' },
