@@ -103,7 +103,7 @@ test('dashboard review button opens form with charge data', async () => {
     </AuthProvider>
   );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
-  const reviewButton = await screen.findByRole('button', { name: /mark as paid/i });
+  const reviewButton = await screen.findByRole('button', { name: /log payment/i });
   await screen.findAllByText('$200');
   await userEvent.click(reviewButton);
   const heading = await screen.findByRole('heading', { name: /payment review/i });
