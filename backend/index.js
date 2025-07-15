@@ -340,6 +340,16 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
     return res.status(400).send('Missing fields');
   }
 
+  console.log('⏩ Creating user with data:', {
+    email,
+    name,
+    isAdmin,
+    status,
+    initiationDate,
+    amountOwed,
+    tags
+  });
+
   // create auth user + profile using service role
   const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc(
     'create_user_with_profile',
@@ -350,7 +360,12 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
       p_is_admin: isAdmin
     }
   );
-  if (rpcErr) return res.status(500).json({ error: rpcErr.message });
+  if (rpcErr) {
+    console.error('✖ RPC create_user_with_profile failed:', rpcErr);
+    return res.status(500).json({ error: rpcErr.message });
+  }
+
+  console.log('✔ RPC result:', rpcData);
   const id = Array.isArray(rpcData) ? rpcData[0] : rpcData;
 
   // set additional fields not handled by the function
@@ -359,7 +374,12 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
     .update({ initiation_date: initiationDate, amount_owed: amountOwed, tags })
     .eq('id', id);
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error('✖ Failed to update profile with extra fields:', error);
+    return res.status(500).json({ error: error.message });
+  }
+
+  console.log('✅ Created user id:', id);
 
   res.json({ id });
 });
