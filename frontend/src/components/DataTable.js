@@ -6,7 +6,6 @@ export default function DataTable({
   columns = [],
   data = [],
   renderActions,
-  actionsPosition = 'right',
   loading = false,
   rowsPerPage = 10
 }) {
@@ -34,25 +33,19 @@ export default function DataTable({
       <table className="admin-table">
         <thead>
           <tr>
-            {actionsPosition === 'left' && renderActions && <th>Actions</th>}
             {columns.map((c) => (
               <th key={c.accessor}>{c.header}</th>
             ))}
-            {actionsPosition === 'right' && renderActions && <th>Actions</th>}
+            {renderActions && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
           {visibleRows.map((row) => (
             <tr key={row.id || JSON.stringify(row)}>
-              {actionsPosition === 'left' && renderActions && (
-                <td>{renderActions(row)}</td>
-              )}
               {columns.map((c) => (
                 <td key={c.accessor}>{row[c.accessor]}</td>
               ))}
-              {actionsPosition === 'right' && renderActions && (
-                <td>{renderActions(row)}</td>
-              )}
+              {renderActions && <td>{renderActions(row)}</td>}
             </tr>
           ))}
         </tbody>
