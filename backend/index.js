@@ -362,6 +362,10 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
   );
   if (rpcErr) {
     console.error('RPC create_user_with_profile failed:', rpcErr);
+    const msg = rpcErr.message || '';
+    if (msg.includes('duplicate key value') && msg.includes('users_email_partial_key')) {
+      return res.status(409).send('Email already exists');
+    }
     return res.status(500).json({ error: rpcErr.message });
   }
 
