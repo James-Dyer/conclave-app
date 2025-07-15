@@ -105,19 +105,11 @@
   padding: var(--space-sm);
 }
 
-.activity-section {
+.payments-section {
   grid-column: span 4;
   background: rgba(255, 255, 0, 0.1);
   padding: var(--space-sm);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-}
-
-.activity-placeholder {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-style: italic;
 }
