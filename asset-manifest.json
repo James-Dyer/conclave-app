@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.84ab1fdf.css",
-    "main.js": "/static/js/main.a6c402b7.js",
+    "main.css": "/static/css/main.0fab6fbe.css",
+    "main.js": "/static/js/main.ee1fc27c.js",
     "static/js/453.670e15c7.chunk.js": "/static/js/453.670e15c7.chunk.js",
+    "static/media/UC-Merced-SigmaChi-ExpectMore.svg": "/static/media/UC-Merced-SigmaChi-ExpectMore.2ed405827bbeb7900c541bdf55414b06.svg",
     "index.html": "/index.html",
-    "main.84ab1fdf.css.map": "/static/css/main.84ab1fdf.css.map",
-    "main.a6c402b7.js.map": "/static/js/main.a6c402b7.js.map",
+    "main.0fab6fbe.css.map": "/static/css/main.0fab6fbe.css.map",
+    "main.ee1fc27c.js.map": "/static/js/main.ee1fc27c.js.map",
     "453.670e15c7.chunk.js.map": "/static/js/453.670e15c7.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.84ab1fdf.css",
-    "static/js/main.a6c402b7.js"
+    "static/css/main.0fab6fbe.css",
+    "static/js/main.ee1fc27c.js"
   ]
 }
