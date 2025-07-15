@@ -1,10 +1,16 @@
 import React from 'react';
 import DataTable from './DataTable';
 import '../styles/PaymentList.css';
+import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
 export default function PaymentList({ payments = [], loading = false }) {
   if (!loading && payments.length === 0) {
-    return <div className="payment-list-empty">No payments found.</div>;
+    return (
+      <div className="table-empty">
+        <img src={logo} alt="" className="empty-illustration" />
+        <p>No payments recorded yet.</p>
+      </div>
+    );
   }
 
   const columns = [

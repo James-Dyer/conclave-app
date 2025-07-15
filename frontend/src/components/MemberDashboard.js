@@ -99,7 +99,6 @@ export default function MemberDashboard({
           </PrimaryButton>
         )}
       </header>
-
       <div className="balance-info" data-testid="balance-info">
         <div className="balance-summary">
           <div
@@ -149,20 +148,25 @@ export default function MemberDashboard({
         </PrimaryButton>
       </div>
 
-      <section>
-        <h2>Outstanding Charges</h2>
-        <ChargeList
-          charges={sortedOutstanding}
-          onViewDetails={onViewDetails}
-          pendingReviewIds={pendingReviewIds}
-          loading={loading}
-        />
-      </section>
+      <div className="dashboard-content">
+        <section className="tables-section">
+          <h2>Outstanding Charges</h2>
+          <ChargeList
+            charges={sortedOutstanding}
+            onViewDetails={onViewDetails}
+            pendingReviewIds={pendingReviewIds}
+            loading={loading}
+          />
 
-      <section>
-        <h2>Recent Payments</h2>
-        <PaymentList payments={sortedPayments} loading={loading} />
-      </section>
+          <h2>Recent Payments</h2>
+          <PaymentList payments={sortedPayments} loading={loading} />
+        </section>
+
+        <aside className="activity-section">
+          <h2>Activity</h2>
+          <div className="activity-placeholder">Activity feed coming soon</div>
+        </aside>
+      </div>
     </div>
   );
 }

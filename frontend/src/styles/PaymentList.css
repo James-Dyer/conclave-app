@@ -10,6 +10,13 @@
   text-align: left;
 }
 
-.payment-list-empty {
+.table-empty {
+  text-align: center;
+  padding: var(--space-md);
   font-style: italic;
+}
+
+.table-empty img.empty-illustration {
+  width: 80px;
+  margin-bottom: var(--space-sm);
 }

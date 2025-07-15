@@ -1,6 +1,7 @@
 import React from 'react';
 import DataTable from './DataTable';
 import '../styles/ChargeList.css';
+import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 import PrimaryButton from './PrimaryButton';
 import SecondaryButton from './SecondaryButton';
 
@@ -16,7 +17,12 @@ export default function ChargeList({
   );
 
   if (!loading && visible.length === 0) {
-    return <div className="charge-list-empty">No charges found.</div>;
+    return (
+      <div className="table-empty">
+        <img src={logo} alt="" className="empty-illustration" />
+        <p>Looks like you've got no outstanding charges.</p>
+      </div>
+    );
   }
 
   const columns = [
