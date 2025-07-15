@@ -340,6 +340,16 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
     return res.status(400).send('Missing fields');
   }
 
+  console.log('Creating user with data:', {
+    email,
+    name,
+    isAdmin,
+    status,
+    initiationDate,
+    amountOwed,
+    tags
+  });
+
   // create auth user + profile using service role
   const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc(
     'create_user_with_profile',
@@ -350,7 +360,12 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
       p_is_admin: isAdmin
     }
   );
-  if (rpcErr) return res.status(500).json({ error: rpcErr.message });
+  if (rpcErr) {
+    console.error('RPC create_user_with_profile failed:', rpcErr);
+    return res.status(500).json({ error: rpcErr.message });
+  }
+
+  console.log('RPC result:', rpcData);
   const id = Array.isArray(rpcData) ? rpcData[0] : rpcData;
 
   // set additional fields not handled by the function
@@ -359,7 +374,12 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
     .update({ initiation_date: initiationDate, amount_owed: amountOwed, tags })
     .eq('id', id);
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error('Failed to update profile with extra fields:', error);
+    return res.status(500).json({ error: error.message });
+  }
+
+  console.log('Created user id:', id);
 
   res.json({ id });
 });
@@ -495,7 +515,7 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
     .select('*')
     .eq('id', paymentId);
   if (payErr || !payment) return res.status(404).json({ error: 'Payment not found' });
-  console.log('👉 Approving payment:', payment);
+  console.log('Approving payment:', payment);
 
   const affected = JSON.parse(payment.affected_charges || '[]');
 
@@ -503,7 +523,7 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
     // Loop and update each affected charge
     console.log(`${affected.length} charge(s) to update:`, affected);
     for (const info of affected) {
-      console.log(`→ processing charge ${info.id} (prev status="${info.prev_status}")`);
+      console.log(`processing charge ${info.id} (prev status="${info.prev_status}")`);
 
       // 2a. Reload the charge
       const { data: [c], error: fetchErr } = await supabaseAdmin
@@ -511,11 +531,11 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
         .select('*')
         .eq('id', info.id);
       if (fetchErr) {
-        console.error(`✖ failed to fetch charge ${info.id}:`, fetchErr);
+        console.error(`failed to fetch charge ${info.id}:`, fetchErr);
         throw fetchErr;
       }
       if (!c) {
-        console.warn(`⚠ charge ${info.id} not found, skipping`);
+        console.warn(`charge ${info.id} not found, skipping`);
         continue;
       }
 
@@ -524,7 +544,7 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
       const upd = isFullyPaid
         ? { status: 'Paid', partial_amount_paid: 0 }
         : { status: 'Partially Paid' };
-      console.log(`   → updating to`, upd);
+      console.log('updating to', upd);
 
       // 2c. Perform the update *and* select so we get back errors or the updated row
       const { data: [updatedCharge], error: updateErr } = await supabaseAdmin
@@ -537,10 +557,10 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
         .eq('id', info.id)
         .select();
       if (updateErr) {
-        console.error(`✖ failed to update charge ${info.id}:`, updateErr);
+        console.error(`failed to update charge ${info.id}:`, updateErr);
         throw updateErr;
       }
-      console.log(`✔ charge ${info.id} now:`, updatedCharge);
+      console.log(`charge ${info.id} now:`, updatedCharge);
     }
 
     // Finally mark the payment itself approved
@@ -554,7 +574,7 @@ app.post('/api/admin/payments/:id/approve', auth, adminOnly, async (req, res) =>
       return res.status(500).json({ error: updPayErr.message });
     }
 
-    console.log('🎉 Payment approved:', updatedPayment);
+    console.log('Payment approved:', updatedPayment);
     res.json({ success: true, payment: updatedPayment });
   } catch (err) {
     // If anything went wrong mid-loop, let the client know
