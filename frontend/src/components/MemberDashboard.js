@@ -157,14 +157,11 @@ export default function MemberDashboard({
             pendingReviewIds={pendingReviewIds}
             loading={loading}
           />
-
-          <h2>Recent Payments</h2>
-          <PaymentList payments={sortedPayments} loading={loading} />
         </section>
 
-        <aside className="activity-section">
-          <h2>Activity</h2>
-          <div className="activity-placeholder">Activity feed coming soon</div>
+        <aside className="payments-section">
+          <h2>Recent Payments</h2>
+          <PaymentList payments={sortedPayments} loading={loading} />
         </aside>
       </div>
     </div>
