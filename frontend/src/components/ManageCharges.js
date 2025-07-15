@@ -16,6 +16,8 @@ export default function ManageCharges({ onBack }) {
   const [step, setStep] = useState(1);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
+  const [amountError, setAmountError] = useState('');
+  const currentYear = new Date().getFullYear();
   const [dueDate, setDueDate] = useState(() => {
     const dt = new Date();
     dt.setDate(dt.getDate() + 30);
@@ -65,7 +67,13 @@ export default function ManageCharges({ onBack }) {
 
   const nextDisabled = () => {
     if (step === 1) {
-      return !description.trim() || !amount || Number(amount) <= 0 || !dueDate;
+      return (
+        !description.trim() ||
+        !amount ||
+        Number(amount) <= 0 ||
+        !dueDate ||
+        !!amountError
+      );
     }
     if (step === 2) {
       return selectedIds.length === 0;
@@ -122,7 +130,7 @@ export default function ManageCharges({ onBack }) {
             Description
             <textarea
               maxLength="255"
-              placeholder="e.g. Monthly Subscription Fee"
+              placeholder={`e.g. Membership Dues - Spring ${currentYear}`}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -130,12 +138,19 @@ export default function ManageCharges({ onBack }) {
           <label>
             Amount
             <input
-              type="number"
-              min="0"
-              step="0.01"
+              type="text"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setAmount(val);
+                if (val && !/^\d*\.?\d*$/.test(val)) {
+                  setAmountError('Amount must be a number');
+                } else {
+                  setAmountError('');
+                }
+              }}
             />
+            {amountError && <div className="error">{amountError}</div>}
           </label>
           <label>
             Due Date
