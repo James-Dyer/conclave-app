@@ -1,13 +1,6 @@
 import '../styles/Header.css';
 
-export default function Header({
-  onShowDashboard,
-  onShowLogin,
-  onShowReview,
-  onShowChargeDetails,
-  onShowAdmin,
-  onLogout
-}) {
+export default function Header({ onShowLogin, onLogout }) {
   return (
     <header className="header">
       <nav className="nav">
@@ -20,42 +13,6 @@ export default function Header({
               onClick={onShowLogin}
             >
               Login
-            </button>
-          )}
-          {onShowDashboard && (
-            <button
-              type="button"
-              className="nav-button dashboard-nav-button"
-              onClick={onShowDashboard}
-            >
-              Dashboard
-            </button>
-          )}
-          {onShowAdmin && (
-            <button
-              type="button"
-              className="nav-button admin-nav-button"
-              onClick={onShowAdmin}
-            >
-              Admin
-            </button>
-          )}
-          {onShowReview && (
-            <button
-              type="button"
-              className="nav-button review-nav-button"
-              onClick={onShowReview}
-            >
-              Payment Review
-            </button>
-          )}
-          {onShowChargeDetails && (
-            <button
-              type="button"
-              className="nav-button charge-details-nav-button"
-              onClick={onShowChargeDetails}
-            >
-              Charge Details
             </button>
           )}
           {onLogout && (
