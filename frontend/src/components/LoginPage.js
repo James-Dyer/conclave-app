@@ -3,6 +3,7 @@ import '../styles/LoginPage.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import { supabase, authFetch } from '../supabaseClient';
+import logo from '../logo.svg';
 
 export default function LoginPage({ onLogin = () => {} }) {
   const [email, setEmail] = useState('');
@@ -39,35 +40,45 @@ export default function LoginPage({ onLogin = () => {} }) {
 
   return (
     <div className="login-page">
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit} className="login-form">
-        <label>
-          Email
+      <div className="login-card">
+        <img src={logo} alt="Conclave logo" className="login-logo" />
+        <h1 className="login-heading">Login</h1>
+        <form onSubmit={handleSubmit} className="login-form">
+          <label htmlFor="email" className="visually-hidden">
+            Email
+          </label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            placeholder="Email"
           />
-        </label>
-        <label>
-          Password
+          <label htmlFor="password" className="visually-hidden">
+            Password
+          </label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            placeholder="Password"
           />
-        </label>
-        {error && <div className="error">{error}</div>}
-        <button type="submit" disabled={loading}>
-          {loading ? (
-            <span className="spinner" aria-label="loading" />
-          ) : (
-            'Login'
-          )}
-        </button>
-      </form>
+          {error && <div className="error">{error}</div>}
+          <button type="submit" disabled={loading}>
+            {loading ? (
+              <span className="spinner" aria-label="loading" />
+            ) : (
+              'Login'
+            )}
+          </button>
+        </form>
+        <a href="#" className="forgot-link">
+          Forgot Password?
+        </a>
+      </div>
     </div>
   );
 }
