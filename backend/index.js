@@ -350,37 +350,63 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
     tags
   });
 
-  // create auth user + profile using service role
-  const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc(
-    'create_user_with_profile',
-    {
-      p_email: email,
-      p_full_name: name,
-      p_status: status,
-      p_is_admin: isAdmin
-    }
-  );
-  if (rpcErr) {
-    console.error('RPC create_user_with_profile failed:', rpcErr);
-    const msg = rpcErr.message || '';
-    if (msg.includes('duplicate key value') && msg.includes('users_email_partial_key')) {
+  // create auth user then insert matching profile
+  const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
+    email,
+    password: 'password'
+  });
+  if (signUpErr) {
+    console.error('signUp failed:', signUpErr);
+    const msg = signUpErr.message || '';
+    if (msg.includes('registered')) {
       return res.status(409).send('Email already exists');
     }
-    return res.status(500).json({ error: rpcErr.message });
+    return res.status(500).json({ error: signUpErr.message });
   }
 
-  console.log('RPC result:', rpcData);
-  const id = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+  const id = signUpData.user.id;
 
-  // set additional fields not handled by the function
+  // insert the profile row
   const { error } = await supabase
     .from('profiles')
-    .update({ initiation_date: initiationDate, amount_owed: amountOwed, tags })
-    .eq('id', id);
+    .insert({
+      id,
+      email,
+      name,
+      is_admin: isAdmin,
+      status,
+      initiation_date: initiationDate,
+      amount_owed: amountOwed,
+      tags
+    });
 
   if (error) {
-    console.error('Failed to update profile with extra fields:', error);
+    console.error('Failed to create profile:', error);
     return res.status(500).json({ error: error.message });
+  }
+
+  // verify the auth user exists and log for debugging
+  try {
+    const { data: userCheck, error: userErr } =
+      await supabaseAdmin.auth.admin.getUserById(id);
+    console.log('Post-create getUserById result:', { user: userCheck, userErr });
+  } catch (e) {
+    console.error('getUserById threw:', e);
+  }
+
+  try {
+    const { data: emailRow, error: emailRowErr } = await supabaseAdmin
+      .schema('auth')
+      .from('users')
+      .select('id, email')
+      .eq('email', email)
+      .maybeSingle();
+    console.log('Direct auth.users lookup:', {
+      row: emailRow,
+      emailRowErr
+    });
+  } catch (e) {
+    console.error('auth.users lookup threw:', e);
   }
 
   console.log('Created user id:', id);
