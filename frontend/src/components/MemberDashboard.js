@@ -84,11 +84,13 @@ export default function MemberDashboard({
 
   return (
     <div className="member-dashboard">
+      {user?.isAdmin && onShowAdmin && (
+        <div className="view-toggle-wrapper">
+          <ViewToggle isAdminView={false} onToggle={onShowAdmin} />
+        </div>
+      )}
       <header className="member-dash-header">
         <h1>Dashboard</h1>
-        {user?.isAdmin && onShowAdmin && (
-          <ViewToggle isAdminView={false} onToggle={onShowAdmin} />
-        )}
         {onShowActivity && (
           <PrimaryButton
             type="button"
