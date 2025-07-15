@@ -17,7 +17,7 @@ function App() {
   const [reviewCharge, setReviewCharge] = useState(null);
   const [detailsCharge, setDetailsCharge] = useState(null);
   const [pendingReviewIds, setPendingReviewIds] = useState([]);
-  const { setToken, setUser, user } = useAuth();
+  const { token, setToken, setUser, user } = useAuth();
 
   const showDashboard = () => {
     setCurrentPage('dashboard');
@@ -112,14 +112,7 @@ function App() {
   }
 
   return (
-    <AppShell
-      onShowDashboard={showDashboard}
-      onShowLogin={showLogin}
-      onShowReview={showReview}
-      onShowChargeDetails={showChargeDetails}
-      onShowAdmin={user?.isAdmin ? showAdmin : undefined}
-      onLogout={handleLogout}
-    >
+    <AppShell onShowLogin={showLogin} onLogout={token ? handleLogout : undefined}>
       {pageContent}
     </AppShell>
   );
