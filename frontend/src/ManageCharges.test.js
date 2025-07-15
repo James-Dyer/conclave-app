@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ManageCharges from './components/ManageCharges';
 import { AuthProvider } from './AuthContext';
@@ -31,4 +31,12 @@ test('shows error for non-numeric amount', async () => {
   const input = screen.getByLabelText(/amount/i);
   await userEvent.type(input, '$200');
   expect(await screen.findByText(/amount must be a number/i)).toBeInTheDocument();
+});
+
+test('shows required warning on description blur', async () => {
+  setup();
+  const textarea = screen.getByLabelText(/description/i);
+  fireEvent.focus(textarea);
+  fireEvent.blur(textarea);
+  expect(await screen.findByText(/description is required/i)).toBeInTheDocument();
 });

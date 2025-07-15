@@ -15,6 +15,7 @@ export default function ManageCharges({ onBack }) {
   const { addNotification } = useNotifications();
   const [step, setStep] = useState(1);
   const [description, setDescription] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
   const currentYear = new Date().getFullYear();
@@ -65,6 +66,14 @@ export default function ManageCharges({ onBack }) {
     setSelectedIds(Array.from(new Set([...selectedIds, ...filteredMembers.map((m) => m.id)])));
   };
 
+  const handleDescriptionBlur = () => {
+    if (!description.trim()) {
+      setDescriptionError('Description is required');
+    } else {
+      setDescriptionError('');
+    }
+  };
+
   const nextDisabled = () => {
     if (step === 1) {
       return (
@@ -72,7 +81,8 @@ export default function ManageCharges({ onBack }) {
         !amount ||
         Number(amount) <= 0 ||
         !dueDate ||
-        !!amountError
+        !!amountError ||
+        !!descriptionError
       );
     }
     if (step === 2) {
@@ -133,7 +143,9 @@ export default function ManageCharges({ onBack }) {
               placeholder={`e.g. Membership Dues - Spring ${currentYear}`}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              onBlur={handleDescriptionBlur}
             />
+            {descriptionError && <div className="error">{descriptionError}</div>}
           </label>
           <label>
             Amount

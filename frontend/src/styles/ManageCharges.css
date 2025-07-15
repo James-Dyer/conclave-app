@@ -12,9 +12,10 @@
 
 .charge-form {
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 150px 1fr auto;
   gap: 12px;
   max-width: 500px;
+  align-items: start;
 }
 
 .charge-form label {
@@ -52,4 +53,12 @@
 
 .error {
   color: var(--color-error);
+}
+
+.charge-form .error {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  font-size: 0.85rem;
+  height: 100%;
 }
