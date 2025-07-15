@@ -2,6 +2,8 @@ import { useState } from 'react';
 import ChargesList from './ChargesList';
 import ManageCharges from './ManageCharges';
 import '../styles/AdminDashboard.css';
+import SecondaryButton from './SecondaryButton';
+import PrimaryButton from './PrimaryButton';
 
 export default function ManageChargesPage({ onBack }) {
   const [creating, setCreating] = useState(false);
@@ -13,10 +15,12 @@ export default function ManageChargesPage({ onBack }) {
       <header className="admin-dash-header">
         <h1>Manage Charges</h1>
         {onBack && (
-          <button onClick={onBack} className="back-button">Back</button>
+          <SecondaryButton onClick={onBack} className="back-button">
+            Back
+          </SecondaryButton>
         )}
       </header>
-      <button onClick={() => setCreating(true)}>Create Charge</button>
+      <PrimaryButton onClick={() => setCreating(true)}>Create Charge</PrimaryButton>
       <ChargesList />
     </div>
   );

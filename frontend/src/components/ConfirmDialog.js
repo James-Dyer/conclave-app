@@ -1,5 +1,7 @@
 import React from 'react';
 import '../styles/ConfirmDialog.css';
+import PrimaryButton from './PrimaryButton';
+import SecondaryButton from './SecondaryButton';
 
 export default function ConfirmDialog({
   open = false,
@@ -51,12 +53,12 @@ export default function ConfirmDialog({
           {errorText && <div className="error">{errorText}</div>}
         </div>
         <div className="confirm-dialog-actions">
-          <button type="button" onClick={handleConfirm} className="confirm-button">
+          <PrimaryButton type="button" onClick={handleConfirm} className="confirm-button">
             {confirmText}
-          </button>
-          <button type="button" onClick={onCancel} className="cancel-button">
+          </PrimaryButton>
+          <SecondaryButton type="button" onClick={onCancel} className="cancel-button">
             {cancelText}
-          </button>
+          </SecondaryButton>
         </div>
       </div>
     </div>

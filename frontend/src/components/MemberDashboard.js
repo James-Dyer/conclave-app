@@ -3,6 +3,7 @@ import ChargeList from './ChargeList';
 import PaymentList from './PaymentList';
 import '../styles/MemberDashboard.css';
 import ViewToggle from './ViewToggle';
+import PrimaryButton from './PrimaryButton';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import { getBalanceBreakdown } from '../balanceUtils';
@@ -89,13 +90,13 @@ export default function MemberDashboard({
         )}
         <h1>Dashboard</h1>
         {onShowActivity && (
-          <button
+          <PrimaryButton
             type="button"
             className="activity-button"
             onClick={onShowActivity}
           >
             Account Activity
-          </button>
+          </PrimaryButton>
         )}
       </header>
 
@@ -137,7 +138,7 @@ export default function MemberDashboard({
             <div className="breakdown-error">Unable to calculate breakdown.</div>
           )}
         </div>
-        <button
+        <PrimaryButton
           type="button"
           className="dashboard-review-button"
           data-testid="dashboard-review-button"
@@ -145,7 +146,7 @@ export default function MemberDashboard({
           onClick={() => onRequestReview({ amount: totalBalance })}
         >
           Mark as Paid
-        </button>
+        </PrimaryButton>
       </div>
 
       <section>

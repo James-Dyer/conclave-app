@@ -1,6 +1,8 @@
 import React from 'react';
 import DataTable from './DataTable';
 import '../styles/ChargeList.css';
+import PrimaryButton from './PrimaryButton';
+import SecondaryButton from './SecondaryButton';
 
 export default function ChargeList({
   charges = [],
@@ -47,7 +49,7 @@ export default function ChargeList({
       data={rows}
       renderActions={(row) => (
         <div className="flex space-x-2">
-          <button
+          <SecondaryButton
             type="button"
             onClick={() =>
               onViewDetails({
@@ -57,10 +59,10 @@ export default function ChargeList({
                 dueDate: row.original.dueDate
               })
             }
-            className="px-3 py-1 bg-gray-200 text-gray-800 rounded"
+            className="px-3 py-1"
           >
             Details
-          </button>
+          </SecondaryButton>
         </div>
       )}
     />

@@ -4,6 +4,8 @@ import ConfirmDialog from './ConfirmDialog';
 import DataTable from './DataTable';
 import ViewToggle from './ViewToggle';
 import '../styles/AdminDashboard.css';
+import PrimaryButton from './PrimaryButton';
+import SecondaryButton from './SecondaryButton';
 
 export default function AdminDashboard({
   onManageCharges,
@@ -82,16 +84,16 @@ export default function AdminDashboard({
       </header>
       {error && <div className="error">{error}</div>}
       <section className="quick-links">
-        <button className="quick-link" onClick={onManageCharges}>
+        <PrimaryButton className="quick-link" onClick={onManageCharges}>
           Manage Charges
           <span className="desc">Create, update, or delete charges for members</span>
-        </button>
-        <button className="quick-link" onClick={onShowMembers}>
+        </PrimaryButton>
+        <PrimaryButton className="quick-link" onClick={onShowMembers}>
           Manage Members
           <span className="desc">
             Add, browse, and manage all member accounts
           </span>
-        </button>
+        </PrimaryButton>
       </section>
       <section>
         <h2>Payment Reviews</h2>
@@ -113,8 +115,12 @@ export default function AdminDashboard({
           }))}
           renderActions={(row) => (
             <div className="flex space-x-2">
-              <button onClick={() => openApproveDialog(row.original)}>Approve</button>
-              <button onClick={() => openDenyDialog(row.original)}>Reject</button>
+              <PrimaryButton onClick={() => openApproveDialog(row.original)}>
+                Approve
+              </PrimaryButton>
+              <SecondaryButton onClick={() => openDenyDialog(row.original)}>
+                Reject
+              </SecondaryButton>
             </div>
           )}
         />

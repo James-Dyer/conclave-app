@@ -5,6 +5,8 @@ import FilterMenu from './FilterMenu';
 import ConfirmDialog from './ConfirmDialog';
 import { useNotifications } from '../NotificationContext';
 import '../styles/ManageCharges.css';
+import PrimaryButton from './PrimaryButton';
+import SecondaryButton from './SecondaryButton';
 
 const STATUS_OPTIONS = ['Active', 'Alumni', 'Inactive', 'Suspended', 'Expelled'];
 
@@ -157,9 +159,9 @@ export default function ManageCharges({ onBack }) {
               onChangeStatuses={setStatusFilter}
               onChangeTags={() => {}}
             />
-            <button type="button" onClick={selectAllMatching} disabled={filteredMembers.length === 0}>
+            <PrimaryButton type="button" onClick={selectAllMatching} disabled={filteredMembers.length === 0}>
               Select All Matching
-            </button>
+            </PrimaryButton>
             <div className="selected-count">
               {selectedIds.length} of {members.length} members selected
             </div>
@@ -254,16 +256,17 @@ export default function ManageCharges({ onBack }) {
         </div>
       )}
       <div className="wizard-footer">
-        <button type="button" onClick={handleBack}>Back</button>
+        <SecondaryButton type="button" onClick={handleBack}
+          >Back</SecondaryButton>
         {step < 3 && (
-          <button type="button" onClick={handleNext} disabled={nextDisabled()}>
+          <PrimaryButton type="button" onClick={handleNext} disabled={nextDisabled()}>
             Next
-          </button>
+          </PrimaryButton>
         )}
         {step === 3 && (
-          <button type="button" onClick={() => setShowConfirm(true)}>
+          <PrimaryButton type="button" onClick={() => setShowConfirm(true)}>
             Create Charge
-          </button>
+          </PrimaryButton>
         )}
       </div>
       <ConfirmDialog

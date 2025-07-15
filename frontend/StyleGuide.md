@@ -105,6 +105,11 @@ Gutter (gap): `var(--space-lg)` (24px)
   - Controlled by the `open` prop
   - Optional input value managed externally
 
+### Buttons
+
+- **PrimaryButton** – Light blue action button used for main actions. Rounded corners.
+- **SecondaryButton** – Gray button for less prominent actions like “Back”.
+
 ### SearchBar
 
 - **Purpose:** Styled input for entering search queries.

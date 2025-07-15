@@ -27,13 +27,5 @@
 }
 
 .nav-button {
-  background-color: var(--color-accent);
-  color: var(--color-text);
-  border: none;
   padding: 5px 10px;
-  cursor: pointer;
-}
-
-.nav-button:hover {
-  background-color: var(--color-accent-hover);
 }
