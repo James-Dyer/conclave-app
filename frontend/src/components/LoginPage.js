@@ -3,7 +3,7 @@ import '../styles/LoginPage.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import { supabase, authFetch } from '../supabaseClient';
-import logo from '../logo.svg';
+import logo from '../../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
 export default function LoginPage({ onLogin = () => {} }) {
   const [email, setEmail] = useState('');
@@ -41,7 +41,7 @@ export default function LoginPage({ onLogin = () => {} }) {
   return (
     <div className="login-page">
       <div className="login-card">
-        <img src={logo} alt="Conclave logo" className="login-logo" />
+        <img src={logo} alt="Sigma Chi logo" className="login-logo" />
         <h1 className="login-heading">Login</h1>
         <form onSubmit={handleSubmit} className="login-form">
           <label htmlFor="email" className="visually-hidden">
