@@ -13,6 +13,6 @@
 }
 
 .view-toggle button.active {
-  background-color: #282c34;
+  background-color: var(--color-text);
   color: #fff;
 }

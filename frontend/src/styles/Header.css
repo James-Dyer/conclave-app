@@ -1,5 +1,5 @@
 .header {
-  background-color: #282c34;
+  background-color: var(--color-text);
   padding: 10px 20px;
   color: white;
 }
@@ -16,7 +16,7 @@
 }
 
 .logout-link {
-  color: #61dafb;
+  color: var(--color-accent);
   text-decoration: none;
 }
 
@@ -27,13 +27,13 @@
 }
 
 .nav-button {
-  background-color: #61dafb;
-  color: #282c34;
+  background-color: var(--color-accent);
+  color: var(--color-text);
   border: none;
   padding: 5px 10px;
   cursor: pointer;
 }
 
 .nav-button:hover {
-  background-color: #4db8d6;
+  background-color: var(--color-accent-hover);
 }
