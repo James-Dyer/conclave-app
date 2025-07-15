@@ -37,9 +37,9 @@
 }
 
 .error {
-  color: red;
+  color: var(--color-error);
 }
 
 .success {
-  color: green;
+  color: var(--color-success);
 }
