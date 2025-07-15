@@ -6,7 +6,7 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 
 - **Background:** White `#F2F8FC`
 - **Text / Primary Content:** Dark blue `#282C34`
-- **Accent:** Sky blue `#5e90db` (hover `#3d5f91`)
+- **Accent:** Light blue `#a8d0ff` (hover `#82b4e5`)
 - **Surfaces:** Light gray `#F5F5F5` with darker `#E0E0E0` for emphasis
 - **Status Highlights:** Success `#4CAF50`, error `#B30000`
 - **Cards** Background: White #FFFFFF; Border / Shadow: 0 1px 3px rgba(0,0,0,0.1)

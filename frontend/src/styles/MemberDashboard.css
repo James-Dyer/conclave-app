@@ -12,7 +12,7 @@
 }
 
 .balance-info {
-  background-color: var(--color-surface);
+  background-color: var(--color-background);
   padding: 16px;
   border-radius: 4px;
   display: flex;
