@@ -76,6 +76,19 @@
   background-color: #4db8d6;
 }
 
+.activity-button {
+  margin-left: auto;
+  padding: 6px 12px;
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  cursor: pointer;
+}
+
+.activity-button:hover {
+  background-color: #4db8d6;
+}
+
 .member-dash-header {
   display: flex;
   align-items: center;

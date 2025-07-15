@@ -10,6 +10,7 @@ import AddMember from './AddMember';
 import PaymentReviewForm from './PaymentReviewForm';
 import ChargeDetails from './ChargeDetails';
 import AppShell from './AppShell';
+import AccountActivityPage from './AccountActivityPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
@@ -33,6 +34,7 @@ function App() {
   const showMembersList = () => setCurrentPage('members');
   const showManageCharges = () => setCurrentPage('manageCharges');
   const showAddMember = () => setCurrentPage('addMember');
+  const showActivity = () => setCurrentPage('activity');
   const showReview = (charge) => {
     if (charge) {
       setReviewCharge(charge);
@@ -60,8 +62,12 @@ function App() {
           onViewDetails={showChargeDetails}
           pendingReviewIds={pendingReviewIds}
           onShowAdmin={user?.isAdmin ? showAdmin : undefined}
+          onShowActivity={showActivity}
         />
       );
+      break;
+    case 'activity':
+      pageContent = <AccountActivityPage onBack={showDashboard} />;
       break;
     case 'review':
       pageContent = (
