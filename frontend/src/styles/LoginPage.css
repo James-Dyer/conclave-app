@@ -5,6 +5,7 @@
   min-height: 100vh;
   padding: var(--space-xl) var(--space-xl) 0;
   box-sizing: border-box;
+  background: url('../assets/images/sigmaChiPolo.jpeg') center/cover no-repeat;
 }
 
 .login-card {
