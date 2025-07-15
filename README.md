@@ -66,13 +66,15 @@ conclave-app/
 │
 ├── backend/              ← Node + Express
 │    ├── test
+│    ├── integrationTests.md
 │    └── index.js
 │
 ├── frontend/             ← React app
 │    ├── public
-│    └── src
-│         ├── components  ← JS Components
-│         └── styles      ← CSS
+│    ├── src
+│    │   ├── components  ← JS Components
+│    │   └── styles      ← CSS
+│    └── StyleGuide.md
 │
 ├── README.md
 └── AGENTS.md             ← Instructions for Codex AI
