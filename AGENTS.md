@@ -1,7 +1,8 @@
 # Codex
 Relevant information about the project for the codex agent to understand when performing tasks
 
-## Development
+## Development Guide
+- By default don't use emojis where they don't need to be. Particularly logs and debug statements.
 
 ### Login workflow
 Log in and grab the token
