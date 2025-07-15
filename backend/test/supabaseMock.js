@@ -170,7 +170,14 @@ const supabase = {
       const token = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: '1h' });
       return { data: { session: { access_token: token }, user: { id: user.id, email: user.email } }, error: null };
     },
-    async signUp() { return { data: {}, error: null }; }
+    async signUp({ email, password }) {
+      if (profiles.some((p) => p.email === email)) {
+        return { data: {}, error: { message: 'User already registered' } };
+      }
+      const id = crypto.randomUUID();
+      // track auth user separate from profiles; login for new users not needed
+      return { data: { user: { id, email } }, error: null };
+    }
   },
   from
 };
