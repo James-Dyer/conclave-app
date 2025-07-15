@@ -22,7 +22,7 @@ test('shows login form on initial load', () => {
       <App />
     </AuthProvider>
   );
-}
+});
 
 test.skip('header charge details button shows page', async () => {
   render(
