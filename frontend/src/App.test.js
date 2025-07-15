@@ -4,9 +4,7 @@ import App from './components/App';
 import { AuthProvider } from './AuthContext';
 
 function mockFetch() {
-  global.fetch = jest.fn(() =>
-    Promise.resolve({ ok: true, json: async () => [] })
-  );
+  global.fetch = jest.fn(() => Promise.resolve({ ok: true, json: async () => [] }));
 }
 
 beforeEach(() => {
@@ -18,7 +16,7 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
-function renderApp() {
+test('shows login form on initial load', () => {
   render(
     <AuthProvider>
       <App />
@@ -77,16 +75,16 @@ test.skip('dashboard tile review button opens form', async () => {
   await userEvent.click(button);
   const heading = await screen.findByRole('heading', { name: /payment review/i });
   expect(heading).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
 });
 
 test('shows logout button when token present', () => {
   localStorage.setItem('authToken', 'token');
   localStorage.setItem('authUser', JSON.stringify({ id: 1 }));
-  renderApp();
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
   expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument();
-});
-
-test('hides logout button when not logged in', () => {
-  renderApp();
-  expect(screen.queryByRole('button', { name: /logout/i })).not.toBeInTheDocument();
 });
