@@ -4,17 +4,17 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 
 ## Color Palette
 
-- **Background:** Steel Gray `#1F1C2C`
-- **Text / Primary Content:** Gray `#928DAB`
-- **Accent / Surfaces:** Off-white `#EDEDED` (or similar—try `#F2F2F2` for a bit more warmth)
-- **Optional Highlight:** If you want a pop color for links/buttons, consider Soft Cyan `#4DD0E1` or Coral `#FF6B6B`
+- **Background:** White `#F2F8FC`
+- **Text / Primary Content:** Dark blue `#282C34`
+- **Accent:** Sky blue `#5e90db` (hover `#3d5f91`)
+- **Surfaces:** Light gray `#F5F5F5` with darker `#E0E0E0` for emphasis
+- **Status Highlights:** Success `#4CAF50`, error `#B30000`
 
 ## Typography
 
 - **Primary (body) font:** *Inter*\
   Designed for legibility on screens, modern yet professional.
-- **Secondary (headings) font:** *Montserrat* or *Poppins*\
-  Geometric, clean lines that pair nicely with Inter’s humanist shapes.
+- **Secondary (headings) font:** TBD
 
 **Base sizes & scale:**
 
@@ -150,12 +150,12 @@ Gutter (gap): `var(--space-lg)` (24px)
 
 - **Hover / Focus Transitions:** 150–200ms cubic-bezier fade
 - **Button Press Feedback:** slight scale (0.97) on click
-- **Form Validation States:** inline error text in a warm accent (`#FF6B6B`)
+- **Form Validation States:** inline error text shown in red
 
 ## 7. Accessibility & Contrast
 
 - **Contrast checks:**
-  - Body text on Steel Gray: `#928DAB` vs `#1F1C2C` → ratio ≈ 7.5:1 ✅
+  - Body text on dark blue: `#FFFFFF` vs `#282C34` → ratio ≈ 14:1 ✅
   - Accent text on dark panels: ensure at least 4.5:1 for smaller text
 - **Keyboard navigation:**
   - Visible focus outlines, skip-to-content link
