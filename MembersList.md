@@ -19,7 +19,7 @@ Columns include:
 5. **Amount Owed**
 6. **Tags** 
 
-The table should support pagination once the list grows, but initial implementation can show all members.
+The list now paginates 10 members per page with buttons to navigate between pages.
 
 ## Sorting
 
