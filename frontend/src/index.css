@@ -10,6 +10,11 @@
   --color-surface-emphasis: #E0E0E0;
   --color-success: #4CAF50;
   --color-error: #B30000;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
 }
 
 body {
