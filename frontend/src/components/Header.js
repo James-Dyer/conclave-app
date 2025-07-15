@@ -1,7 +1,14 @@
 import '../styles/Header.css';
 import PrimaryButton from './PrimaryButton';
 
-export default function Header({ onShowLogin, onLogout }) {
+export default function Header({
+  onShowLogin,
+  onShowDashboard,
+  onShowAdmin,
+  onShowReview,
+  onShowChargeDetails,
+  onLogout,
+}) {
   return (
     <header className="header">
       <nav className="nav">
