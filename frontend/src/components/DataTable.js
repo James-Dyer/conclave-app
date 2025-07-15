@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/AdminDashboard.css';
+import SecondaryButton from './SecondaryButton';
 
 export default function DataTable({
   columns = [],
@@ -51,15 +52,15 @@ export default function DataTable({
       </table>
       {totalPages > 1 && (
         <div className="pagination">
-          <button onClick={prev} disabled={page === 0}>
+          <SecondaryButton onClick={prev} disabled={page === 0}>
             Previous
-          </button>
+          </SecondaryButton>
           <span>
             Page {page + 1} of {totalPages}
           </span>
-          <button onClick={next} disabled={page >= totalPages - 1}>
+          <SecondaryButton onClick={next} disabled={page >= totalPages - 1}>
             Next
-          </button>
+          </SecondaryButton>
         </div>
       )}
     </div>

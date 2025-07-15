@@ -3,6 +3,8 @@ import useApi from '../apiClient';
 import ConfirmDialog from './ConfirmDialog';
 import { useNotifications } from '../NotificationContext';
 import '../styles/AddMember.css';
+import PrimaryButton from './PrimaryButton';
+import SecondaryButton from './SecondaryButton';
 
 export default function AddMember({ onCancel }) {
   const api = useApi();
@@ -98,11 +100,11 @@ export default function AddMember({ onCancel }) {
         </label>
         {error && <div className="error">{error}</div>}
         <div className="form-actions">
-          <button type="submit">Submit</button>
+          <PrimaryButton type="submit">Submit</PrimaryButton>
           {onCancel && (
-            <button type="button" onClick={onCancel} className="back-button">
+            <SecondaryButton type="button" onClick={onCancel} className="back-button">
               Cancel
-            </button>
+            </SecondaryButton>
           )}
         </div>
       </form>

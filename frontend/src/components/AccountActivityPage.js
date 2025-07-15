@@ -4,6 +4,7 @@ import PaymentList from './PaymentList';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import '../styles/AccountActivityPage.css';
+import SecondaryButton from './SecondaryButton';
 
 export default function AccountActivityPage({ onBack }) {
   const api = useApi();
@@ -46,9 +47,9 @@ export default function AccountActivityPage({ onBack }) {
       <header className="member-dash-header">
         <h1>Account Activity</h1>
         {onBack && (
-          <button onClick={onBack} className="back-button">
+          <SecondaryButton onClick={onBack} className="back-button">
             Back
-          </button>
+          </SecondaryButton>
         )}
       </header>
       <section>

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import '../styles/PaymentReviewForm.css';
 import useApi from '../apiClient';
 import { useNotifications } from '../NotificationContext';
+import PrimaryButton from './PrimaryButton';
+import SecondaryButton from './SecondaryButton';
 
 const sampleCharge = { id: 1, amount: '$200', description: 'Charge' };
 
@@ -88,11 +90,11 @@ export default function PaymentReviewForm({
         {error && <div className="error">{error}</div>}
         {message && <div className="success">{message}</div>}
         <div className="form-actions">
-          <button type="submit">Submit</button>
+          <PrimaryButton type="submit">Submit</PrimaryButton>
           {onBack && (
-            <button type="button" onClick={onBack} className="back-button">
+            <SecondaryButton type="button" onClick={onBack} className="back-button">
               Back
-            </button>
+            </SecondaryButton>
           )}
         </div>
       </form>

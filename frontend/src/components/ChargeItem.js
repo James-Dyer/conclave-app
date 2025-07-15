@@ -1,3 +1,5 @@
+import SecondaryButton from './SecondaryButton';
+
 export default function ChargeItem({
   id,
   status,
@@ -19,13 +21,13 @@ export default function ChargeItem({
       <td>{displayStatus}</td>
       <td>{partialAmountPaid > 0 ? partialAmountPaid : ''}</td>
       <td className="flex space-x-2">
-        <button
+        <SecondaryButton
           type="button"
           onClick={() => onViewDetails({ id, status, amount, dueDate })}
-          className="px-3 py-1 bg-gray-200 text-gray-800 rounded"
+          className="px-3 py-1"
         >
           Details
-        </button>
+        </SecondaryButton>
       </td>
     </tr>
   );

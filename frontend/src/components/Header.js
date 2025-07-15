@@ -1,24 +1,68 @@
 import '../styles/Header.css';
+import PrimaryButton from './PrimaryButton';
 
-export default function Header({ onShowLogin, onLogout }) {
+export default function Header({
+  onShowLogin,
+  onShowDashboard,
+  onShowAdmin,
+  onShowReview,
+  onShowChargeDetails,
+  onLogout,
+}) {
   return (
     <header className="header">
       <nav className="nav">
         <span className="brand">Conclave ΣΧ-ΛΔ</span>
         <div className="nav-actions">
           {onShowLogin && (
-            <button
+            <PrimaryButton
               type="button"
               className="nav-button login-nav-button"
               onClick={onShowLogin}
             >
               Login
-            </button>
+            </PrimaryButton>
+          )}
+          {onShowDashboard && (
+            <PrimaryButton
+              type="button"
+              className="nav-button dashboard-nav-button"
+              onClick={onShowDashboard}
+            >
+              Dashboard
+            </PrimaryButton>
+          )}
+          {onShowAdmin && (
+            <PrimaryButton
+              type="button"
+              className="nav-button admin-nav-button"
+              onClick={onShowAdmin}
+            >
+              Admin
+            </PrimaryButton>
+          )}
+          {onShowReview && (
+            <PrimaryButton
+              type="button"
+              className="nav-button review-nav-button"
+              onClick={onShowReview}
+            >
+              Payment Review
+            </PrimaryButton>
+          )}
+          {onShowChargeDetails && (
+            <PrimaryButton
+              type="button"
+              className="nav-button charge-details-nav-button"
+              onClick={onShowChargeDetails}
+            >
+              Charge Details
+            </PrimaryButton>
           )}
           {onLogout && (
-            <button type="button" className="nav-button logout-button" onClick={onLogout}>
+            <PrimaryButton type="button" className="nav-button logout-button" onClick={onLogout}>
               Logout
-            </button>
+            </PrimaryButton>
           )}
         </div>
       </nav>
