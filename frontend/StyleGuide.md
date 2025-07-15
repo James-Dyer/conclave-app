@@ -144,3 +144,11 @@ Gutter (gap): `var(--space-lg)` (24px)
 - **Context API:** `useNotifications()` returns `{ notifications, addNotification, removeNotification }` from `NotificationContext`.
 - **Behaviors:**
   - Vertical stack of toasts, auto-dismiss after 5s, pause on hover, manual close button.
+
+## Member Dashboard Layout
+
+- **Row 1:** Header spanning all 12 columns with page title and global actions.
+- **Row 2:** Ten-column container holding four summary cards. The "Mark as Paid" button sits below the cards, right aligned and styled with the brand accent color.
+- **Row 3:** Ten-column region split 6/4. The left side contains the charges and payments tables; the right side is reserved for an activity feed or chart.
+- During development the rows are temporarily tinted different background colors so their boundaries are clear.
+- Empty state tables show an illustration with a short hint instead of plain text (e.g., "Looks like you've got no outstanding charges").
