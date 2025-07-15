@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/ChargeDetails.css';
+import SecondaryButton from './SecondaryButton';
 
 const sampleCharge = {
   id: 1,
@@ -39,9 +40,9 @@ export default function ChargeDetails({ charge, onRequestReview, onBack }) {
 
       <div className="charge-actions">
         {onBack && (
-          <button type="button" onClick={onBack} className="back-button">
+          <SecondaryButton type="button" onClick={onBack} className="back-button">
             Back
-          </button>
+          </SecondaryButton>
         )}
       </div>
     </div>

@@ -1,12 +1,13 @@
 import '../styles/Header.css';
+import PrimaryButton from './PrimaryButton';
 
 export default function Header({
-  onShowDashboard,
   onShowLogin,
+  onShowDashboard,
+  onShowAdmin,
   onShowReview,
   onShowChargeDetails,
-  onShowAdmin,
-  onLogout
+  onLogout,
 }) {
   return (
     <header className="header">
@@ -14,54 +15,54 @@ export default function Header({
         <span className="brand">Conclave ΣΧ-ΛΔ</span>
         <div className="nav-actions">
           {onShowLogin && (
-            <button
+            <PrimaryButton
               type="button"
               className="nav-button login-nav-button"
               onClick={onShowLogin}
             >
               Login
-            </button>
+            </PrimaryButton>
           )}
           {onShowDashboard && (
-            <button
+            <PrimaryButton
               type="button"
               className="nav-button dashboard-nav-button"
               onClick={onShowDashboard}
             >
               Dashboard
-            </button>
+            </PrimaryButton>
           )}
           {onShowAdmin && (
-            <button
+            <PrimaryButton
               type="button"
               className="nav-button admin-nav-button"
               onClick={onShowAdmin}
             >
               Admin
-            </button>
+            </PrimaryButton>
           )}
           {onShowReview && (
-            <button
+            <PrimaryButton
               type="button"
               className="nav-button review-nav-button"
               onClick={onShowReview}
             >
               Payment Review
-            </button>
+            </PrimaryButton>
           )}
           {onShowChargeDetails && (
-            <button
+            <PrimaryButton
               type="button"
               className="nav-button charge-details-nav-button"
               onClick={onShowChargeDetails}
             >
               Charge Details
-            </button>
+            </PrimaryButton>
           )}
           {onLogout && (
-            <button type="button" className="nav-button logout-button" onClick={onLogout}>
+            <PrimaryButton type="button" className="nav-button logout-button" onClick={onLogout}>
               Logout
-            </button>
+            </PrimaryButton>
           )}
         </div>
       </nav>

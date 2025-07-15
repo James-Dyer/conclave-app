@@ -3,6 +3,7 @@ import '../styles/LoginPage.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import { supabase, authFetch } from '../supabaseClient';
+import PrimaryButton from './PrimaryButton';
 import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
 export default function LoginPage({ onLogin = () => {} }) {
@@ -66,13 +67,13 @@ export default function LoginPage({ onLogin = () => {} }) {
             placeholder="Password"
           />
           {error && <div className="error">{error}</div>}
-          <button type="submit" disabled={loading}>
+          <PrimaryButton type="submit" disabled={loading}>
             {loading ? (
               <span className="spinner" aria-label="loading" />
             ) : (
               'Login'
             )}
-          </button>
+          </PrimaryButton>
         </form>
         <a href="#" className="forgot-link">
           Forgot Password?

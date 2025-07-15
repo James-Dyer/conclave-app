@@ -6,6 +6,8 @@ import SortMenu from './SortMenu';
 import FilterMenu from './FilterMenu';
 import DataTable from './DataTable';
 import '../styles/AdminDashboard.css';
+import SecondaryButton from './SecondaryButton';
+import PrimaryButton from './PrimaryButton';
 
 const STATUS_OPTIONS = ['Active', 'Alumni', 'Inactive', 'Suspended', 'Expelled'];
 
@@ -50,10 +52,14 @@ export default function MembersList({ onBack, onAdd }) {
         <h1>Members List</h1>
         <div className="action-buttons">
           {onBack && (
-            <button onClick={onBack} className="back-button">Back</button>
+            <SecondaryButton onClick={onBack} className="back-button">
+              Back
+            </SecondaryButton>
           )}
           {onAdd && (
-            <button onClick={onAdd} className="add-button">Add Member</button>
+            <PrimaryButton onClick={onAdd} className="add-button">
+              Add Member
+            </PrimaryButton>
           )}
         </div>
       </header>

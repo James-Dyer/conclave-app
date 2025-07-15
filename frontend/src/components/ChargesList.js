@@ -5,6 +5,8 @@ import SortMenu from './SortMenu';
 import FilterMenu from './FilterMenu';
 import DataTable from './DataTable';
 import '../styles/AdminDashboard.css';
+import SecondaryButton from './SecondaryButton';
+import PrimaryButton from './PrimaryButton';
 
 const STATUS_OPTIONS = ['Outstanding', 'Paid', 'Delinquent', 'Under Review'];
 
@@ -65,7 +67,9 @@ export default function ChargesList({ onBack }) {
       <header className="admin-dash-header">
         <h1>Charge List</h1>
         {onBack && (
-          <button onClick={onBack} className="back-button">Back</button>
+          <SecondaryButton onClick={onBack} className="back-button">
+            Back
+          </SecondaryButton>
         )}
       </header>
       {error && <div className="error">{error}</div>}
@@ -98,10 +102,14 @@ export default function ChargesList({ onBack }) {
         })}
         renderActions={(row) => (
           <div className="action-buttons">
-            {row.status !== 'Paid' && (
-              <button onClick={() => handleMarkPaid(row.id)}>Mark Paid</button>
-            )}
-            <button onClick={() => handleDelete(row.id)}>Delete</button>
+              {row.status !== 'Paid' && (
+                <PrimaryButton onClick={() => handleMarkPaid(row.id)}>
+                  Mark Paid
+                </PrimaryButton>
+              )}
+              <SecondaryButton onClick={() => handleDelete(row.id)}>
+                Delete
+              </SecondaryButton>
           </div>
         )}
       />

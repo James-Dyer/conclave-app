@@ -86,14 +86,6 @@
 .activity-button {
   margin-left: auto;
   padding: 6px 12px;
-  background-color: var(--color-accent);
-  color: var(--color-text);
-  border: none;
-  cursor: pointer;
-}
-
-.activity-button:hover {
-  background-color: var(--color-accent-hover);
 }
 
 .dashboard-content {
