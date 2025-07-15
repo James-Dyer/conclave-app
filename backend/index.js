@@ -383,6 +383,30 @@ app.post('/api/admin/members', auth, adminOnly, async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 
+  // verify the auth user exists and log for debugging
+  try {
+    const { data: userCheck, error: userErr } =
+      await supabaseAdmin.auth.admin.getUserById(id);
+    console.log('Post-create getUserById result:', { user: userCheck, userErr });
+  } catch (e) {
+    console.error('getUserById threw:', e);
+  }
+
+  try {
+    const { data: emailRow, error: emailRowErr } = await supabaseAdmin
+      .schema('auth')
+      .from('users')
+      .select('id, email')
+      .eq('email', email)
+      .maybeSingle();
+    console.log('Direct auth.users lookup:', {
+      row: emailRow,
+      emailRowErr
+    });
+  } catch (e) {
+    console.error('auth.users lookup threw:', e);
+  }
+
   console.log('Created user id:', id);
 
   res.json({ id });
