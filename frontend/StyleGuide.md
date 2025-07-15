@@ -15,7 +15,7 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 
 - **Primary (body) font:** *Inter*\
   Designed for legibility on screens, modern yet professional.
-- **Secondary (headings) font:** TBD
+- **Secondary (headings) font:** Roboto Slab
 
 **Base sizes & scale:**
 
@@ -75,7 +75,7 @@ Gutter (gap): `var(--space-lg)` (24px)
 
 **Section Margins:**
 
-- TBD
+- Use vertical spacing of var(--space-lg) (24px) between sections
 
 ## 5. Core UI Components
 
