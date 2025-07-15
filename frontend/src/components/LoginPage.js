@@ -3,7 +3,7 @@ import '../styles/LoginPage.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import { supabase, authFetch } from '../supabaseClient';
-import logo from '../../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
+import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
 export default function LoginPage({ onLogin = () => {} }) {
   const [email, setEmail] = useState('');
