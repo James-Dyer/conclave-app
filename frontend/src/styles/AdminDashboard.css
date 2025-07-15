@@ -44,14 +44,31 @@
 
 .admin-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 8px;
 }
 
 .admin-table th,
 .admin-table td {
-  border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+}
+
+.admin-table tbody tr {
+  background: var(--color-surface);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.admin-table tbody tr td:first-child {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.admin-table tbody tr td:last-child {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 
 .control-bar {
