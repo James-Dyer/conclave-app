@@ -42,7 +42,6 @@ export default function LoginPage({ onLogin = () => {} }) {
     <div className="login-page">
       <div className="login-card">
         <img src={logo} alt="Sigma Chi logo" className="login-logo" />
-        <h1 className="login-heading">Login</h1>
         <form onSubmit={handleSubmit} className="login-form">
           <label htmlFor="email" className="visually-hidden">
             Email

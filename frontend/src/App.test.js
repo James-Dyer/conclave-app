@@ -31,14 +31,14 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
-test('renders login heading and header buttons', () => {
+test('renders login form and header buttons', () => {
   render(
     <AuthProvider>
       <App />
     </AuthProvider>
   );
-  const heading = screen.getByRole('heading', { name: /login/i });
-  expect(heading).toBeInTheDocument();
+  const emailField = screen.getByPlaceholderText(/email/i);
+  expect(emailField).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /dashboard/i })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /payment review/i })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /charge details/i })).toBeInTheDocument();
@@ -92,8 +92,8 @@ test('header login button shows login page', async () => {
   );
   await userEvent.click(screen.getByRole('button', { name: /dashboard/i }));
   await userEvent.click(screen.getByRole('button', { name: /^login$/i }));
-  const heading = screen.getByRole('heading', { name: /login/i });
-  expect(heading).toBeInTheDocument();
+  const emailField = screen.getByPlaceholderText(/email/i);
+  expect(emailField).toBeInTheDocument();
 });
 
 test('dashboard review button opens form with charge data', async () => {
