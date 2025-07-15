@@ -19,10 +19,11 @@ export default function LoginPage({ onLogin = () => {} }) {
     setError('');
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password,
       });
+      if (authError) console.error('Auth error:', authError);
       if (error || !data.session) {
         throw new Error(error ? error.message : 'Login failed');
       }
