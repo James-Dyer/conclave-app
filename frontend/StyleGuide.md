@@ -4,9 +4,9 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 
 ## Color Palette
 
-- **Background:** Dark blue `#282C34`
-- **Text / Primary Content:** White `#FFFFFF`
-- **Accent:** React blue `#61DAFB` (hover `#4DB8D6`)
+- **Background:** White `#F2F8FC`
+- **Text / Primary Content:** Dark blue `#282C34`
+- **Accent:** Sky blue `#5e90db` (hover `#3d5f91`)
 - **Surfaces:** Light gray `#F5F5F5` with darker `#E0E0E0` for emphasis
 - **Status Highlights:** Success `#4CAF50`, error `#B30000`
 
@@ -14,8 +14,7 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 
 - **Primary (body) font:** *Inter*\
   Designed for legibility on screens, modern yet professional.
-- **Secondary (headings) font:** *Montserrat* or *Poppins*\
-  Geometric, clean lines that pair nicely with Inter’s humanist shapes.
+- **Secondary (headings) font:** TBD
 
 **Base sizes & scale:**
 
