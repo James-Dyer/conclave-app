@@ -101,6 +101,16 @@
   background-color: var(--color-light-blue-hover);
 }
 
+.review-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.under-review-notice {
+  font-size: 0.9rem;
+}
+
 
 .dashboard-content {
   grid-column: 2 / span 10;

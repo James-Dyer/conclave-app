@@ -77,6 +77,35 @@ test('dashboard payment review button triggers callback', async () => {
   expect(onRequestReview).toHaveBeenCalled();
 });
 
+test('shows notice when payments are under review', async () => {
+  jest.resetAllMocks();
+  global.fetch = jest.fn((url) => {
+    if (url.endsWith('/my-charges')) {
+      return Promise.resolve({ ok: true, json: async () => [] });
+    }
+    if (url.endsWith('/payments')) {
+      return Promise.resolve({
+        ok: true,
+        json: async () => [
+          { id: 1, amount: 10, date: '2024-04-01', status: 'Under Review' },
+          { id: 2, amount: 20, date: '2024-05-01', status: 'Under Review' }
+        ]
+      });
+    }
+    return Promise.resolve({ ok: true, json: async () => [] });
+  });
+  localStorage.setItem('authToken', 'token');
+  localStorage.setItem('authUser', JSON.stringify({ id: 1 }));
+  render(
+    <AuthProvider>
+      <MemberDashboard />
+    </AuthProvider>
+  );
+  await screen.findByTestId('dashboard-review-button');
+  const notice = await screen.findByTestId('under-review-notice');
+  expect(notice).toHaveTextContent('You have 2 payments under review');
+});
+
 test('pending review charges are excluded from totals', async () => {
   render(
     <AuthProvider>
