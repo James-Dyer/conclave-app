@@ -1,18 +1,18 @@
 .nav-tab {
   padding: 6px 12px;
-  background-color: var(--color-light-gray);
+  background-color: var(--color-light-blue);
   color: var(--color-navy);
-  border: 1px solid var(--color-light-gray-hover);
+  border: 1px solid var(--color-light-blue-hover);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   cursor: pointer;
+  font-family: 'Roboto Slab', serif;
 }
 
 .nav-tab:hover {
-  background-color: var(--color-light-gray-hover);
+  background-color: var(--color-light-blue-hover);
 }
 
 .nav-tab.active {
   background-color: var(--color-offwhite);
-  font-weight: bold;
 }

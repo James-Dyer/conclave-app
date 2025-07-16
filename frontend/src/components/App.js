@@ -6,6 +6,7 @@ import MemberDashboard from './MemberDashboard';
 import AdminDashboard from './AdminDashboard';
 import MembersList from './MembersList';
 import ManageChargesPage from './ManageChargesPage';
+import ManagePaymentsPage from './ManagePaymentsPage';
 import AddMember from './AddMember';
 import PaymentReviewForm from './PaymentReviewForm';
 import ChargeDetails from './ChargeDetails';
@@ -59,6 +60,10 @@ function App() {
   const showManageCharges = () => {
     setIsAdminView(true);
     setCurrentPage('manageCharges');
+  };
+  const showManagePayments = () => {
+    setIsAdminView(true);
+    setCurrentPage('managePayments');
   };
   const showAddMember = () => {
     setIsAdminView(true);
@@ -149,6 +154,9 @@ function App() {
     case 'manageCharges':
       pageContent = <ManageChargesPage onBack={showAdmin} />;
       break;
+    case 'managePayments':
+      pageContent = <ManagePaymentsPage onBack={showAdmin} />;
+      break;
     case 'addMember':
       pageContent = <AddMember onCancel={showMembersList} />;
       break;
@@ -161,6 +169,7 @@ function App() {
       onShowDashboard={token ? showDashboard : undefined}
       onShowActivity={token && !isAdminView ? showActivity : undefined}
       onShowManageCharges={token && isAdminView ? showManageCharges : undefined}
+      onShowManagePayments={token && isAdminView ? showManagePayments : undefined}
       onShowMembers={token && isAdminView ? showMembersList : undefined}
       onLogout={token ? handleLogout : undefined}
       currentPage={currentPage}

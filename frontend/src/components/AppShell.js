@@ -7,6 +7,7 @@ export default function AppShell({
   onShowDashboard,
   onShowActivity,
   onShowManageCharges,
+  onShowManagePayments,
   onShowMembers,
   onLogout,
   currentPage,
@@ -17,6 +18,7 @@ export default function AppShell({
         onShowDashboard={onShowDashboard}
         onShowActivity={onShowActivity}
         onShowManageCharges={onShowManageCharges}
+        onShowManagePayments={onShowManagePayments}
         onShowMembers={onShowMembers}
         onLogout={onLogout}
         currentPage={currentPage}

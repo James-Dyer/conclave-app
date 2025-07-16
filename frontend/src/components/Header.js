@@ -7,6 +7,7 @@ export default function Header({
   onShowDashboard,
   onShowActivity,
   onShowManageCharges,
+  onShowManagePayments,
   onShowMembers,
   onLogout,
   currentPage,
@@ -41,6 +42,15 @@ export default function Header({
               onClick={onShowManageCharges}
             >
               Manage Charges
+            </NavTab>
+          )}
+          {onShowManagePayments && (
+            <NavTab
+              className="payments-tab"
+              active={currentPage === 'managePayments'}
+              onClick={onShowManagePayments}
+            >
+              Manage Payments
             </NavTab>
           )}
           {onShowMembers && (
