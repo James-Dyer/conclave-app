@@ -7,6 +7,18 @@
   text-align: center;
 }
 
+.review-card {
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 24px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
 .review-form {
   display: flex;
   flex-direction: column;
