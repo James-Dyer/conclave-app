@@ -1,5 +1,5 @@
 import '../styles/App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
 import LoginPage from './LoginPage';
@@ -16,13 +16,19 @@ import AppShell from './AppShell';
 import AccountActivityPage from './AccountActivityPage';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('login');
+  const [currentPage, setCurrentPage] = useState(
+    () => localStorage.getItem('currentPage') || 'login'
+  );
   const [reviewCharge, setReviewCharge] = useState(null);
   const [detailsCharge, setDetailsCharge] = useState(null);
   const [detailsPayment, setDetailsPayment] = useState(null);
   const [pendingReviewIds, setPendingReviewIds] = useState([]);
   const [isAdminView, setIsAdminView] = useState(false);
   const { token, setToken, setUser, user } = useAuth();
+
+  useEffect(() => {
+    localStorage.setItem('currentPage', currentPage);
+  }, [currentPage]);
 
   const showMemberDashboard = () => {
     setIsAdminView(false);
@@ -52,6 +58,7 @@ function App() {
     } finally {
       setToken(null);
       setUser(null);
+      localStorage.removeItem('currentPage');
       setIsAdminView(false);
       showLogin();
     }
