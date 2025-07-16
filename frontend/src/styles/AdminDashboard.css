@@ -70,10 +70,27 @@
 .admin-table tbody tr.clickable-row {
   cursor: pointer;
   transition: background 0.2s;
+  position: relative;
 }
 
 .admin-table tbody tr.clickable-row:hover {
   background: var(--color-light-blue-hover);
+}
+
+.admin-table th.arrow-col {
+  width: 24px;
+}
+
+.admin-table td.row-arrow {
+  width: 24px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.admin-table tbody tr.clickable-row:hover td.row-arrow {
+  opacity: 1;
 }
 
 .admin-table tbody tr td:first-child {
