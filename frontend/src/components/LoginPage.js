@@ -33,6 +33,7 @@ export default function LoginPage({ onLogin = () => {} }) {
       setToken(token);
       const member = await api.fetchMember();
       setUser(member);
+      localStorage.setItem('currentPage', 'dashboard');
       onLogin();
     } catch (err) {
       setError(err.message);
