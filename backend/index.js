@@ -97,6 +97,8 @@ async function auth(req, res, next) {
     return res.status(401).send('Invalid token');
   }
   req.memberId = user.id;
+  // Attach the session so queries enforce row level security for this user
+  await supabase.auth.setSession({ access_token: token, refresh_token: token });
   next();
 }
 
