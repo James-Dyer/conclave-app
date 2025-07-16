@@ -117,6 +117,9 @@ async function adminOnly(req, res, next) {
 
 // Return basic information about the currently authenticated member
 app.get('/api/member', auth, async (req, res) => {
+  // Attach the access token so row level security policies allow the query
+  const token = req.headers.authorization.replace(/^Bearer\s/, '');
+  await supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('profiles')
     .select('*')

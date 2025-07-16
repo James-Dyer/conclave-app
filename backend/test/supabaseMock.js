@@ -177,6 +177,9 @@ const supabase = {
       const id = crypto.randomUUID();
       // track auth user separate from profiles; login for new users not needed
       return { data: { user: { id, email } }, error: null };
+    },
+    async setSession() {
+      return { data: null, error: null };
     }
   },
   from
