@@ -2,7 +2,7 @@ import { useState } from 'react';
 import '../styles/LoginPage.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
-import { supabase, authFetch } from '../supabaseClient';
+import { supabase } from '../supabaseClient';
 import PrimaryButton from './PrimaryButton';
 import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
@@ -23,14 +23,13 @@ export default function LoginPage({ onLogin = () => {} }) {
         email,
         password,
       });
-      if (authError) console.error('Auth error:', authError);
-      if (error || !data.session) {
-        throw new Error(error ? error.message : 'Login failed');
+      if (authError || !data.session) {
+        throw new Error(authError ? authError.message : 'Login failed');
       }
+
       const token = data.session.access_token;
       setToken(token);
-      const res = await authFetch('/api/member');
-      const member = await res.json();
+      const member = await api.fetchMember();
       setUser(member);
       onLogin();
     } catch (err) {
