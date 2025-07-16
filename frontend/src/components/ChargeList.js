@@ -50,7 +50,7 @@ export default function ChargeList({
     <DataTable
       loading={loading}
       columns={columns}
-      data={rows.map((r) => ({ ...r, amount: `$${r.amount}` }))}
+      data={rows}
       onRowClick={(row) =>
         onViewDetails({
           id: row.original.id,

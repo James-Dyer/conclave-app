@@ -115,14 +115,6 @@
   padding: var(--space-sm);
 }
 
-.tables-section .admin-table tbody tr {
-  background: var(--color-text);
-  color: white;
-}
-
-.tables-section .admin-table tbody tr:hover {
-  background: #1d2230;
-}
 
 .payments-section {
   grid-column: span 4;

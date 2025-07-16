@@ -49,8 +49,8 @@
 }
 
 .admin-table thead th {
-  background: var(--color-surface-emphasis);
-  color: var(--color-text);
+  background: var(--color-navy-dark);
+  color: white;
 }
 
 .admin-table th,
@@ -60,7 +60,8 @@
 }
 
 .admin-table tbody tr {
-  background: var(--color-surface);
+  background: var(--color-navy);
+  color: white;
   border: 1px solid #ddd;
   border-radius: 6px;
   overflow: hidden;
@@ -68,12 +69,11 @@
 
 .admin-table tbody tr.clickable-row {
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s;
 }
 
 .admin-table tbody tr.clickable-row:hover {
-  transform: translateY(-2px);
-  background: var(--color-surface-emphasis);
+  background: var(--color-navy-dark);
 }
 
 .admin-table tbody tr td:first-child {
