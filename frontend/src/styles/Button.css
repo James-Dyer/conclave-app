@@ -16,6 +16,7 @@
   background-color: #e0e0e0;
   color: var(--color-navy);
   border: 1px solid #ccc;
+  border-radius: 4px;
   cursor: pointer;
 }
 

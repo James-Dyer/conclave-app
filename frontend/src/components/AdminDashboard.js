@@ -163,10 +163,20 @@ export default function AdminDashboard({
           }))}
           renderActions={(row) => (
             <div className="flex space-x-2">
-              <PrimaryButton onClick={() => openApproveDialog(row.original)}>
+              <SecondaryButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openApproveDialog(row.original);
+                }}
+              >
                 Approve
-              </PrimaryButton>
-              <SecondaryButton onClick={() => openDenyDialog(row.original)}>
+              </SecondaryButton>
+              <SecondaryButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDenyDialog(row.original);
+                }}
+              >
                 Reject
               </SecondaryButton>
             </div>
