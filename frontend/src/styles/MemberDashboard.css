@@ -81,7 +81,7 @@
   color: var(--color-text);
   border: none;
   cursor: pointer;
-  align-self: flex-end;
+  align-self: flex-start;
 }
 
 .dashboard-review-button:hover {
