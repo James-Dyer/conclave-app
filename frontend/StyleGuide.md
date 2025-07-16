@@ -14,6 +14,10 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 | `--color-light-gray-hover` | `#E0E0E0` | Light Gray Hover |
 | `--color-success` | `#4CAF50` | Success Green |
 | `--color-error` | `#B30000` | Error Red |
+| `--status-red` | `#ffe6e6` | Status Red |
+| `--status-yellow` | `#fff5e6` | Status Yellow |
+| `--status-blue` | `#e6f2ff` | Status Blue |
+| `--status-green` | `#e6ffe6` | Status Green |
 - **Cards** Background: White #FFFFFF; Border / Shadow: 0 1px 3px rgba(0,0,0,0.1)
 
 ## Typography
