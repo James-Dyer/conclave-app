@@ -68,8 +68,18 @@ export function useApi() {
       // Admin
       fetchMembers: (search = '') =>
         request(`/members?search=${encodeURIComponent(search)}`),
-      fetchAdminMembers: (search = '') =>
-        request(`/admin/members?search=${encodeURIComponent(search)}`),
+      fetchAdminMembers: async (search = '') => {
+        const data = await request(
+          `/admin/members?search=${encodeURIComponent(search)}`
+        );
+        if (!search && data) {
+          localStorage.setItem(
+            'cachedAdminMembers',
+            JSON.stringify({ ts: Date.now(), data })
+          );
+        }
+        return data;
+      },
       createMember: (member) =>
         request('/admin/members', {
           method: 'POST',
@@ -102,7 +112,16 @@ export function useApi() {
       deleteCharge: (id) =>
         request(`/admin/charges/${id}`, { method: 'DELETE' }),
 
-      fetchPendingPayments: () => request('/payments?status=Under%20Review'),
+      fetchPendingPayments: async () => {
+        const data = await request('/payments?status=Under%20Review');
+        if (data) {
+          localStorage.setItem(
+            'cachedPendingPayments',
+            JSON.stringify({ ts: Date.now(), data })
+          );
+        }
+        return data;
+      },
       approvePayment: (id) =>
         request(`/admin/payments/${id}/approve`, { method: 'POST' }),
       denyPayment: (id, note) =>

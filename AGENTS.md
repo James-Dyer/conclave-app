@@ -99,3 +99,15 @@ These keep common UI logic centralized so pages like `MembersList` and `ChargesL
 ## Documenting Database Schema Changes
 When implementing features that require new Supabase columns or tables, clearly describe the required schema updates in your pull request summary.
 Note any new column names, types and defaults so the Supabase instance can be updated accordingly.
+
+## Frontend Caching
+
+Both the member and admin dashboards cache frequently accessed API data in
+`localStorage` for five minutes. Cached keys:
+
+- `cachedCharges` and `cachedPayments` – member dashboard charges and payment
+  history.
+- `cachedPendingPayments` and `cachedAdminMembers` – admin dashboard payment
+  reviews and member names.
+
+The caches are cleared on logout in `AuthContext`.
