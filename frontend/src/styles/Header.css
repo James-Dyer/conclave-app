@@ -1,7 +1,7 @@
 .header {
-  background-color: var(--color-navy);
+  background-color: var(--color-navy-bg);
   padding: 10px 20px;
-  color: white;
+  color: var(--color-white-text);
 }
 
 .nav {

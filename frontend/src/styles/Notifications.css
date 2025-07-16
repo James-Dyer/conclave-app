@@ -10,7 +10,7 @@
 
 .notification {
   background-color: var(--color-success);
-  color: #fff;
+  color: var(--color-white-text);
   padding: 14px 36px 14px 18px;
   border-radius: 4px;
   min-width: 200px;
@@ -23,7 +23,7 @@
   right: 8px;
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--color-white-text);
   cursor: pointer;
   font-size: 1.4rem;
   line-height: 1;

@@ -49,8 +49,8 @@
 }
 
 .admin-table thead th {
-  background: var(--color-navy);
-  color: white;
+  background: var(--color-navy-bg);
+  color: var(--color-white-text);
 }
 
 .admin-table th,

@@ -1,5 +1,6 @@
 import '../styles/Header.css';
 import PrimaryButton from './PrimaryButton';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header({
   onShowLogin,
@@ -9,12 +10,15 @@ export default function Header({
   onShowChargeDetails,
   onShowActivity,
   onLogout,
+  isDarkMode,
+  onToggleDarkMode,
 }) {
   return (
     <header className="header">
       <nav className="nav">
         <span className="brand">Conclave ΣΧ-ΛΔ</span>
         <div className="nav-actions">
+          <ThemeToggle isDark={isDarkMode} onToggle={onToggleDarkMode} />
           {onShowLogin && (
             <PrimaryButton
               type="button"

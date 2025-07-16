@@ -7,6 +7,8 @@ export default function AppShell({
   onShowDashboard,
   onShowActivity,
   onLogout,
+  isDarkMode,
+  onToggleDarkMode,
 }) {
   return (
     <div className="app-shell">
@@ -14,6 +16,8 @@ export default function AppShell({
         onShowDashboard={onShowDashboard}
         onShowActivity={onShowActivity}
         onLogout={onLogout}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={onToggleDarkMode}
       />
       <NotificationContainer />
       <main className="app-content">{children}</main>

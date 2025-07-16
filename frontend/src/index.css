@@ -4,6 +4,8 @@
 :root {
   --color-offwhite: #F2F8FC;
   --color-navy: #232d3d;
+  --color-navy-bg: var(--color-navy);
+  --color-white-text: #fff;
   --color-light-blue: #a7c6ea;
   --color-light-blue-hover: #a2bacf;
   --color-light-gray: #F5F5F5;
@@ -15,6 +17,13 @@
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
+}
+
+body.dark-mode {
+  --color-offwhite: #232d3d; /* offwhite backgrounds become navy */
+  --color-navy: #F2F8FC; /* navy text becomes offwhite */
+  --color-navy-bg: #a7c6ea; /* navy backgrounds become light blue */
+  --color-white-text: #232d3d; /* white text becomes navy */
 }
 
 body {

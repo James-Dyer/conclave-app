@@ -1,5 +1,5 @@
 import '../styles/App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import LoginPage from './LoginPage';
 import MemberDashboard from './MemberDashboard';
@@ -20,6 +20,10 @@ function App() {
   const [detailsPayment, setDetailsPayment] = useState(null);
   const [pendingReviewIds, setPendingReviewIds] = useState([]);
   const [isAdminView, setIsAdminView] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', isDarkMode);
+  }, [isDarkMode]);
   const { token, setToken, setUser, user } = useAuth();
 
   const showMemberDashboard = () => {
@@ -63,6 +67,9 @@ function App() {
   const showAddMember = () => {
     setIsAdminView(true);
     setCurrentPage('addMember');
+  };
+  const toggleDarkMode = () => {
+    setIsDarkMode((v) => !v);
   };
   const showActivity = () => setCurrentPage('activity');
   const showReview = (charge) => {
@@ -161,6 +168,8 @@ function App() {
       onShowDashboard={token ? showDashboard : undefined}
       onShowActivity={token && !isAdminView ? showActivity : undefined}
       onLogout={token ? handleLogout : undefined}
+      isDarkMode={isDarkMode}
+      onToggleDarkMode={toggleDarkMode}
     >
       {pageContent}
     </AppShell>
