@@ -1,5 +1,6 @@
 import '../styles/App.css';
 import { useState } from 'react';
+import { supabase } from '../supabaseClient';
 import { useAuth } from '../AuthContext';
 import LoginPage from './LoginPage';
 import MemberDashboard from './MemberDashboard';
@@ -43,11 +44,17 @@ function App() {
     }
   };
   const showLogin = () => setCurrentPage('login');
-  const handleLogout = () => {
-    setToken(null);
-    setUser(null);
-    setIsAdminView(false);
-    showLogin();
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error('Supabase signOut error:', err);
+    } finally {
+      setToken(null);
+      setUser(null);
+      setIsAdminView(false);
+      showLogin();
+    }
   };
   const showAdmin = () => {
     setIsAdminView(true);
