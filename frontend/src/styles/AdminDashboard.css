@@ -70,6 +70,21 @@
 .admin-table tbody tr.clickable-row {
   cursor: pointer;
   transition: background 0.2s;
+  position: relative;
+}
+
+.admin-table tbody tr.clickable-row::after {
+  content: '›';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text);
+  pointer-events: none;
+}
+
+.admin-table tbody tr.clickable-row td:last-child {
+  padding-right: 20px;
 }
 
 .admin-table tbody tr.clickable-row:hover {
