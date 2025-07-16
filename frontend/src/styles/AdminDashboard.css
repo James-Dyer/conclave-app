@@ -49,7 +49,7 @@
 }
 
 .admin-table thead th {
-  background: var(--color-navy-dark);
+  background: var(--color-text);
   color: white;
 }
 
@@ -60,8 +60,8 @@
 }
 
 .admin-table tbody tr {
-  background: var(--color-navy);
-  color: white;
+  background: var(--color-accent);
+  color: var(--color-text);
   border: 1px solid #ddd;
   border-radius: 6px;
   overflow: hidden;
@@ -73,7 +73,7 @@
 }
 
 .admin-table tbody tr.clickable-row:hover {
-  background: var(--color-navy-dark);
+  background: var(--color-accent-hover);
 }
 
 .admin-table tbody tr td:first-child {

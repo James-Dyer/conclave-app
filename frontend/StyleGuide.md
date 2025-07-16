@@ -5,7 +5,7 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 ## Color Palette
 
 - **Background:** White `#F2F8FC`
-- **Text / Primary Content:** Dark blue `#282C34`
+- **Text / Primary Content:** Navy `#282C34`
 - **Accent:** Light blue `#a8d0ff` (hover `#82b4e5`)
 - **Surfaces:** Light gray `#F5F5F5` with darker `#E0E0E0` for emphasis
 - **Status Highlights:** Success `#4CAF50`, error `#B30000`
