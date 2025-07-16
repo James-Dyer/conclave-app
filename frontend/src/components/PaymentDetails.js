@@ -8,6 +8,7 @@ const samplePayment = {
   date: '2024-05-01',
   memo: 'Dues',
   status: 'Approved',
+  platform: 'Zelle',
   adminNote: ''
 };
 
@@ -25,6 +26,10 @@ export default function PaymentDetails({ payment, onBack }) {
           <tr>
             <th>Paid On</th>
             <td>{new Date(display.date).toLocaleDateString()}</td>
+          </tr>
+          <tr>
+            <th>Platform</th>
+            <td>{display.platform || '-'}</td>
           </tr>
           <tr>
             <th>Status</th>
