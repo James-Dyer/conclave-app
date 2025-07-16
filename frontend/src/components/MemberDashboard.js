@@ -111,7 +111,7 @@ export default function MemberDashboard({
         </div>
       )}
       <header className="member-dash-header">
-        <h1>Dashboard</h1>
+        <h1>{`Welcome${user?.name ? `, ${user.name}` : ''}!`}</h1>
       </header>
       <div className="balance-info" data-testid="balance-info">
         <div className="balance-summary">
