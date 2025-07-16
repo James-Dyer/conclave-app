@@ -34,7 +34,7 @@
 
 .balance-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 
@@ -49,14 +49,23 @@
   font-weight: bold;
 }
 
+.balance-card.total .amount {
+  font-size: 2.4rem;
+}
+
 .balance-card .label {
   font-size: 0.9rem;
+}
+
+.balance-card.total .label {
+  font-size: 1rem;
 }
 
 .balance-card.total {
   background-color: var(--color-surface-emphasis);
   border: 2px solid var(--color-text);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+  grid-column: 1 / -1;
 }
 
 .balance-card.overdue {
