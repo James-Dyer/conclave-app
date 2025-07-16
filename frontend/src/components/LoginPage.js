@@ -4,6 +4,7 @@ import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import { supabase } from '../supabaseClient';
 import PrimaryButton from './PrimaryButton';
+import InfoDialog from './InfoDialog';
 import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
 export default function LoginPage({ onLogin = () => {} }) {
@@ -11,6 +12,7 @@ export default function LoginPage({ onLogin = () => {} }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showEmailHelp, setShowEmailHelp] = useState(false);
   const { setToken, setUser } = useAuth();
   const api = useApi();
 
@@ -72,9 +74,28 @@ export default function LoginPage({ onLogin = () => {} }) {
             {loading && <span className="spinner" aria-label="loading" />}
           </PrimaryButton>
         </form>
-        <a href="#" className="forgot-link">
-          Forgot Password?
-        </a>
+        <div className="forgot-links">
+          <a
+            href="#"
+            className="forgot-link"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowEmailHelp(true);
+            }}
+          >
+            Forgot Email?
+          </a>
+          <a href="#" className="forgot-link">
+            Forgot Password?
+          </a>
+        </div>
+        <InfoDialog
+          open={showEmailHelp}
+          title="Forgot Email?"
+          onClose={() => setShowEmailHelp(false)}
+        >
+          <p>Instructions on how to find your email go here.</p>
+        </InfoDialog>
       </div>
     </div>
   );
