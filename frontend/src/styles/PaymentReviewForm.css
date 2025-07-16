@@ -36,6 +36,10 @@
   padding: 8px;
   font-size: 1rem;
 }
+.review-form select {
+  padding: 8px;
+  font-size: 1rem;
+}
 
 .form-actions {
   display: flex;

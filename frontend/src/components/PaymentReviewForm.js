@@ -18,6 +18,8 @@ export default function PaymentReviewForm({
   const [paymentDate, setPaymentDate] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [platform, setPlatform] = useState('');
+  const [otherPlatform, setOtherPlatform] = useState('');
   const api = useApi();
   const { addNotification } = useNotifications();
 
@@ -46,6 +48,11 @@ export default function PaymentReviewForm({
     e.preventDefault();
     setError('');
     setMessage('');
+    const plat = platform === 'Other' ? otherPlatform.trim() : platform;
+    if (!plat) {
+      setError('Payment platform is required');
+      return;
+    }
     if (Number(amountPaid) > Number(charge.amount)) {
       setError('Payment exceeds outstanding charges');
       return;
@@ -59,11 +66,14 @@ export default function PaymentReviewForm({
         amount: amountPaid,
         memo,
         date: paymentDate
+        , platform: plat
       });
       setMessage('Payment submitted');
       setMemo('');
       setAmountPaid('');
       setPaymentDate('');
+      setPlatform('');
+      setOtherPlatform('');
       addNotification('Your payment review has been submitted successfully.');
       if (onSubmitted) onSubmitted(charge?.id);
       if (onBack) onBack();
@@ -96,6 +106,27 @@ export default function PaymentReviewForm({
             onChange={(e) => setPaymentDate(e.target.value)}
           />
         </label>
+        <label>
+          Platform
+          <select value={platform} onChange={(e) => setPlatform(e.target.value)}>
+            <option value="" disabled>Select one</option>
+            <option value="Zelle">Zelle</option>
+            <option value="Venmo">Venmo</option>
+            <option value="Debit/Credit">Debit/Credit</option>
+            <option value="Cash">Cash</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        {platform === 'Other' && (
+          <label>
+            Specify Platform
+            <input
+              type="text"
+              value={otherPlatform}
+              onChange={(e) => setOtherPlatform(e.target.value)}
+            />
+          </label>
+        )}
         <label>
           Memo
           <input

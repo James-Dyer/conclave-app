@@ -83,7 +83,7 @@ async function submitPayment(amount) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${memberToken}`
     },
-    body: JSON.stringify({ amount })
+    body: JSON.stringify({ amount, platform: 'Zelle' })
   });
   const data = await res.json();
   return data.payment.id;

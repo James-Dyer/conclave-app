@@ -240,16 +240,20 @@ app.get('/api/payments', auth, async (req, res) => {
       memo: p.memo,
       status: p.status,
       adminId: p.admin_id,
-      adminNote: p.admin_note
+      adminNote: p.admin_note,
+      platform: p.platform
     }))
   );
 });
 
 // Submit a payment for review
 app.post('/api/payments', auth, async (req, res) => {
-  const { amount, memo, date } = req.body || {};
+  const { amount, memo, date, platform } = req.body || {};
   if (amount == null) {
     return res.status(400).json({ error: 'Missing amount' });
+  }
+  if (!platform) {
+    return res.status(400).json({ error: 'Missing platform' });
   }
 
   // record the payment first
@@ -260,6 +264,7 @@ app.post('/api/payments', auth, async (req, res) => {
       amount,
       date: date || new Date().toISOString().slice(0, 10),
       memo: memo || '',
+      platform,
       status: 'Under Review',
       admin_note: ''
     })
