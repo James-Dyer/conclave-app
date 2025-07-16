@@ -13,7 +13,8 @@ const DENY_NOTE_LIMIT = 70;
 export default function AdminDashboard({
   onManageCharges,
   onShowMembers,
-  onShowMemberDashboard
+  onShowMemberDashboard,
+  onViewPaymentDetails
 }) {
   const api = useApi();
   const [reviews, setReviews] = useState([]);
@@ -160,6 +161,7 @@ export default function AdminDashboard({
             { header: 'Member', accessor: 'member' },
             { header: 'Amount Paid', accessor: 'amount' },
             { header: 'Payment Date', accessor: 'date' },
+            { header: 'Platform', accessor: 'platform' },
             { header: 'Memo', accessor: 'memo' }
           ]}
           data={reviews.map((r) => ({
@@ -167,6 +169,7 @@ export default function AdminDashboard({
             member: members[r.memberId] || r.memberId,
             amount: r.amountPaid ?? r.amount,
             date: new Date(r.date).toLocaleDateString(),
+            platform: r.platform || '-',
             memo: r.memo || '-',
             original: r
           }))}
@@ -180,6 +183,11 @@ export default function AdminDashboard({
               </SecondaryButton>
             </div>
           )}
+          onRowClick={
+            onViewPaymentDetails
+              ? (row) => onViewPaymentDetails(row.original)
+              : undefined
+          }
         />
       </section>
       <ConfirmDialog
