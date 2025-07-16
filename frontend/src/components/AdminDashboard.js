@@ -162,7 +162,7 @@ export default function AdminDashboard({
             original: r
           }))}
           renderActions={(row) => (
-            <div className="flex space-x-2">
+            <div className="action-buttons">
               <SecondaryButton
                 onClick={(e) => {
                   e.stopPropagation();
