@@ -4,7 +4,7 @@ import SecondaryButton from './SecondaryButton';
 
 const samplePayment = {
   id: 1,
-  amount: '$100',
+  amount: 100,
   date: '2024-05-01',
   memo: 'Dues',
   status: 'Approved',
@@ -14,6 +14,12 @@ const samplePayment = {
 
 export default function PaymentDetails({ payment, onBack }) {
   const display = { ...samplePayment, ...(payment || {}) };
+  const amountDisplay =
+    typeof display.amount === 'number'
+      ? `$${display.amount}`
+      : display.amount?.toString().trim().startsWith('$')
+      ? display.amount
+      : `$${display.amount}`;
   return (
     <div className="payment-details-page">
       <h1>Payment Details</h1>
@@ -21,7 +27,7 @@ export default function PaymentDetails({ payment, onBack }) {
         <tbody>
           <tr>
             <th>Amount</th>
-            <td>{display.amount}</td>
+            <td>{amountDisplay}</td>
           </tr>
           <tr>
             <th>Paid On</th>

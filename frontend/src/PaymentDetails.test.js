@@ -13,3 +13,16 @@ test('shows payment platform in details', () => {
   render(<PaymentDetails payment={payment} />);
   expect(screen.getByText(/venmo/i)).toBeInTheDocument();
 });
+
+test('amount is prefixed with dollar sign', () => {
+  const payment = {
+    amount: 25,
+    date: '2025-01-02',
+    status: 'Approved',
+    memo: '',
+    adminNote: '',
+    platform: 'Cash'
+  };
+  render(<PaymentDetails payment={payment} />);
+  expect(screen.getByText('$25')).toBeInTheDocument();
+});
