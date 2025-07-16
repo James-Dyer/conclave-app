@@ -116,6 +116,7 @@
   padding: var(--space-sm);
 }
 
+
 .payments-section {
   grid-column: span 4;
   /* removed temporary tinted background */

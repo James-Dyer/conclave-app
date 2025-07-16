@@ -3,7 +3,7 @@ import DataTable from './DataTable';
 import '../styles/PaymentList.css';
 import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
-export default function PaymentList({ payments = [], loading = false }) {
+export default function PaymentList({ payments = [], loading = false, onViewDetails = () => {} }) {
   if (!loading && payments.length === 0) {
     return (
       <div className="table-empty">
@@ -14,19 +14,22 @@ export default function PaymentList({ payments = [], loading = false }) {
   }
 
   const columns = [
-    { header: 'Amount Paid', accessor: 'amount' },
-    { header: 'Paid Date', accessor: 'paidDate' },
-    { header: 'Memo', accessor: 'memo' },
-    { header: 'Status', accessor: 'status' },
-    { header: 'Admin Note', accessor: 'adminNote' }
+    { header: 'Amount', accessor: 'amount' },
+    { header: 'Paid On', accessor: 'paidDate' },
+    { header: 'Status', accessor: 'status' }
   ];
 
   const rows = payments.map((p) => ({
     ...p,
     paidDate: new Date(p.date).toLocaleDateString(),
-    memo: p.memo || '-',
-    adminNote: p.adminNote || '-'
+    original: p
   }));
-
-  return <DataTable columns={columns} data={rows} loading={loading} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={rows}
+      loading={loading}
+      onRowClick={(row) => onViewDetails(row.original)}
+    />
+  );
 }

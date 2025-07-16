@@ -12,7 +12,8 @@ const CACHE_TTL_MS = 5 * 60 * 1000;
 
 export default function MemberDashboard({
   onRequestReview = () => {},
-  onViewDetails = () => {},
+  onViewChargeDetails = () => {},
+  onViewPaymentDetails = () => {},
   pendingReviewIds = [],
   onShowAdmin,
 }) {
@@ -166,7 +167,7 @@ export default function MemberDashboard({
           <h2>Outstanding Charges</h2>
           <ChargeList
             charges={sortedOutstanding}
-            onViewDetails={onViewDetails}
+            onViewDetails={onViewChargeDetails}
             pendingReviewIds={pendingReviewIds}
             loading={loading}
           />
@@ -174,7 +175,11 @@ export default function MemberDashboard({
 
         <aside className="payments-section">
           <h2>Recent Payments</h2>
-          <PaymentList payments={sortedPayments} loading={loading} />
+          <PaymentList
+            payments={sortedPayments}
+            loading={loading}
+            onViewDetails={onViewPaymentDetails}
+          />
         </aside>
       </div>
     </div>

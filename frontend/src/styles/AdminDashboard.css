@@ -48,6 +48,11 @@
   border-spacing: 0 8px;
 }
 
+.admin-table thead th {
+  background: var(--color-text);
+  color: white;
+}
+
 .admin-table th,
 .admin-table td {
   padding: 8px;
@@ -55,10 +60,20 @@
 }
 
 .admin-table tbody tr {
-  background: var(--color-surface);
+  background: var(--color-accent);
+  color: var(--color-text);
   border: 1px solid #ddd;
   border-radius: 6px;
   overflow: hidden;
+}
+
+.admin-table tbody tr.clickable-row {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-table tbody tr.clickable-row:hover {
+  background: var(--color-accent-hover);
 }
 
 .admin-table tbody tr td:first-child {

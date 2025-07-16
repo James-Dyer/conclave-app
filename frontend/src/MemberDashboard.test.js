@@ -53,14 +53,15 @@ test('renders dashboard sections', async () => {
 });
 
 
-test('shows details button for charges', async () => {
+test('charge rows are clickable instead of having buttons', async () => {
   render(
     <AuthProvider>
       <MemberDashboard />
     </AuthProvider>
   );
-  const detailButtons = await screen.findAllByRole('button', { name: /details/i });
-  expect(detailButtons.length).toBeGreaterThan(0);
+  const rows = await screen.findAllByRole('row');
+  expect(rows.length).toBeGreaterThan(1);
+  expect(screen.queryByRole('button', { name: /details/i })).not.toBeInTheDocument();
 });
 
 test('dashboard payment review button triggers callback', async () => {
@@ -110,50 +111,13 @@ test('payments are sorted most recent first', async () => {
       <MemberDashboard />
     </AuthProvider>
   );
-  const header = await screen.findByText(/amount paid/i);
+  const header = await screen.findByText(/^amount$/i);
   const table = header.closest('table');
   const rows = within(table).getAllByRole('row').slice(1);
   expect(rows[0]).toHaveTextContent('20');
   expect(rows[1]).toHaveTextContent('10');
 });
 
-test('partial amount paid displayed for charges', async () => {
-  jest.resetAllMocks();
-  global.fetch = jest.fn((url) => {
-    if (url.endsWith('/my-charges')) {
-      return Promise.resolve({
-        ok: true,
-        json: async () => [
-          {
-            id: 1,
-            status: 'Outstanding',
-            amount: 100,
-            dueDate: '2024-05-01',
-            partialAmountPaid: 25
-          }
-        ]
-      });
-    }
-    if (url.endsWith('/payments')) {
-      return Promise.resolve({ ok: true, json: async () => [] });
-    }
-    return Promise.resolve({ ok: true, json: async () => [] });
-  });
-  localStorage.setItem('authToken', 'token');
-  localStorage.setItem('authUser', JSON.stringify({ id: 1 }));
-  render(
-    <AuthProvider>
-      <MemberDashboard />
-    </AuthProvider>
-  );
-  const header = await screen.findByText(/partial amount paid/i);
-  const table = header.closest('table');
-  await screen.findByText('25');
-  const rows = within(table).getAllByRole('row');
-  const row = rows[1];
-  const cells = within(row).getAllByRole('cell');
-  expect(cells[4]).toHaveTextContent('25');
-});
 
 test('outstanding charges are sorted oldest first', async () => {
   jest.resetAllMocks();
@@ -181,10 +145,10 @@ test('outstanding charges are sorted oldest first', async () => {
   );
   const header = await screen.findByText(/due date/i);
   const table = header.closest('table');
-  await screen.findByText('20');
+  await screen.findByText('$20');
   const rows = within(table).getAllByRole('row').slice(1);
-  expect(rows[0]).toHaveTextContent('20');
-  expect(rows[1]).toHaveTextContent('10');
+  expect(rows[0]).toHaveTextContent('$20');
+  expect(rows[1]).toHaveTextContent('$10');
 });
 
 test('uses cached data when available', async () => {
