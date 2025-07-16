@@ -8,6 +8,8 @@ import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import { getBalanceBreakdown } from '../balanceUtils';
 
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
 export default function MemberDashboard({
   onRequestReview = () => {},
   onViewDetails = () => {},
@@ -30,6 +32,25 @@ export default function MemberDashboard({
     if (!token) {
       setLoading(false);
       return;
+    }
+    const now = Date.now();
+    let usedCache = false;
+    try {
+      const cachedCharges = JSON.parse(localStorage.getItem('cachedCharges'));
+      if (cachedCharges && now - cachedCharges.ts < CACHE_TTL_MS) {
+        setChargeData(cachedCharges.data);
+        usedCache = true;
+      }
+    } catch {}
+    try {
+      const cachedPayments = JSON.parse(localStorage.getItem('cachedPayments'));
+      if (cachedPayments && now - cachedPayments.ts < CACHE_TTL_MS) {
+        setPaymentData(cachedPayments.data);
+        usedCache = true;
+      }
+    } catch {}
+    if (usedCache) {
+      setLoading(false);
     }
     async function load() {
       try {
