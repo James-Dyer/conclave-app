@@ -97,6 +97,21 @@ button:disabled {
   animation: spin 1s linear infinite;
 }
 
+.login-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-button .hidden-text {
+  visibility: hidden;
+}
+
+.login-button .spinner {
+  position: absolute;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
