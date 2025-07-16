@@ -62,10 +62,11 @@
 }
 
 .balance-card.total {
-  background-color: var(--color-surface-emphasis);
-  border: 2px solid var(--color-text);
+  background-color: var(--color-text);
+  border: 2px solid var(--color-accent);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
   grid-column: 1 / -1;
+  color: #fff;
 }
 
 .balance-card.overdue {
