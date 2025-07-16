@@ -66,7 +66,7 @@ test('payment submission validates fields', async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
-    body: JSON.stringify({})
+    body: JSON.stringify({ amount: 5 })
   });
   assert.equal(res.status, 400);
 });
@@ -78,7 +78,7 @@ test('submit payment succeeds', async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
-    body: JSON.stringify({ amount: 100, memo: 'Test' })
+    body: JSON.stringify({ amount: 100, memo: 'Test', platform: 'Zelle' })
   });
   assert.equal(res.status, 200);
   const data = await res.json();
@@ -155,7 +155,7 @@ test('admin can approve payment', async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
-  body: JSON.stringify({ amount: 250 })
+  body: JSON.stringify({ amount: 250, platform: 'Zelle' })
   });
   assert.equal(res.status, 200);
 

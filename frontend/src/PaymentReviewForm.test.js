@@ -23,6 +23,7 @@ test('successful submit shows confirmation message', async () => {
       <PaymentReviewForm charge={{ id: 1, amount: 100 }} />
     </AuthProvider>
   );
+  await userEvent.selectOptions(screen.getByLabelText(/platform/i), 'Zelle');
   const input = screen.getByLabelText(/amount paid/i);
   expect(input).toHaveValue(100);
   await userEvent.click(screen.getByRole('button', { name: /submit/i }));
@@ -39,6 +40,7 @@ test('failed submit shows error message', async () => {
       <PaymentReviewForm charge={{ id: 1, amount: 100 }} />
     </AuthProvider>
   );
+  await userEvent.selectOptions(screen.getByLabelText(/platform/i), 'Zelle');
   const input = screen.getByLabelText(/amount paid/i);
   await userEvent.clear(input);
   await userEvent.type(input, '50');
@@ -46,13 +48,14 @@ test('failed submit shows error message', async () => {
   expect(await screen.findByText('Bad request')).toBeInTheDocument();
 });
 
-test('prefills amount for lump sum payment', () => {
+test('prefills amount for lump sum payment', async () => {
   setupLocalStorage();
   render(
     <AuthProvider>
       <PaymentReviewForm charge={{ amount: 250 }} />
     </AuthProvider>
   );
+  await userEvent.selectOptions(screen.getByLabelText(/platform/i), 'Zelle');
   const input = screen.getByLabelText(/amount paid/i);
   expect(input).toHaveValue(250);
 });
@@ -64,11 +67,26 @@ test('shows error on overpayment', async () => {
       <PaymentReviewForm charge={{ id: 1, amount: 100 }} />
     </AuthProvider>
   );
+  await userEvent.selectOptions(screen.getByLabelText(/platform/i), 'Zelle');
   const input = screen.getByLabelText(/amount paid/i);
   await userEvent.clear(input);
   await userEvent.type(input, '150');
   await userEvent.click(screen.getByRole('button', { name: /submit/i }));
   expect(
     await screen.findByText(/exceeds outstanding charges/i)
+  ).toBeInTheDocument();
+});
+
+test('requires custom platform when other selected', async () => {
+  setupLocalStorage();
+  render(
+    <AuthProvider>
+      <PaymentReviewForm charge={{ id: 1, amount: 100 }} />
+    </AuthProvider>
+  );
+  await userEvent.selectOptions(screen.getByLabelText(/platform/i), 'Other');
+  await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+  expect(
+    await screen.findByText(/payment platform is required/i)
   ).toBeInTheDocument();
 });

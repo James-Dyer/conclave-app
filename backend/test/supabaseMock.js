@@ -43,7 +43,8 @@ let payments = [
     memo: 'Dues',
     status: 'Approved',
     admin_id: profiles[1].id,
-    admin_note: ''
+    admin_note: '',
+    platform: 'Zelle'
   }
 ];
 let nextPaymentId = 2;

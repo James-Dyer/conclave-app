@@ -133,7 +133,7 @@ test('admin can deny a payment request', async () => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${memberToken}`
     },
-    body: JSON.stringify({ amount: 5 })
+    body: JSON.stringify({ amount: 5, platform: 'Zelle' })
   });
   assert.equal(reviewRes.status, 200);
 
