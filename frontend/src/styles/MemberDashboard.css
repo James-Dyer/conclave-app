@@ -10,7 +10,7 @@
   display: flex;
   gap: var(--space-sm);
   align-items: center;
-  background: rgba(255, 0, 0, 0.1);
+  /* removed temporary tinted background */
   padding: var(--space-sm);
 }
 
@@ -29,7 +29,7 @@
   align-items: stretch;
   text-align: center;
   gap: 8px;
-  background: rgba(0, 255, 0, 0.1);
+  /* removed temporary tinted background */
 }
 
 .balance-summary {
@@ -98,7 +98,7 @@
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: var(--space-lg);
-  background: rgba(0, 0, 255, 0.05);
+  /* removed temporary tinted background */
 }
 
 .tables-section {
@@ -106,13 +106,13 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: rgba(0, 0, 255, 0.1);
+  /* removed temporary tinted background */
   padding: var(--space-sm);
 }
 
 .payments-section {
   grid-column: span 4;
-  background: rgba(255, 255, 0, 0.1);
+  /* removed temporary tinted background */
   padding: var(--space-sm);
   display: flex;
   flex-direction: column;
