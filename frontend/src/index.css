@@ -2,12 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Roboto+Slab:wght@400;700&display=swap');
 
 :root {
-  --color-background: #F2F8FC;
-  --color-text: #232d3d;
-  --color-accent: #a7c6ea;
-  --color-accent-hover: #a2bacf;
-  --color-surface: #F5F5F5;
-  --color-surface-emphasis: #E0E0E0;
+  --color-offwhite: #F2F8FC;
+  --color-navy: #232d3d;
+  --color-light-blue: #a7c6ea;
+  --color-light-blue-hover: #a2bacf;
+  --color-light-gray: #F5F5F5;
+  --color-light-gray-hover: #E0E0E0;
   --color-success: #4CAF50;
   --color-error: #B30000;
   --space-xs: 4px;
@@ -19,8 +19,8 @@
 
 body {
   margin: 0;
-  background-color: var(--color-background);
-  color: var(--color-text);
+  background-color: var(--color-offwhite);
+  color: var(--color-navy);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

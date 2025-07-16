@@ -40,7 +40,7 @@
 .login-form input {
   padding: 8px;
   font-size: 1rem;
-  border: 1px solid var(--color-surface-emphasis);
+  border: 1px solid var(--color-light-gray-hover);
   border-radius: 4px;
   box-sizing: border-box;
   width: 100%;
@@ -48,7 +48,7 @@
 
 .login-form input:focus {
   outline: none;
-  border-color: var(--color-accent);
+  border-color: var(--color-light-blue);
   box-shadow: 0 0 0 2px rgba(94, 144, 219, 0.4);
 }
 
@@ -68,7 +68,7 @@ button:disabled {
 
 .forgot-link {
   font-size: 0.9rem;
-  color: var(--color-accent);
+  color: var(--color-light-blue);
   text-decoration: none;
 }
 

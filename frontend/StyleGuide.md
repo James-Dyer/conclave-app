@@ -4,11 +4,16 @@ Welcome to the Frontend Style Guide Docs. This guide captures the essential desi
 
 ## Color Palette
 
-- **Background:** White `#F2F8FC`
-- **Text / Primary Content:** Navy `#282C34`
-- **Accent:** Light blue `#a8d0ff` (hover `#82b4e5`)
-- **Surfaces:** Light gray `#F5F5F5` with darker `#E0E0E0` for emphasis
-- **Status Highlights:** Success `#4CAF50`, error `#B30000`
+| Variable | Hex | Color Name |
+| --- | --- | --- |
+| `--color-offwhite` | `#F2F8FC` | Offwhite |
+| `--color-navy` | `#232d3d` | Navy |
+| `--color-light-blue` | `#a7c6ea` | Light Blue |
+| `--color-light-blue-hover` | `#a2bacf` | Light Blue Hover |
+| `--color-light-gray` | `#F5F5F5` | Light Gray |
+| `--color-light-gray-hover` | `#E0E0E0` | Light Gray Hover |
+| `--color-success` | `#4CAF50` | Success Green |
+| `--color-error` | `#B30000` | Error Red |
 - **Cards** Background: White #FFFFFF; Border / Shadow: 0 1px 3px rgba(0,0,0,0.1)
 
 ## Typography
