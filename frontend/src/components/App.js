@@ -160,7 +160,10 @@ function App() {
     <AppShell
       onShowDashboard={token ? showDashboard : undefined}
       onShowActivity={token && !isAdminView ? showActivity : undefined}
+      onShowManageCharges={token && isAdminView ? showManageCharges : undefined}
+      onShowMembers={token && isAdminView ? showMembersList : undefined}
       onLogout={token ? handleLogout : undefined}
+      currentPage={currentPage}
     >
       {pageContent}
     </AppShell>

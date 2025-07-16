@@ -6,7 +6,6 @@
 
 .nav {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
@@ -21,11 +20,14 @@
 }
 
 .nav-actions {
+  margin-left: auto;
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-.nav-button {
-  padding: 5px 10px;
+.nav-tabs {
+  display: flex;
+  gap: 8px;
+  margin-left: 20px;
 }
