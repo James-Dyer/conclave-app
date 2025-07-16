@@ -13,12 +13,15 @@ export default function PaymentReviewForm({
   onSubmitted
 }) {
   const [memo, setMemo] = useState('');
+  const [memoError, setMemoError] = useState('');
   const [amountPaid, setAmountPaid] = useState('');
   const [paymentDate, setPaymentDate] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const api = useApi();
   const { addNotification } = useNotifications();
+
+  const MEMO_LIMIT = 70;
 
   useEffect(() => {
     if (charge && (charge.id || charge.amount)) {
@@ -30,12 +33,25 @@ export default function PaymentReviewForm({
     }
   }, [charge]);
 
+  const handleMemoChange = (val) => {
+    setMemo(val);
+    if (val.length > MEMO_LIMIT) {
+      setMemoError(`Maximum ${MEMO_LIMIT} characters allowed`);
+    } else {
+      setMemoError('');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
     if (Number(amountPaid) > Number(charge.amount)) {
       setError('Payment exceeds outstanding charges');
+      return;
+    }
+    if (memo.length > MEMO_LIMIT) {
+      setMemoError(`Maximum ${MEMO_LIMIT} characters allowed`);
       return;
     }
     try {
@@ -85,8 +101,10 @@ export default function PaymentReviewForm({
           <input
             type="text"
             value={memo}
-            onChange={(e) => setMemo(e.target.value)}
+            onChange={(e) => handleMemoChange(e.target.value)}
           />
+          <div className="char-count">{memo.length}/{MEMO_LIMIT}</div>
+          {memoError && <div className="error">{memoError}</div>}
         </label>
         {error && <div className="error">{error}</div>}
         {message && <div className="success">{message}</div>}

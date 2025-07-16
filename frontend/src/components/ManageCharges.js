@@ -9,6 +9,7 @@ import PrimaryButton from './PrimaryButton';
 import SecondaryButton from './SecondaryButton';
 
 const STATUS_OPTIONS = ['Active', 'Alumni', 'Inactive', 'Suspended', 'Expelled'];
+const MAX_DESC_LENGTH = 70;
 
 export default function ManageCharges({ onBack }) {
   const api = useApi();
@@ -66,11 +67,24 @@ export default function ManageCharges({ onBack }) {
     setSelectedIds(Array.from(new Set([...selectedIds, ...filteredMembers.map((m) => m.id)])));
   };
 
+  const handleDescriptionChange = (val) => {
+    setDescription(val);
+    if (val.length > MAX_DESC_LENGTH) {
+      setDescriptionError(`Maximum ${MAX_DESC_LENGTH} characters allowed`);
+    } else {
+      setDescriptionError('');
+    }
+  };
+
   const handleDescriptionBlur = () => {
     if (!description.trim()) {
       setDescriptionError('Description is required');
     } else {
-      setDescriptionError('');
+      if (description.length > MAX_DESC_LENGTH) {
+        setDescriptionError(`Maximum ${MAX_DESC_LENGTH} characters allowed`);
+      } else {
+        setDescriptionError('');
+      }
     }
   };
 
@@ -139,18 +153,22 @@ export default function ManageCharges({ onBack }) {
           <label>
             Description
             <textarea
-              maxLength="255"
               placeholder={`e.g. Membership Dues - Spring ${currentYear}`}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
               onBlur={handleDescriptionBlur}
             />
-            <div
-              className={
-                descriptionError ? 'error' : 'error error-placeholder'
-              }
-            >
-              {descriptionError || '\u00a0'}
+            <div className="field-meta">
+              <div className="char-count">
+                {description.length}/{MAX_DESC_LENGTH}
+              </div>
+              <div
+                className={
+                  descriptionError ? 'error' : 'error error-placeholder'
+                }
+              >
+                {descriptionError || '\u00a0'}
+              </div>
             </div>
           </label>
           <label>

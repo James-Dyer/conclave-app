@@ -67,3 +67,16 @@
 .error-placeholder {
   visibility: hidden;
 }
+
+.field-meta {
+  display: flex;
+  flex-direction: column;
+  margin-left: 8px;
+  min-width: 140px;
+}
+
+.char-count {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  color: #555;
+}
