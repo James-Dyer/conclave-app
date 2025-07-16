@@ -70,20 +70,20 @@
 }
 
 .balance-card.overdue {
-  background-color: var(--status-red);
-  color: #8b0000;
+  background-color: #8b0000;
+  color: var(--status-red);
   border: 2px solid var(--color-navy);
 }
 
 .balance-card.due-soon {
-  background-color: var(--status-yellow);
-  color: #9e2b00;
+  background-color: #9e2b00;
+  color: var(--status-yellow);
   border: 2px solid var(--color-navy);
 }
 
 .balance-card.upcoming {
-  background-color: var(--status-blue);
-  color: #1a73e8;
+  background-color: #1a73e8;
+  color: var(--status-blue);
   border: 2px solid var(--color-navy);
 }
 
