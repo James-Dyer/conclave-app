@@ -145,7 +145,13 @@ export default function ManageCharges({ onBack }) {
               onChange={(e) => setDescription(e.target.value)}
               onBlur={handleDescriptionBlur}
             />
-            {descriptionError && <div className="error">{descriptionError}</div>}
+            <div
+              className={
+                descriptionError ? 'error' : 'error error-placeholder'
+              }
+            >
+              {descriptionError || '\u00a0'}
+            </div>
           </label>
           <label>
             Amount
@@ -162,7 +168,11 @@ export default function ManageCharges({ onBack }) {
                 }
               }}
             />
-            {amountError && <div className="error">{amountError}</div>}
+            <div
+              className={amountError ? 'error' : 'error error-placeholder'}
+            >
+              {amountError || '\u00a0'}
+            </div>
           </label>
           <label>
             Due Date
