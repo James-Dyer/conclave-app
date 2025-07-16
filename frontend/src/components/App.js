@@ -143,6 +143,7 @@ function App() {
           onManageCharges={showManageCharges}
           onShowMembers={showMembersList}
           onShowMemberDashboard={showMemberDashboard}
+          onViewPaymentDetails={showPaymentDetails}
         />
       );
       break;
