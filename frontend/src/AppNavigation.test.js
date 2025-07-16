@@ -78,5 +78,5 @@ test('user can view payment details from dashboard', async () => {
   expect(
     await screen.findByRole('heading', { name: /payment details/i })
   ).toBeInTheDocument();
-  expect(screen.getByText('50')).toBeInTheDocument();
+  expect(screen.getByText('$50')).toBeInTheDocument();
 });
