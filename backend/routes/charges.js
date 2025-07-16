@@ -23,6 +23,8 @@ router.get('/', async (req, res) => {
     dueDate: row.due_date,
     description: row.description,
     tags: row.tags,
+    partialAmountPaid: row.partial_amount_paid || 0,
+    updatedAt: row.updated_at,
   }));
 
   res.json(mapped);

@@ -150,6 +150,7 @@ app.get('/api/my-charges', auth, async (req, res) => {
     description: row.description,
     tags: row.tags,
     partialAmountPaid: row.partial_amount_paid || 0,
+    updatedAt: row.updated_at
   }));
 
   res.json(mapped);
