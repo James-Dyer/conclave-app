@@ -2,7 +2,7 @@ import { useState } from 'react';
 import '../styles/LoginPage.css';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
-import { supabase, authFetch } from '../supabaseClient';
+import { supabase } from '../supabaseClient';
 import PrimaryButton from './PrimaryButton';
 import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
@@ -29,8 +29,7 @@ export default function LoginPage({ onLogin = () => {} }) {
       }
       const token = data.session.access_token;
       setToken(token);
-      const res = await authFetch('/api/member');
-      const member = await res.json();
+      const member = await api.fetchMember();
       setUser(member);
       onLogin();
     } catch (err) {
