@@ -62,3 +62,7 @@
   font-size: 0.85rem;
   height: 100%;
 }
+
+.error-placeholder {
+  visibility: hidden;
+}
