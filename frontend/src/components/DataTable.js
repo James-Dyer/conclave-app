@@ -38,6 +38,7 @@ export default function DataTable({
               <th key={c.accessor}>{c.header}</th>
             ))}
             {renderActions && <th>Actions</th>}
+            {onRowClick && <th className="arrow-col" />}
           </tr>
         </thead>
         <tbody>
@@ -56,6 +57,7 @@ export default function DataTable({
                 return <td key={c.accessor}>{display}</td>;
               })}
               {renderActions && <td>{renderActions(row)}</td>}
+              {onRowClick && <td className="row-arrow">&#8594;</td>}
             </tr>
           ))}
         </tbody>
