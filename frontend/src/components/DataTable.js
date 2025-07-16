@@ -2,12 +2,19 @@ import React, { useState } from 'react';
 import '../styles/AdminDashboard.css';
 import SecondaryButton from './SecondaryButton';
 
+function getDefaultRowsPerPage() {
+  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    return 5;
+  }
+  return 10;
+}
+
 export default function DataTable({
   columns = [],
   data = [],
   renderActions,
   loading = false,
-  rowsPerPage = 10,
+  rowsPerPage = getDefaultRowsPerPage(),
   onRowClick
 }) {
   const [page, setPage] = useState(0);
