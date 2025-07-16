@@ -150,6 +150,12 @@
   .member-dash-header h1 {
     flex-basis: 100%;
   }
+  .balance-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .balance-card {
+    min-width: 0;
+  }
   .balance-info,
   .dashboard-content {
     grid-column: 1 / -1;
