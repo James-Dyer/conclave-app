@@ -29,3 +29,8 @@
 .nav-button {
   padding: 5px 10px;
 }
+
+/* Reduce height so the nav doesn't expand when this button shows */
+.logout-button {
+  padding: 4px 10px;
+}
