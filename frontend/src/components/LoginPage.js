@@ -75,6 +75,9 @@ export default function LoginPage({ onLogin = () => {} }) {
         <a href="#" className="forgot-link">
           Forgot Password?
         </a>
+        <p className="security-notice">
+          Your information is secured with industry‑standard authentication and encryption.
+        </p>
       </div>
     </div>
   );

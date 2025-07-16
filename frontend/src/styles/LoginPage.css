@@ -121,3 +121,9 @@ button:disabled {
   }
 }
 
+.security-notice {
+  font-size: 0.75rem;
+  color: #555;
+  text-align: center;
+}
+
