@@ -48,7 +48,10 @@ export default function ChargeList({
       dueDate: new Date(charge.dueDate).toLocaleDateString(),
       statusDisplay,
       statusIndicator,
-      original: charge
+      original: {
+        ...charge,
+        description: charge.description || '-',
+      }
     };
   });
 
@@ -62,7 +65,10 @@ export default function ChargeList({
           id: row.original.id,
           status: row.original.status,
           amount: row.original.amount,
-          dueDate: row.original.dueDate
+          dueDate: row.original.dueDate,
+          description: row.original.description,
+          partialAmountPaid: row.original.partialAmountPaid,
+          updatedAt: row.original.updatedAt
         })
       }
     />

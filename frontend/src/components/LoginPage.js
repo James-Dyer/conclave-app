@@ -67,12 +67,9 @@ export default function LoginPage({ onLogin = () => {} }) {
             placeholder="Password"
           />
           {error && <div className="error">{error}</div>}
-          <PrimaryButton type="submit" disabled={loading}>
-            {loading ? (
-              <span className="spinner" aria-label="loading" />
-            ) : (
-              'Login'
-            )}
+          <PrimaryButton type="submit" disabled={loading} className="login-button">
+            <span className={loading ? 'hidden-text' : undefined}>Login</span>
+            {loading && <span className="spinner" aria-label="loading" />}
           </PrimaryButton>
         </form>
         <a href="#" className="forgot-link">
