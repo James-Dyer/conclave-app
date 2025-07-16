@@ -24,8 +24,8 @@ export default function LoginPage({ onLogin = () => {} }) {
         password,
       });
       if (authError) console.error('Auth error:', authError);
-      if (error || !data.session) {
-        throw new Error(error ? error.message : 'Login failed');
+      if (authError || !data.session) {
+        throw new Error(authError ? authError.message : 'Login failed');
       }
       const token = data.session.access_token;
       setToken(token);
