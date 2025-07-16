@@ -31,6 +31,8 @@ export function AuthProvider({ children }) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('cachedCharges');
       localStorage.removeItem('cachedPayments');
+      localStorage.removeItem('cachedPendingPayments');
+      localStorage.removeItem('cachedAdminMembers');
     }
   }, [token]);
 

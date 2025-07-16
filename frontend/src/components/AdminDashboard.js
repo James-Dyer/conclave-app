@@ -7,6 +7,8 @@ import '../styles/AdminDashboard.css';
 import PrimaryButton from './PrimaryButton';
 import SecondaryButton from './SecondaryButton';
 
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
 export default function AdminDashboard({
   onManageCharges,
   onShowMembers,
@@ -23,6 +25,33 @@ export default function AdminDashboard({
   const [denyError, setDenyError] = useState('');
 
   useEffect(() => {
+    const now = Date.now();
+    let usedCache = false;
+    try {
+      const cachedReviews = JSON.parse(
+        localStorage.getItem('cachedPendingPayments')
+      );
+      if (cachedReviews && now - cachedReviews.ts < CACHE_TTL_MS) {
+        setReviews(cachedReviews.data);
+        usedCache = true;
+      }
+    } catch {}
+    try {
+      const cachedMembers = JSON.parse(
+        localStorage.getItem('cachedAdminMembers')
+      );
+      if (cachedMembers && now - cachedMembers.ts < CACHE_TTL_MS) {
+        const map = {};
+        cachedMembers.data.forEach((mem) => {
+          map[mem.id] = mem.name;
+        });
+        setMembers(map);
+        usedCache = true;
+      }
+    } catch {}
+    if (usedCache) {
+      setLoading(false);
+    }
     async function load() {
       setLoading(true);
       try {
@@ -31,11 +60,23 @@ export default function AdminDashboard({
           api.fetchAdminMembers()
         ]);
         setReviews(r || []);
+        if (r) {
+          localStorage.setItem(
+            'cachedPendingPayments',
+            JSON.stringify({ ts: Date.now(), data: r })
+          );
+        }
         const map = {};
         (m || []).forEach((mem) => {
           map[mem.id] = mem.name;
         });
         setMembers(map);
+        if (m) {
+          localStorage.setItem(
+            'cachedAdminMembers',
+            JSON.stringify({ ts: Date.now(), data: m })
+          );
+        }
       } catch (e) {
         setError(e.message);
       } finally {
