@@ -11,28 +11,6 @@
   gap: 12px;
 }
 
-.quick-links {
-  flex-direction: row;
-}
-
-.quick-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px 14px;
-  border: 1px solid #ddd;
-  background: var(--color-light-gray);
-  cursor: pointer;
-}
-
-.quick-link:disabled {
-  cursor: default;
-  opacity: 0.7;
-}
-
-.quick-link .desc {
-  font-size: 0.8rem;
-}
 
 .admin-dash-header {
   display: flex;

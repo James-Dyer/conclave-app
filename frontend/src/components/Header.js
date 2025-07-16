@@ -1,77 +1,77 @@
 import '../styles/Header.css';
 import PrimaryButton from './PrimaryButton';
+import NavTab from './NavTab';
 
 export default function Header({
   onShowLogin,
   onShowDashboard,
-  onShowAdmin,
-  onShowReview,
-  onShowChargeDetails,
   onShowActivity,
+  onShowManageCharges,
+  onShowManagePayments,
+  onShowMembers,
   onLogout,
+  currentPage,
 }) {
   return (
     <header className="header">
       <nav className="nav">
         <span className="brand">Conclave ΣΧ-ΛΔ</span>
-        <div className="nav-actions">
-          {onShowLogin && (
-            <PrimaryButton
-              type="button"
-              className="nav-button login-nav-button"
-              onClick={onShowLogin}
-            >
-              Login
-            </PrimaryButton>
-          )}
+        <div className="nav-tabs">
           {onShowDashboard && (
-            <PrimaryButton
-              type="button"
-              className="nav-button dashboard-nav-button"
+            <NavTab
+              className="dashboard-tab"
+              active={currentPage === 'dashboard' || currentPage === 'admin'}
               onClick={onShowDashboard}
             >
               Dashboard
-            </PrimaryButton>
+            </NavTab>
           )}
           {onShowActivity && (
-            <PrimaryButton
-              type="button"
-              className="nav-button activity-nav-button"
+            <NavTab
+              className="activity-tab"
+              active={currentPage === 'activity'}
               onClick={onShowActivity}
             >
               Account Activity
-            </PrimaryButton>
+            </NavTab>
           )}
-          {onShowAdmin && (
-            <PrimaryButton
-              type="button"
-              className="nav-button admin-nav-button"
-              onClick={onShowAdmin}
+          {onShowManageCharges && (
+            <NavTab
+              className="charges-tab"
+              active={currentPage === 'manageCharges'}
+              onClick={onShowManageCharges}
             >
-              Admin
-            </PrimaryButton>
+              Manage Charges
+            </NavTab>
           )}
-          {onShowReview && (
-            <PrimaryButton
-              type="button"
-              className="nav-button review-nav-button"
-              onClick={onShowReview}
+          {onShowManagePayments && (
+            <NavTab
+              className="payments-tab"
+              active={currentPage === 'managePayments'}
+              onClick={onShowManagePayments}
             >
-              Payment Review
-            </PrimaryButton>
+              Manage Payments
+            </NavTab>
           )}
-          {onShowChargeDetails && (
-            <PrimaryButton
-              type="button"
-              className="nav-button charge-details-nav-button"
-              onClick={onShowChargeDetails}
+          {onShowMembers && (
+            <NavTab
+              className="members-tab"
+              active={currentPage === 'members'}
+              onClick={onShowMembers}
             >
-              Charge Details
-            </PrimaryButton>
+              Manage Members
+            </NavTab>
           )}
+        </div>
+        <div className="nav-actions">
           {onLogout && (
-            <PrimaryButton type="button" className="nav-button logout-button" onClick={onLogout}>
+            <PrimaryButton type="button" className="logout-button" onClick={onLogout}>
               Logout
+            </PrimaryButton>
+          )}
+          {onShowLogin && (
+            <PrimaryButton type="button" onClick={onShowLogin}>
+              Login
             </PrimaryButton>
           )}
         </div>

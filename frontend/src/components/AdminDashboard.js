@@ -140,18 +140,6 @@ export default function AdminDashboard({
         <h1>Admin Dashboard</h1>
       </header>
       {error && <div className="error">{error}</div>}
-      <section className="quick-links">
-        <PrimaryButton className="quick-link" onClick={onManageCharges}>
-          Manage Charges
-          <span className="desc">Create, update, or delete charges for members</span>
-        </PrimaryButton>
-        <PrimaryButton className="quick-link" onClick={onShowMembers}>
-          Manage Members
-          <span className="desc">
-            Add, browse, and manage all member accounts
-          </span>
-        </PrimaryButton>
-      </section>
       <section>
         <h2>Payment Reviews</h2>
         <DataTable
