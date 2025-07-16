@@ -10,6 +10,10 @@
   --color-light-gray-hover: #E0E0E0;
   --color-success: #4CAF50;
   --color-error: #B30000;
+  --status-red: #ffe6e6;
+  --status-yellow: #fff5e6;
+  --status-blue: #e6f2ff;
+  --status-green: #e6ffe6;
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
