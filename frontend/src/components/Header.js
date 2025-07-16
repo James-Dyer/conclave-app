@@ -64,11 +64,15 @@ export default function Header({
           )}
         </div>
         <div className="nav-actions">
-          {onLogout && (
-            <PrimaryButton type="button" className="logout-button" onClick={onLogout}>
-              Logout
-            </PrimaryButton>
-          )}
+          <PrimaryButton
+            type="button"
+            className="logout-button"
+            onClick={onLogout}
+            style={{ visibility: onLogout ? 'visible' : 'hidden' }}
+            disabled={!onLogout}
+          >
+            Logout
+          </PrimaryButton>
           {onShowLogin && (
             <PrimaryButton type="button" onClick={onShowLogin}>
               Login
