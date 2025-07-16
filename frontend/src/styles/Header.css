@@ -2,6 +2,7 @@
   background-color: var(--color-navy);
   padding: 7px 20px;
   color: white;
+  position: relative;
 }
 
 .nav {
@@ -35,4 +36,65 @@
 
 .logout-button {
   padding: 6px 12px;
+}
+
+.hamburger {
+  display: none;
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-tabs {
+    display: none;
+    flex-direction: column;
+    margin: var(--space-sm) 0 0;
+  }
+
+  .nav-actions {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--color-navy);
+    padding: var(--space-sm) 0;
+    border-top: 1px solid var(--color-light-blue);
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .mobile-menu.open {
+    display: flex;
+  }
+
+  .mobile-menu .nav-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin: 0;
+  }
+
+  .mobile-menu .nav-actions {
+    display: flex;
+    flex-direction: column;
+    margin-left: 0;
+    padding: 0 var(--space-sm);
+    gap: var(--space-sm);
+  }
 }
