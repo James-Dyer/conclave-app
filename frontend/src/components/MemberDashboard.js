@@ -84,6 +84,10 @@ export default function MemberDashboard({
     (a, b) => new Date(b.date) - new Date(a.date)
   );
 
+  const underReviewCount = paymentData.filter(
+    (p) => p.status === 'Under Review'
+  ).length;
+
   let breakdownError = false;
   let breakdown = {
     totalBalance: 0,
@@ -151,15 +155,25 @@ export default function MemberDashboard({
             <div className="breakdown-error">Unable to calculate breakdown.</div>
           )}
         </div>
-        <PrimaryButton
-          type="button"
-          className="dashboard-review-button"
-          data-testid="dashboard-review-button"
-          disabled={loading || totalBalance === 0}
-          onClick={() => onRequestReview({ amount: totalBalance })}
-        >
-          Mark as Paid
-        </PrimaryButton>
+        <div className="review-action">
+          <PrimaryButton
+            type="button"
+            className="dashboard-review-button"
+            data-testid="dashboard-review-button"
+            disabled={loading || totalBalance === 0}
+            onClick={() => onRequestReview({ amount: totalBalance })}
+          >
+            Mark as Paid
+          </PrimaryButton>
+          {underReviewCount > 0 && (
+            <span
+              className="under-review-notice"
+              data-testid="under-review-notice"
+            >
+              {`You have ${underReviewCount} payment${underReviewCount > 1 ? 's' : ''} under review`}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="dashboard-content">
