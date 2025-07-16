@@ -52,8 +52,10 @@ export default function AdminDashboard({
     if (usedCache) {
       setLoading(false);
     }
-    async function load() {
-      setLoading(true);
+    async function load(skipLoading) {
+      if (!skipLoading) {
+        setLoading(true);
+      }
       try {
         const [r, m] = await Promise.all([
           api.fetchPendingPayments(),
@@ -83,7 +85,7 @@ export default function AdminDashboard({
         setLoading(false);
       }
     }
-    load();
+    load(usedCache);
   }, []);
 
   function openApproveDialog(review) {
