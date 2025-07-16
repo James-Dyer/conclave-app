@@ -27,7 +27,7 @@ export default function PaymentList({ payments = [], loading = false, onViewDeta
   return (
     <DataTable
       columns={columns}
-      data={rows.map((r) => ({ ...r, amount: `$${r.amount}` }))}
+      data={rows}
       loading={loading}
       onRowClick={(row) => onViewDetails(row.original)}
     />
