@@ -175,3 +175,19 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.status-circle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.status-circle.good {
+  background-color: var(--color-success);
+}
+.status-circle.bad {
+  background-color: var(--color-error);
+}
+.status-circle.neutral {
+  background-color: var(--color-light-gray);
+}

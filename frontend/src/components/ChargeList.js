@@ -4,6 +4,7 @@ import '../styles/ChargeList.css';
 import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 import PrimaryButton from './PrimaryButton';
 import SecondaryButton from './SecondaryButton';
+import { getStatusCategory } from '../statusUtils';
 
 export default function ChargeList({
   charges = [],
@@ -29,19 +30,24 @@ export default function ChargeList({
     { header: 'Description', accessor: 'description' },
     { header: 'Amount', accessor: 'amount' },
     { header: 'Due Date', accessor: 'dueDate' },
-    { header: 'Status', accessor: 'statusDisplay' }
+    { header: 'Status', accessor: 'statusDisplay' },
+    { header: '', accessor: 'statusIndicator' }
   ];
 
   const rows = visible.map((charge) => {
     const pending = pendingReviewIds.includes(charge.id);
     const effectiveStatus = pending ? 'Under Review' : charge.status;
     const statusDisplay = effectiveStatus;
+    const statusIndicator = (
+      <span className={`status-circle ${getStatusCategory(effectiveStatus)}`} />
+    );
     return {
       id: charge.id,
       description: charge.description || '-',
       amount: charge.amount,
       dueDate: new Date(charge.dueDate).toLocaleDateString(),
       statusDisplay,
+      statusIndicator,
       original: charge
     };
   });

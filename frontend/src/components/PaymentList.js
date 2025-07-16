@@ -2,6 +2,7 @@ import React from 'react';
 import DataTable from './DataTable';
 import '../styles/PaymentList.css';
 import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
+import { getStatusCategory } from '../statusUtils';
 
 export default function PaymentList({ payments = [], loading = false, onViewDetails = () => {} }) {
   if (!loading && payments.length === 0) {
@@ -16,12 +17,16 @@ export default function PaymentList({ payments = [], loading = false, onViewDeta
   const columns = [
     { header: 'Amount', accessor: 'amount' },
     { header: 'Paid On', accessor: 'paidDate' },
-    { header: 'Status', accessor: 'status' }
+    { header: 'Status', accessor: 'status' },
+    { header: '', accessor: 'statusIndicator' }
   ];
 
   const rows = payments.map((p) => ({
     ...p,
     paidDate: new Date(p.date).toLocaleDateString(),
+    statusIndicator: (
+      <span className={`status-circle ${getStatusCategory(p.status)}`} />
+    ),
     original: p
   }));
   return (
