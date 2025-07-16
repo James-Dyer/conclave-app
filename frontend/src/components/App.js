@@ -140,8 +140,8 @@ function App() {
 
   return (
     <AppShell
-      onShowDashboard={showDashboard}
-      onShowActivity={showActivity}
+      onShowDashboard={token ? showDashboard : undefined}
+      onShowActivity={token && !isAdminView ? showActivity : undefined}
       onLogout={token ? handleLogout : undefined}
     >
       {pageContent}
