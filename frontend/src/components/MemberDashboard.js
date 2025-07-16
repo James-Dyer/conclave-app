@@ -109,12 +109,10 @@ export default function MemberDashboard({
 
   return (
     <div className="member-dashboard">
-      {user?.isAdmin && onShowAdmin && (
-        <div className="view-toggle-wrapper">
-          <ViewToggle isAdminView={false} onToggle={onShowAdmin} />
-        </div>
-      )}
       <header className="member-dash-header">
+        {user?.isAdmin && onShowAdmin && (
+          <ViewToggle isAdminView={false} onToggle={onShowAdmin} />
+        )}
         <h1>{`Welcome${user?.name ? `, ${user.name}` : ''}!`}</h1>
       </header>
       <div className="balance-info" data-testid="balance-info">
