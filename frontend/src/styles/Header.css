@@ -1,5 +1,5 @@
 .header {
-  background-color: var(--color-text);
+  background-color: var(--color-navy);
   padding: 10px 20px;
   color: white;
 }
@@ -16,7 +16,7 @@
 }
 
 .logout-link {
-  color: var(--color-accent);
+  color: var(--color-light-blue);
   text-decoration: none;
 }
 

@@ -1,5 +1,5 @@
 # Codex
-Relevant information about the project for the codex agent to understand when performing tasks
+Relevant information about the project for the codex agent to understand when performing tasks. The full list of color and spacing variables used by the frontend lives in `frontend/StyleGuide.md`.
 
 ## Development Guide
 - By default don't use emojis where they don't need to be. Particularly logs and debug statements.

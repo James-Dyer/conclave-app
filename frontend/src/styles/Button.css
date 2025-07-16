@@ -1,20 +1,20 @@
 .primary-button {
   padding: 6px 12px;
-  background-color: var(--color-accent);
-  color: var(--color-text);
+  background-color: var(--color-light-blue);
+  color: var(--color-navy);
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .primary-button:hover {
-  background-color: var(--color-accent-hover);
+  background-color: var(--color-light-blue-hover);
 }
 
 .secondary-button {
   padding: 6px 12px;
   background-color: #e0e0e0;
-  color: var(--color-text);
+  color: var(--color-navy);
   border: 1px solid #ccc;
   cursor: pointer;
 }
