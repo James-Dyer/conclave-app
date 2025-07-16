@@ -58,11 +58,12 @@ export default function PaymentReviewForm({
 
   return (
     <div className="payment-review-page">
-      <h1>Payment Review</h1>
-      <form onSubmit={handleSubmit} className="review-form">
-        <div className="static-field">
-          <strong>Total Amount:</strong> {charge.amount}
-        </div>
+      <div className="review-card">
+        <h1>Payment Review</h1>
+        <form onSubmit={handleSubmit} className="review-form">
+          <div className="static-field">
+            <strong>Total Amount:</strong> {charge.amount}
+          </div>
         <label>
           Amount Paid
           <input
@@ -98,6 +99,7 @@ export default function PaymentReviewForm({
           )}
         </div>
       </form>
+      </div>
     </div>
   );
 }
