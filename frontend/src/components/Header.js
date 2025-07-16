@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import '../styles/Header.css';
 import PrimaryButton from './PrimaryButton';
 import NavTab from './NavTab';
@@ -12,73 +13,109 @@ export default function Header({
   onLogout,
   currentPage,
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function handleNavClick(cb) {
+    return () => {
+      setMenuOpen(false);
+      if (cb) cb();
+    };
+  }
+
+  const tabs = (
+    <>
+      {onShowDashboard && (
+        <NavTab
+          key="dashboard"
+          className="dashboard-tab"
+          active={currentPage === 'dashboard' || currentPage === 'admin'}
+          onClick={handleNavClick(onShowDashboard)}
+        >
+          Dashboard
+        </NavTab>
+      )}
+      {onShowActivity && (
+        <NavTab
+          key="activity"
+          className="activity-tab"
+          active={currentPage === 'activity'}
+          onClick={handleNavClick(onShowActivity)}
+        >
+          Account Activity
+        </NavTab>
+      )}
+      {onShowManageCharges && (
+        <NavTab
+          key="charges"
+          className="charges-tab"
+          active={currentPage === 'manageCharges'}
+          onClick={handleNavClick(onShowManageCharges)}
+        >
+          Manage Charges
+        </NavTab>
+      )}
+      {onShowManagePayments && (
+        <NavTab
+          key="payments"
+          className="payments-tab"
+          active={currentPage === 'managePayments'}
+          onClick={handleNavClick(onShowManagePayments)}
+        >
+          Manage Payments
+        </NavTab>
+      )}
+      {onShowMembers && (
+        <NavTab
+          key="members"
+          className="members-tab"
+          active={currentPage === 'members'}
+          onClick={handleNavClick(onShowMembers)}
+        >
+          Manage Members
+        </NavTab>
+      )}
+    </>
+  );
+
+  const actions = (
+    <>
+      <PrimaryButton
+        type="button"
+        className="logout-button"
+        onClick={handleNavClick(onLogout)}
+        style={{ visibility: onLogout ? 'visible' : 'hidden' }}
+        disabled={!onLogout}
+      >
+        Logout
+      </PrimaryButton>
+      {onShowLogin && (
+        <PrimaryButton type="button" onClick={handleNavClick(onShowLogin)}>
+          Login
+        </PrimaryButton>
+      )}
+    </>
+  );
+
   return (
     <header className="header">
       <nav className="nav">
         <span className="brand">Conclave ΣΧ-ΛΔ</span>
-        <div className="nav-tabs">
-          {onShowDashboard && (
-            <NavTab
-              className="dashboard-tab"
-              active={currentPage === 'dashboard' || currentPage === 'admin'}
-              onClick={onShowDashboard}
-            >
-              Dashboard
-            </NavTab>
-          )}
-          {onShowActivity && (
-            <NavTab
-              className="activity-tab"
-              active={currentPage === 'activity'}
-              onClick={onShowActivity}
-            >
-              Account Activity
-            </NavTab>
-          )}
-          {onShowManageCharges && (
-            <NavTab
-              className="charges-tab"
-              active={currentPage === 'manageCharges'}
-              onClick={onShowManageCharges}
-            >
-              Manage Charges
-            </NavTab>
-          )}
-          {onShowManagePayments && (
-            <NavTab
-              className="payments-tab"
-              active={currentPage === 'managePayments'}
-              onClick={onShowManagePayments}
-            >
-              Manage Payments
-            </NavTab>
-          )}
-          {onShowMembers && (
-            <NavTab
-              className="members-tab"
-              active={currentPage === 'members'}
-              onClick={onShowMembers}
-            >
-              Manage Members
-            </NavTab>
-          )}
-        </div>
-        <div className="nav-actions">
-          <PrimaryButton
-            type="button"
-            className="logout-button"
-            onClick={onLogout}
-            style={{ visibility: onLogout ? 'visible' : 'hidden' }}
-            disabled={!onLogout}
-          >
-            Logout
-          </PrimaryButton>
-          {onShowLogin && (
-            <PrimaryButton type="button" onClick={onShowLogin}>
-              Login
-            </PrimaryButton>
-          )}
-        </div>
+        <button
+          className="hamburger"
+          type="button"
+          aria-label="Toggle menu"
+          onClick={() => setMenuOpen((o) => !o)}
+        >
+          &#9776;
+        </button>
+        <div className="nav-tabs">{tabs}</div>
+        <div className="nav-actions">{actions}</div>
+        {menuOpen && (
+          <div className="mobile-menu open">
+            <div className="nav-tabs">{tabs}</div>
+            <div className="nav-actions">{actions}</div>
+          </div>
+        )}
       </nav>
     </header>
   );
