@@ -7,6 +7,7 @@ export default function Header({
   onShowAdmin,
   onShowReview,
   onShowChargeDetails,
+  onShowActivity,
   onLogout,
 }) {
   return (
@@ -30,6 +31,15 @@ export default function Header({
               onClick={onShowDashboard}
             >
               Dashboard
+            </PrimaryButton>
+          )}
+          {onShowActivity && (
+            <PrimaryButton
+              type="button"
+              className="nav-button activity-nav-button"
+              onClick={onShowActivity}
+            >
+              Account Activity
             </PrimaryButton>
           )}
           {onShowAdmin && (

@@ -88,10 +88,6 @@
   background-color: var(--color-accent-hover);
 }
 
-.activity-button {
-  margin-left: auto;
-  padding: 6px 12px;
-}
 
 .dashboard-content {
   grid-column: 2 / span 10;
