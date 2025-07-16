@@ -9,7 +9,7 @@ import PrimaryButton from './PrimaryButton';
 import SecondaryButton from './SecondaryButton';
 
 const STATUS_OPTIONS = ['Active', 'Alumni', 'Inactive', 'Suspended', 'Expelled'];
-const MAX_DESC_LENGTH = 70;
+const MAX_DESC_LENGTH = 50;
 
 export default function ManageCharges({ onBack }) {
   const api = useApi();
