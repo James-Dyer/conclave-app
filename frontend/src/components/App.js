@@ -17,23 +17,51 @@ function App() {
   const [reviewCharge, setReviewCharge] = useState(null);
   const [detailsCharge, setDetailsCharge] = useState(null);
   const [pendingReviewIds, setPendingReviewIds] = useState([]);
+  const [isAdminView, setIsAdminView] = useState(false);
   const { token, setToken, setUser, user } = useAuth();
 
-  const showDashboard = () => {
+  const showMemberDashboard = () => {
+    setIsAdminView(false);
     setCurrentPage('dashboard');
     setReviewCharge(null);
     setDetailsCharge(null);
+  };
+  const showAdminDashboard = () => {
+    setIsAdminView(true);
+    setCurrentPage('admin');
+    setReviewCharge(null);
+    setDetailsCharge(null);
+  };
+  const showDashboard = () => {
+    if (isAdminView) {
+      showAdminDashboard();
+    } else {
+      showMemberDashboard();
+    }
   };
   const showLogin = () => setCurrentPage('login');
   const handleLogout = () => {
     setToken(null);
     setUser(null);
+    setIsAdminView(false);
     showLogin();
   };
-  const showAdmin = () => setCurrentPage('admin');
-  const showMembersList = () => setCurrentPage('members');
-  const showManageCharges = () => setCurrentPage('manageCharges');
-  const showAddMember = () => setCurrentPage('addMember');
+  const showAdmin = () => {
+    setIsAdminView(true);
+    setCurrentPage('admin');
+  };
+  const showMembersList = () => {
+    setIsAdminView(true);
+    setCurrentPage('members');
+  };
+  const showManageCharges = () => {
+    setIsAdminView(true);
+    setCurrentPage('manageCharges');
+  };
+  const showAddMember = () => {
+    setIsAdminView(true);
+    setCurrentPage('addMember');
+  };
   const showActivity = () => setCurrentPage('activity');
   const showReview = (charge) => {
     if (charge) {
@@ -62,7 +90,6 @@ function App() {
           onViewDetails={showChargeDetails}
           pendingReviewIds={pendingReviewIds}
           onShowAdmin={user?.isAdmin ? showAdmin : undefined}
-          onShowActivity={showActivity}
         />
       );
       break;
@@ -92,7 +119,7 @@ function App() {
         <AdminDashboard
           onManageCharges={showManageCharges}
           onShowMembers={showMembersList}
-          onShowMemberDashboard={showDashboard}
+          onShowMemberDashboard={showMemberDashboard}
         />
       );
       break;
@@ -112,7 +139,11 @@ function App() {
   }
 
   return (
-    <AppShell onShowLogin={showLogin} onLogout={token ? handleLogout : undefined}>
+    <AppShell
+      onShowDashboard={showDashboard}
+      onShowActivity={showActivity}
+      onLogout={token ? handleLogout : undefined}
+    >
       {pageContent}
     </AppShell>
   );
