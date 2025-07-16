@@ -20,6 +20,7 @@ export default function PaymentReviewForm({
   const [error, setError] = useState('');
   const [platform, setPlatform] = useState('');
   const [otherPlatform, setOtherPlatform] = useState('');
+  const [loading, setLoading] = useState(false);
   const api = useApi();
   const { addNotification } = useNotifications();
 
@@ -48,6 +49,7 @@ export default function PaymentReviewForm({
     e.preventDefault();
     setError('');
     setMessage('');
+    setLoading(true);
     const plat = platform === 'Other' ? otherPlatform.trim() : platform;
     if (!plat) {
       setError('Payment platform is required');
@@ -79,6 +81,8 @@ export default function PaymentReviewForm({
       if (onBack) onBack();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -140,7 +144,14 @@ export default function PaymentReviewForm({
         {error && <div className="error">{error}</div>}
         {message && <div className="success">{message}</div>}
         <div className="form-actions">
-          <PrimaryButton type="submit">Submit</PrimaryButton>
+          <PrimaryButton
+            type="submit"
+            disabled={loading}
+            className="submit-button"
+          >
+            <span className={loading ? 'hidden-text' : undefined}>Submit</span>
+            {loading && <span className="spinner" aria-label="loading" />}
+          </PrimaryButton>
           {onBack && (
             <SecondaryButton type="button" onClick={onBack} className="back-button">
               Back
