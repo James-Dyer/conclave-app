@@ -9,6 +9,7 @@ import ManageChargesPage from './ManageChargesPage';
 import AddMember from './AddMember';
 import PaymentReviewForm from './PaymentReviewForm';
 import ChargeDetails from './ChargeDetails';
+import PaymentDetails from './PaymentDetails';
 import AppShell from './AppShell';
 import AccountActivityPage from './AccountActivityPage';
 
@@ -16,6 +17,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [reviewCharge, setReviewCharge] = useState(null);
   const [detailsCharge, setDetailsCharge] = useState(null);
+  const [detailsPayment, setDetailsPayment] = useState(null);
   const [pendingReviewIds, setPendingReviewIds] = useState([]);
   const [isAdminView, setIsAdminView] = useState(false);
   const { token, setToken, setUser, user } = useAuth();
@@ -81,13 +83,21 @@ function App() {
     setCurrentPage('chargeDetails');
   };
 
+  const showPaymentDetails = (payment) => {
+    if (payment) {
+      setDetailsPayment(payment);
+    }
+    setCurrentPage('paymentDetails');
+  };
+
   let pageContent;
   switch (currentPage) {
     case 'dashboard':
       pageContent = (
         <MemberDashboard
           onRequestReview={showReview}
-          onViewDetails={showChargeDetails}
+          onViewChargeDetails={showChargeDetails}
+          onViewPaymentDetails={showPaymentDetails}
           pendingReviewIds={pendingReviewIds}
           onShowAdmin={user?.isAdmin ? showAdmin : undefined}
         />
@@ -110,6 +120,14 @@ function App() {
         <ChargeDetails
           charge={detailsCharge || undefined}
           onRequestReview={showReview}
+          onBack={showDashboard}
+        />
+      );
+      break;
+    case 'paymentDetails':
+      pageContent = (
+        <PaymentDetails
+          payment={detailsPayment || undefined}
           onBack={showDashboard}
         />
       );

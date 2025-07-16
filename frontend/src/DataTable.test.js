@@ -30,3 +30,13 @@ test('paginates rows 10 at a time', async () => {
   await userEvent.click(screen.getByRole('button', { name: /next/i }));
   expect(screen.getByText('Row 10')).toBeInTheDocument();
 });
+
+test('calls onRowClick when a row is clicked', async () => {
+  const columns = [{ header: 'Name', accessor: 'name' }];
+  const data = [{ id: 1, name: 'Row 1' }];
+  const handle = jest.fn();
+  render(<DataTable columns={columns} data={data} onRowClick={handle} />);
+  const rows = screen.getAllByRole('row');
+  await userEvent.click(rows[1]);
+  expect(handle).toHaveBeenCalledWith(data[0]);
+});

@@ -7,7 +7,8 @@ export default function DataTable({
   data = [],
   renderActions,
   loading = false,
-  rowsPerPage = 10
+  rowsPerPage = 10,
+  onRowClick
 }) {
   const [page, setPage] = useState(0);
 
@@ -41,10 +42,19 @@ export default function DataTable({
         </thead>
         <tbody>
           {visibleRows.map((row) => (
-            <tr key={row.id || JSON.stringify(row)}>
-              {columns.map((c) => (
-                <td key={c.accessor}>{row[c.accessor]}</td>
-              ))}
+            <tr
+              key={row.id || JSON.stringify(row)}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              className={onRowClick ? 'clickable-row' : undefined}
+            >
+              {columns.map((c) => {
+                const value = row[c.accessor];
+                const isMoney =
+                  typeof value === 'number' &&
+                  c.header.toLowerCase().includes('amount');
+                const display = isMoney ? `$${value}` : value;
+                return <td key={c.accessor}>{display}</td>;
+              })}
               {renderActions && <td>{renderActions(row)}</td>}
             </tr>
           ))}

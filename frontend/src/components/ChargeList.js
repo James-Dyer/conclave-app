@@ -27,10 +27,9 @@ export default function ChargeList({
 
   const columns = [
     { header: 'Description', accessor: 'description' },
-    { header: 'Original Amount', accessor: 'amount' },
+    { header: 'Amount', accessor: 'amount' },
     { header: 'Due Date', accessor: 'dueDate' },
-    { header: 'Status', accessor: 'statusDisplay' },
-    { header: 'Partial Amount Paid', accessor: 'partial' }
+    { header: 'Status', accessor: 'statusDisplay' }
   ];
 
   const rows = visible.map((charge) => {
@@ -43,7 +42,6 @@ export default function ChargeList({
       amount: charge.amount,
       dueDate: new Date(charge.dueDate).toLocaleDateString(),
       statusDisplay,
-      partial: charge.partialAmountPaid > 0 ? charge.partialAmountPaid : '',
       original: charge
     };
   });
@@ -52,25 +50,15 @@ export default function ChargeList({
     <DataTable
       loading={loading}
       columns={columns}
-      data={rows}
-      renderActions={(row) => (
-        <div className="flex space-x-2">
-          <SecondaryButton
-            type="button"
-            onClick={() =>
-              onViewDetails({
-                id: row.original.id,
-                status: row.original.status,
-                amount: row.original.amount,
-                dueDate: row.original.dueDate
-              })
-            }
-            className="px-3 py-1"
-          >
-            Details
-          </SecondaryButton>
-        </div>
-      )}
+      data={rows.map((r) => ({ ...r, amount: `$${r.amount}` }))}
+      onRowClick={(row) =>
+        onViewDetails({
+          id: row.original.id,
+          status: row.original.status,
+          amount: row.original.amount,
+          dueDate: row.original.dueDate
+        })
+      }
     />
   );
 }

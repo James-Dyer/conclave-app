@@ -1,0 +1,24 @@
+.payment-details-page {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.payment-details-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.payment-details-table th,
+.payment-details-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.payment-actions {
+  display: flex;
+  gap: 10px;
+}
