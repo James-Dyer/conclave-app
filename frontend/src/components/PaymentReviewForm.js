@@ -24,7 +24,7 @@ export default function PaymentReviewForm({
   const api = useApi();
   const { addNotification } = useNotifications();
 
-  const MEMO_LIMIT = 70;
+  const MEMO_LIMIT = 50;
 
   useEffect(() => {
     if (charge && (charge.id || charge.amount)) {
