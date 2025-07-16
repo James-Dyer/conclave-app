@@ -6,6 +6,8 @@ import { useAuth } from '../AuthContext';
 import '../styles/AccountActivityPage.css';
 import SecondaryButton from './SecondaryButton';
 
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
 export default function AccountActivityPage({ onBack }) {
   const api = useApi();
   const { token } = useAuth();
@@ -18,6 +20,27 @@ export default function AccountActivityPage({ onBack }) {
       setLoading(false);
       return;
     }
+
+    const now = Date.now();
+    let usedCache = false;
+    try {
+      const cachedCharges = JSON.parse(localStorage.getItem('cachedCharges'));
+      if (cachedCharges && now - cachedCharges.ts < CACHE_TTL_MS) {
+        setCharges(cachedCharges.data);
+        usedCache = true;
+      }
+    } catch {}
+    try {
+      const cachedPayments = JSON.parse(localStorage.getItem('cachedPayments'));
+      if (cachedPayments && now - cachedPayments.ts < CACHE_TTL_MS) {
+        setPayments(cachedPayments.data);
+        usedCache = true;
+      }
+    } catch {}
+    if (usedCache) {
+      setLoading(false);
+    }
+
     async function load() {
       try {
         const [c, p] = await Promise.all([
