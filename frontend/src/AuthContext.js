@@ -29,6 +29,8 @@ export function AuthProvider({ children }) {
       localStorage.setItem('authToken', token);
     } else {
       localStorage.removeItem('authToken');
+      localStorage.removeItem('cachedCharges');
+      localStorage.removeItem('cachedPayments');
     }
   }, [token]);
 

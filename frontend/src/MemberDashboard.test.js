@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MemberDashboard from './components/MemberDashboard';
 import { AuthProvider } from './AuthContext';
@@ -185,4 +185,65 @@ test('outstanding charges are sorted oldest first', async () => {
   const rows = within(table).getAllByRole('row').slice(1);
   expect(rows[0]).toHaveTextContent('20');
   expect(rows[1]).toHaveTextContent('10');
+});
+
+test('uses cached data when available', async () => {
+  const ts = Date.now();
+  localStorage.setItem(
+    'cachedCharges',
+    JSON.stringify({ ts, data: [{ id: 1, status: 'Outstanding', amount: 50, dueDate: '2024-05-01' }] })
+  );
+  localStorage.setItem(
+    'cachedPayments',
+    JSON.stringify({ ts, data: [] })
+  );
+  global.fetch = jest.fn(() => new Promise(() => {}));
+  render(
+    <AuthProvider>
+      <MemberDashboard />
+    </AuthProvider>
+  );
+  const total = await screen.findByTestId('total-balance');
+  expect(total).toHaveTextContent('$50');
+});
+
+test('api results refresh the cache', async () => {
+  const ts = Date.now();
+  localStorage.setItem(
+    'cachedCharges',
+    JSON.stringify({ ts, data: [{ id: 1, status: 'Outstanding', amount: 50, dueDate: '2024-05-01' }] })
+  );
+  localStorage.setItem(
+    'cachedPayments',
+    JSON.stringify({ ts, data: [] })
+  );
+  global.fetch = jest.fn((url) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          ok: true,
+          json: async () =>
+            url.endsWith('/my-charges')
+              ? [
+                  {
+                    id: 1,
+                    status: 'Outstanding',
+                    amount: 200,
+                    dueDate: '2024-05-01',
+                  },
+                ]
+              : [],
+        });
+      }, 0);
+    })
+  );
+  render(
+    <AuthProvider>
+      <MemberDashboard />
+    </AuthProvider>
+  );
+  const total = await screen.findByTestId('total-balance');
+  expect(total).toHaveTextContent('$50');
+  await waitFor(() => expect(total).toHaveTextContent('$200'));
+  expect(JSON.parse(localStorage.getItem('cachedCharges')).data[0].amount).toBe(200);
 });

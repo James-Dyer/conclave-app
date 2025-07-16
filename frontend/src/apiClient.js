@@ -36,9 +36,28 @@ export function useApi() {
           false
         ),
       fetchMember: () => request('/member'),
-      fetchCharges: () => request('/my-charges'),
-      fetchPayments: (status = '') =>
-        request(`/payments${status ? `?status=${encodeURIComponent(status)}` : ''}`),
+      fetchCharges: async () => {
+        const data = await request('/my-charges');
+        if (data) {
+          localStorage.setItem(
+            'cachedCharges',
+            JSON.stringify({ ts: Date.now(), data })
+          );
+        }
+        return data;
+      },
+      fetchPayments: async (status = '') => {
+        const data = await request(
+          `/payments${status ? `?status=${encodeURIComponent(status)}` : ''}`
+        );
+        if (data) {
+          localStorage.setItem(
+            'cachedPayments',
+            JSON.stringify({ ts: Date.now(), data })
+          );
+        }
+        return data;
+      },
       submitPayment: (payment) =>
         request('/payments', {
           method: 'POST',
