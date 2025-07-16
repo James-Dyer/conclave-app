@@ -8,6 +8,7 @@ import PrimaryButton from './PrimaryButton';
 import SecondaryButton from './SecondaryButton';
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
+const DENY_NOTE_LIMIT = 70;
 
 export default function AdminDashboard({
   onManageCharges,
@@ -105,10 +106,23 @@ export default function AdminDashboard({
     setDenyError('');
   }
 
+  const handleDenyNoteChange = (val) => {
+    setDenyNote(val);
+    if (val.length > DENY_NOTE_LIMIT) {
+      setDenyError(`Maximum ${DENY_NOTE_LIMIT} characters allowed`);
+    } else {
+      setDenyError('');
+    }
+  };
+
   async function confirmDeny(note) {
     if (!reviewToDeny) return;
     if (!note) {
       setDenyError('Reason is required');
+      return;
+    }
+    if (note.length > DENY_NOTE_LIMIT) {
+      setDenyError(`Maximum ${DENY_NOTE_LIMIT} characters allowed`);
       return;
     }
     await api.denyPayment(reviewToDeny.id, note);
@@ -205,8 +219,9 @@ export default function AdminDashboard({
         }}
         inputLabel="Reason for denial"
         inputValue={denyNote}
-        onInputChange={setDenyNote}
+        onInputChange={handleDenyNoteChange}
         errorText={denyError}
+        maxLength={DENY_NOTE_LIMIT}
       >
         {reviewToDeny && (
           <div className="space-y-1">

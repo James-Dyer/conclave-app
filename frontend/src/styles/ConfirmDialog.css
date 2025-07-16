@@ -57,6 +57,13 @@
   font-size: 1rem;
 }
 
+.char-count {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: 2px;
+}
+
 .error {
   color: var(--color-error);
   margin-top: 4px;

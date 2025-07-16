@@ -14,7 +14,8 @@ export default function ConfirmDialog({
   inputLabel,
   inputValue = '',
   onInputChange = () => {},
-  errorText
+  errorText,
+  maxLength
 }) {
   if (!open) return null;
   const handleConfirm = () => {
@@ -48,6 +49,11 @@ export default function ConfirmDialog({
                 value={inputValue}
                 onChange={(e) => onInputChange(e.target.value)}
               />
+              {typeof maxLength === 'number' && (
+                <div className="char-count">
+                  {inputValue.length}/{maxLength}
+                </div>
+              )}
             </label>
           )}
           {errorText && <div className="error">{errorText}</div>}
