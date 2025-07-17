@@ -15,6 +15,15 @@ export default function Header({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const hasMenuItems =
+    onShowDashboard ||
+    onShowActivity ||
+    onShowManageCharges ||
+    onShowManagePayments ||
+    onShowMembers ||
+    onShowLogin ||
+    onLogout;
+
   function handleNavClick(cb) {
     return () => {
       setMenuOpen(false);
@@ -100,17 +109,19 @@ export default function Header({
     <header className="header">
       <nav className="nav">
         <span className="brand">Conclave ΣΧ-ΛΔ</span>
-        <button
-          className="hamburger"
-          type="button"
-          aria-label="Toggle menu"
-          onClick={() => setMenuOpen((o) => !o)}
-        >
-          &#9776;
-        </button>
+        {hasMenuItems && (
+          <button
+            className="hamburger"
+            type="button"
+            aria-label="Toggle menu"
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            &#9776;
+          </button>
+        )}
         <div className="nav-tabs">{tabs}</div>
         <div className="nav-actions">{actions}</div>
-        {menuOpen && (
+        {menuOpen && hasMenuItems && (
           <div className="mobile-menu open">
             <div className="nav-tabs">{tabs}</div>
             <div className="nav-actions">{actions}</div>
