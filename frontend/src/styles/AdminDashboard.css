@@ -182,6 +182,8 @@
   .admin-table tbody tr td {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+    word-break: break-word;
     padding: var(--space-xs) var(--space-sm);
     width: 100%;
   }
