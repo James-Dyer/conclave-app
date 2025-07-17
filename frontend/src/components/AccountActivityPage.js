@@ -4,7 +4,6 @@ import PaymentList from './PaymentList';
 import useApi from '../apiClient';
 import { useAuth } from '../AuthContext';
 import '../styles/AccountActivityPage.css';
-import SecondaryButton from './SecondaryButton';
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
@@ -69,11 +68,6 @@ export default function AccountActivityPage({ onBack }) {
     <div className="account-activity-page">
       <header className="member-dash-header">
         <h1>Account Activity</h1>
-        {onBack && (
-          <SecondaryButton onClick={onBack} className="back-button">
-            Back
-          </SecondaryButton>
-        )}
       </header>
       <section>
         <h2>All Charges</h2>
