@@ -178,6 +178,7 @@
   .admin-table tbody tr {
     display: block;
     margin-bottom: var(--space-sm);
+    overflow: visible;
   }
   .admin-table tbody tr td {
     display: flex;
