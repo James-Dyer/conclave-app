@@ -141,7 +141,7 @@ export default function AdminDashboard({
         <h1>Admin Dashboard</h1>
       </header>
       {error && <div className="error">{error}</div>}
-      <section>
+      <section className="reviews-section">
         <h2>Payment Reviews</h2>
         <DataTable
           loading={loading}
