@@ -6,14 +6,23 @@
 }
 
 .view-toggle button {
-  padding: 8px 16px;
+  padding: var(--space-sm) var(--space-md);
   background: none;
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
 }
 
 .view-toggle button.active {
   background-color: var(--color-navy);
   color: #fff;
+}
+
+@media (max-width: 768px) {
+  .view-toggle button {
+    padding: var(--space-md) var(--space-lg);
+  }
 }
