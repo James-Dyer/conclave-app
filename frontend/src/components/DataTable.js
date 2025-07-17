@@ -61,7 +61,11 @@ export default function DataTable({
                   typeof value === 'number' &&
                   c.header.toLowerCase().includes('amount');
                 const display = isMoney ? `$${value}` : value;
-                return <td key={c.accessor}>{display}</td>;
+                return (
+                  <td key={c.accessor} data-label={c.header}>
+                    {display}
+                  </td>
+                );
               })}
               {renderActions && <td>{renderActions(row)}</td>}
               {onRowClick && <td className="row-arrow">&#x276F;</td>}
