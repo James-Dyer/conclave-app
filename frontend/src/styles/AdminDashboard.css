@@ -162,4 +162,29 @@
   .admin-dash-header h1 {
     flex-basis: 100%;
   }
+  .admin-table {
+    border-spacing: 0;
+  }
+  .admin-table thead {
+    display: none;
+  }
+  .admin-table tbody tr {
+    display: block;
+    margin-bottom: var(--space-sm);
+  }
+  .admin-table tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-xs) var(--space-sm);
+    width: 100%;
+  }
+  .admin-table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    margin-right: var(--space-sm);
+  }
+  .admin-table th.arrow-col,
+  .admin-table td.row-arrow {
+    display: none;
+  }
 }
