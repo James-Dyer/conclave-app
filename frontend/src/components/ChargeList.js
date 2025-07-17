@@ -8,7 +8,7 @@ import SecondaryButton from './SecondaryButton';
 export default function ChargeList({
   charges = [],
   onRequestReview = () => {},
-  onViewDetails = () => {},
+  onViewDetails,
   pendingReviewIds = [],
   loading = false,
 }) {
@@ -49,12 +49,8 @@ export default function ChargeList({
     };
   });
 
-  return (
-    <DataTable
-      loading={loading}
-      columns={columns}
-      data={rows}
-      onRowClick={(row) =>
+  const rowClick = onViewDetails
+    ? (row) =>
         onViewDetails({
           id: row.original.id,
           status: row.original.status,
@@ -64,7 +60,14 @@ export default function ChargeList({
           partialAmountPaid: row.original.partialAmountPaid,
           updatedAt: row.original.updatedAt
         })
-      }
+    : undefined;
+
+  return (
+    <DataTable
+      loading={loading}
+      columns={columns}
+      data={rows}
+      onRowClick={rowClick}
     />
   );
 }

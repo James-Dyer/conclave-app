@@ -3,7 +3,7 @@ import DataTable from './DataTable';
 import '../styles/PaymentList.css';
 import logo from '../assets/images/UC-Merced-SigmaChi-ExpectMore.svg';
 
-export default function PaymentList({ payments = [], loading = false, onViewDetails = () => {} }) {
+export default function PaymentList({ payments = [], loading = false, onViewDetails }) {
   if (!loading && payments.length === 0) {
     return (
       <div className="table-empty">
@@ -24,12 +24,16 @@ export default function PaymentList({ payments = [], loading = false, onViewDeta
     paidDate: new Date(p.date).toLocaleDateString(),
     original: p
   }));
+  const rowClick = onViewDetails
+    ? (row) => onViewDetails(row.original)
+    : undefined;
+
   return (
     <DataTable
       columns={columns}
       data={rows}
       loading={loading}
-      onRowClick={(row) => onViewDetails(row.original)}
+      onRowClick={rowClick}
     />
   );
 }
